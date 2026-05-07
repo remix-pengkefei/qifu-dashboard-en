@@ -252,7 +252,7 @@
   background: linear-gradient(180deg, rgba(11, 23, 51, 0.85), rgba(8, 16, 38, 0.7));
   overflow: hidden;
   margin-left: clamp(4px, 0.4vw, 10px);
-  margin-bottom: clamp(4px, 0.4vw, 10px);
+  margin-bottom: 0;
 }
 
 .cm-feed-head {
@@ -283,20 +283,23 @@
 .cm-feed-list {
   flex: 1;
   overflow: hidden;
-  padding: clamp(6px, 0.5vw, 12px);
+  padding: clamp(5px, 0.4vw, 10px);
   display: flex;
   flex-direction: column;
-  gap: clamp(5px, 0.4vw, 10px);
+  justify-content: space-evenly;
+  perspective: 600px;
 }
 
 .cm-feed-item {
   flex-shrink: 0;
-  padding: clamp(8px, 0.6vw, 14px) clamp(10px, 0.7vw, 16px);
+  padding: clamp(5px, 0.4vw, 10px) clamp(8px, 0.55vw, 12px);
   background: linear-gradient(135deg, rgba(13, 28, 60, 0.7), rgba(8, 16, 38, 0.5));
   border: 1px solid rgba(86, 196, 255, 0.1);
   border-left: 2px solid #56c4ff;
   border-radius: 3px;
-  animation: cm-feed-drop 0.4s ease-out backwards;
+  transform-origin: top center;
+  animation: cm-feed-flip 0.35s ease-out backwards;
+  will-change: transform, opacity;
   position: relative;
   overflow: hidden;
 }
@@ -308,9 +311,10 @@
   pointer-events: none;
 }
 
-@keyframes cm-feed-drop {
-  0%   { opacity: 0; transform: translateY(-16px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes cm-feed-flip {
+  0%   { opacity: 0; transform: rotateX(90deg); }
+  60%  { opacity: 1; transform: rotateX(-3deg); }
+  100% { opacity: 1; transform: rotateX(0deg); }
 }
 
 .cm-feed-row1 {
@@ -365,7 +369,7 @@
    ══════════════════════════════════════ */
 .cm-wave {
   flex-shrink: 0;
-  height: clamp(48px, 5vw, 110px);
+  height: clamp(36px, 3.8vw, 80px);
   border-top: 1px solid rgba(86, 196, 255, 0.15);
   background: linear-gradient(180deg, rgba(4, 10, 24, 0.85), rgba(2, 6, 16, 0.95));
   position: relative;

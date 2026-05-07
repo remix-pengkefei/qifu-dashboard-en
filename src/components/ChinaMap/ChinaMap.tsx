@@ -117,8 +117,8 @@ const genTime = () => {
   return `${h}:${m}:${s}`;
 };
 
-const genEvent = (id: number): FeedEvent => {
-  const biz = pickBiz();
+const genEvent = (id: number, forceBiz?: typeof BIZ_TYPES[number]): FeedEvent => {
+  const biz = forceBiz ?? pickBiz();
   const actions = EVENT_ACTIONS[biz.key];
   const tpl = actions[Math.floor(Math.random() * actions.length)];
   return {
@@ -132,26 +132,58 @@ const genEvent = (id: number): FeedEvent => {
   };
 };
 
+let lastDominant = -1;
+const genBatch = (count: number, seq: { current: number }): FeedEvent[] => {
+  const candidates = BIZ_TYPES.filter((_, i) => i !== lastDominant);
+  const domIdx = BIZ_TYPES.indexOf(candidates[Math.floor(Math.random() * candidates.length)]);
+  lastDominant = domIdx;
+  const dominant = BIZ_TYPES[domIdx];
+  const domCount = Math.floor(count * 0.5) + Math.floor(Math.random() * 2);
+  const others = BIZ_TYPES.filter((_, i) => i !== domIdx);
+  const slots: typeof BIZ_TYPES[number][] = [];
+  for (let i = 0; i < domCount; i++) slots.push(dominant);
+  for (let i = domCount; i < count; i++) slots.push(others[Math.floor(Math.random() * others.length)]);
+  for (let i = slots.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [slots[i], slots[j]] = [slots[j], slots[i]];
+  }
+  return slots.map((biz) => genEvent(seq.current++, biz));
+};
+
 // ── 事件流组件 ──
+const FEED_COUNT = 8;
+const FLIP_GAP = 140;
+const FLIP_PAUSE = 2000;
+
 const EventFeed = () => {
   const seqRef = useRef(0);
-  const [events, setEvents] = useState<FeedEvent[]>(() => {
-    const init: FeedEvent[] = [];
-    for (let i = 0; i < 12; i++) {
-      init.push(genEvent(seqRef.current++));
-    }
-    return init;
-  });
+  const nextBatchRef = useRef<FeedEvent[]>([]);
+  const [events, setEvents] = useState<FeedEvent[]>(() => genBatch(FEED_COUNT, seqRef));
+  const [flipKeys, setFlipKeys] = useState<number[]>(() => Array(FEED_COUNT).fill(0));
 
   useEffect(() => {
     let alive = true;
-    const fire = () => {
+    let idx = 0;
+
+    const flipOne = () => {
       if (!alive) return;
-      const evt = genEvent(seqRef.current++);
-      setEvents((prev) => [evt, ...prev].slice(0, 12));
-      window.setTimeout(fire, 2000 + Math.random() * 1500);
+      if (idx === 0) {
+        nextBatchRef.current = genBatch(FEED_COUNT, seqRef);
+      }
+      const ci = idx;
+      const evt = nextBatchRef.current[ci];
+      setEvents((prev) => { const n = [...prev]; n[ci] = evt; return n; });
+      setFlipKeys((prev) => { const n = [...prev]; n[ci] = prev[ci] + 1; return n; });
+      idx++;
+      if (idx < FEED_COUNT) {
+        window.setTimeout(flipOne, FLIP_GAP);
+      } else {
+        idx = 0;
+        window.setTimeout(flipOne, FLIP_PAUSE);
+      }
     };
-    window.setTimeout(fire, 2000);
+
+    window.setTimeout(flipOne, 1000);
     return () => { alive = false; };
   }, []);
 
@@ -162,8 +194,12 @@ const EventFeed = () => {
         实时事件流
       </div>
       <div className="cm-feed-list">
-        {events.map((e) => (
-          <div key={e.id} className="cm-feed-item" style={{ "--ac": e.color } as React.CSSProperties}>
+        {events.map((e, i) => (
+          <div
+            key={`${flipKeys[i]}-${i}`}
+            className="cm-feed-item"
+            style={{ "--ac": e.color } as React.CSSProperties}
+          >
             <div className="cm-feed-row1">
               <span className="cm-feed-biz">{e.bizLabel}</span>
               <span className="cm-feed-detail">{e.detail}</span>
@@ -185,37 +221,43 @@ const WAVE_SEGMENTS = BIZ_TYPES.map((b) => ({ label: b.label, color: b.color }))
 
 const waveBuf: number[] = [];
 let waveT = 0;
+let waveAccum = 0;
 
 type WaveDot = { idx: number; seg: number };
 const waveDots: WaveDot[] = [];
 let nextDotT = 0;
-let waveInited = false;
 
-function initWave(maxPts: number) {
-  if (waveInited) return;
-  waveInited = true;
-  for (let i = 0; i < maxPts; i++) {
-    waveT++;
-    let v = 0.15;
-    v += Math.abs(Math.sin(waveT * 0.008)) * 0.25;
-    v += Math.abs(Math.sin(waveT * 0.025 + 1.3)) * 0.18;
-    v += Math.abs(Math.sin(waveT * 0.07 + 2.7)) * 0.12;
-    v += Math.abs(Math.sin(waveT * 0.18)) * 0.08;
-    v += Math.abs(Math.sin(waveT * 0.5 + 0.8)) * 0.05;
-    v += Math.random() * 0.05;
-    if (Math.random() < 0.04) v += Math.random() * 0.3 + 0.15;
-    waveBuf.push(Math.min(0.95, v));
+const WAVE_RATE = 120;
+const WAVE_MS = 1000 / WAVE_RATE;
 
-    if (waveT >= nextDotT) {
-      const seg = pickBiz();
-      const si = WAVE_SEGMENTS.findIndex((s) => s.label === seg.label);
-      waveDots.push({ idx: waveBuf.length - 1, seg: si >= 0 ? si : 0 });
-      nextDotT = waveT + 3 + Math.floor(Math.random() * 8);
-    }
+function pushWavePoint() {
+  waveT++;
+  let v = 0.15;
+  v += Math.abs(Math.sin(waveT * 0.008)) * 0.25;
+  v += Math.abs(Math.sin(waveT * 0.025 + 1.3)) * 0.18;
+  v += Math.abs(Math.sin(waveT * 0.07 + 2.7)) * 0.12;
+  v += Math.abs(Math.sin(waveT * 0.18)) * 0.08;
+  v += Math.abs(Math.sin(waveT * 0.5 + 0.8)) * 0.05;
+  v += Math.random() * 0.05;
+  if (Math.random() < 0.04) v += Math.random() * 0.3 + 0.15;
+  waveBuf.push(Math.min(0.95, v));
+
+  if (waveT >= nextDotT) {
+    const seg = pickBiz();
+    const si = WAVE_SEGMENTS.findIndex((s) => s.label === seg.label);
+    waveDots.push({ idx: waveBuf.length - 1, seg: si >= 0 ? si : 0 });
+    nextDotT = waveT + 3 + Math.floor(Math.random() * 8);
   }
 }
 
-function drawWaves(canvas: HTMLCanvasElement) {
+let waveInited = false;
+function initWave(maxPts: number) {
+  if (waveInited) return;
+  waveInited = true;
+  for (let i = 0; i < maxPts + 10; i++) pushWavePoint();
+}
+
+function drawWaves(canvas: HTMLCanvasElement, dt: number) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -227,30 +269,23 @@ function drawWaves(canvas: HTMLCanvasElement) {
 
   initWave(maxPts);
 
-  for (let p = 0; p < 3; p++) {
-    waveT++;
-    let v = 0.15;
-    v += Math.abs(Math.sin(waveT * 0.008)) * 0.25;
-    v += Math.abs(Math.sin(waveT * 0.025 + 1.3)) * 0.18;
-    v += Math.abs(Math.sin(waveT * 0.07 + 2.7)) * 0.12;
-    v += Math.abs(Math.sin(waveT * 0.18)) * 0.08;
-    v += Math.abs(Math.sin(waveT * 0.5 + 0.8)) * 0.05;
-    v += Math.random() * 0.05;
-    if (Math.random() < 0.04) v += Math.random() * 0.3 + 0.15;
-    waveBuf.push(Math.min(0.95, v));
-
-    if (waveT >= nextDotT) {
-      const seg = pickBiz();
-      const si = WAVE_SEGMENTS.findIndex((s) => s.label === seg.label);
-      waveDots.push({ idx: waveBuf.length - 1, seg: si >= 0 ? si : 0 });
-      nextDotT = waveT + 3 + Math.floor(Math.random() * 8);
-    }
+  waveAccum += dt;
+  let pushed = 0;
+  while (waveAccum >= WAVE_MS && pushed < 12) {
+    waveAccum -= WAVE_MS;
+    pushWavePoint();
+    pushed++;
   }
-  while (waveBuf.length > maxPts) {
+
+  while (waveBuf.length > maxPts + 10) {
     waveBuf.shift();
     for (const d of waveDots) d.idx--;
   }
-  while (waveDots.length > 0 && waveDots[0].idx < 0) waveDots.shift();
+  while (waveDots.length > 0 && waveDots[0].idx < -1) waveDots.shift();
+
+  const frac = waveAccum / WAVE_MS;
+  const pxPerPt = w / (maxPts - 1);
+  const scrollOff = frac * pxPerPt;
 
   ctx.clearRect(0, 0, w, h);
 
@@ -259,31 +294,32 @@ function drawWaves(canvas: HTMLCanvasElement) {
   const len = waveBuf.length;
   if (len < 2) return;
 
-  // main line
+  const startIdx = len - maxPts - 1;
+
   ctx.save();
   ctx.strokeStyle = "rgba(86, 196, 255, 0.7)";
   ctx.lineWidth = 1 * dpr;
   ctx.beginPath();
-  for (let j = 0; j < len; j++) {
-    const x = (j / (maxPts - 1)) * w;
+  for (let j = Math.max(0, startIdx); j < len; j++) {
+    const px = (j - startIdx) * pxPerPt - scrollOff;
     const y = baseline - waveBuf[j] * maxH;
-    j === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    j === Math.max(0, startIdx) ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
   }
   ctx.stroke();
   ctx.restore();
 
-  // colored dots on the line
   const dotR = 2 * dpr;
   for (const d of waveDots) {
-    if (d.idx < 0 || d.idx >= len) continue;
-    const x = (d.idx / (maxPts - 1)) * w;
+    if (d.idx < startIdx || d.idx >= len) continue;
+    const px = (d.idx - startIdx) * pxPerPt - scrollOff;
+    if (px < -dotR || px > w + dotR) continue;
     const y = baseline - waveBuf[d.idx] * maxH;
     const color = WAVE_SEGMENTS[d.seg].color;
 
     ctx.save();
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(x, y, dotR, 0, Math.PI * 2);
+    ctx.arc(px, y, dotR, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
@@ -313,9 +349,12 @@ const WaveMonitor = () => {
     const ro = new ResizeObserver(fit);
     ro.observe(box);
 
-    const loop = () => {
+    let prevTs = 0;
+    const loop = (ts: number) => {
       if (!alive) return;
-      drawWaves(cv);
+      const dt = prevTs === 0 ? 16 : Math.min(ts - prevTs, 50);
+      prevTs = ts;
+      drawWaves(cv, dt);
       id = requestAnimationFrame(loop);
     };
     id = requestAnimationFrame(loop);
@@ -631,7 +670,7 @@ export const ChinaMap = () => {
 
   const W = size.width || 1;
   const H = size.height || 1;
-  const mapTop = 8;
+  const mapTop = -5;
 
   const projection = useMemo(() => {
     if (!geo) return null;
