@@ -12,11 +12,30 @@ import {
 import { CITY_NODES, MAJOR_LINKS } from "../../data/regions";
 import "./ChinaMap.css";
 
+const NEIGHBOR_LABELS: { name: string; coord: [number, number] }[] = [
+  { name: "Russia", coord: [100, 54] },
+  { name: "Mongolia", coord: [104, 47] },
+  { name: "Kazakhstan", coord: [75, 45] },
+  { name: "India", coord: [82, 22] },
+  { name: "Myanmar", coord: [97, 20] },
+  { name: "Vietnam", coord: [107, 17] },
+  { name: "Laos", coord: [103, 19] },
+  { name: "Nepal", coord: [84, 28.5] },
+  { name: "Pakistan", coord: [70, 30] },
+  { name: "N. Korea", coord: [127, 40] },
+  { name: "S. Korea", coord: [127.5, 36] },
+  { name: "Japan", coord: [136, 36] },
+  { name: "Philippines", coord: [121, 14] },
+];
+
 const KEY_CITIES = [
-  "bj", "sh", "gz", "sz", "cq",
+  "bj", "sh", "gz", "sz", "cq", "tj",
   "cd", "wh", "hz", "nj", "cs",
   "xa", "jn", "sy", "hb", "fz",
   "km", "nn", "ur", "lz_lhasa", "hk_city",
+  "sjz", "ty", "hhht", "cc", "hf", "nc",
+  "zz", "gy", "lz", "xn", "yc",
+  "qd", "dl", "xm", "hk",
 ];
 
 type Spark = { id: number; x: number; y: number; color: string; size: number };
@@ -36,7 +55,6 @@ const LABEL_COLORS = ["#56c4ff", "#2fd996", "#a78bfa", "#ffb84d", "#ff5e6c"];
 type CityPulse = { id: number; x: number; y: number; color: string };
 type DataLabel = { id: number; x: number; y: number; text: string; color: string };
 type FlyDot = { id: number; pathD: string; dur: number };
-
 // ── 实时事件流数据 ──
 const EVENT_TEMPLATES = [
   { action: "贷款审批通过", gen: () => `¥${(Math.random() * 200 + 5).toFixed(1)}万` },
@@ -257,6 +275,291 @@ const WaveMonitor = () => {
   );
 };
 
+// ── 业务热力散点层（航空俯瞰城市灯光） ──
+const HEAT_CITIES = CITY_NODES.map((c) => ({
+  coord: c.coord,
+  weight: c.tier === 1 ? 1.0 : c.tier === 2 ? 0.45 : c.tier === 3 ? 0.25 : 0.12,
+  name: c.name,
+}));
+
+// extra population corridors (small towns between major cities)
+const EXTRA_POINTS: [number, number, number][] = [
+  // 长三角密集带
+  [120.9, 31.4, 0.15], [121.1, 30.9, 0.12], [120.5, 30.5, 0.1],
+  [119.5, 31.8, 0.08], [119.9, 30.8, 0.08], [121.4, 29.3, 0.06],
+  // 珠三角密集带
+  [113.5, 22.8, 0.15], [113.8, 22.6, 0.12], [114.3, 23.1, 0.1],
+  [112.9, 23.3, 0.08], [113.1, 22.5, 0.06],
+  // 京津冀
+  [116.8, 39.5, 0.1], [115.5, 38.8, 0.08], [117.5, 39.7, 0.06],
+  [115.0, 39.5, 0.05], [116.1, 38.3, 0.04],
+  // 成渝
+  [105.3, 30.1, 0.08], [106.0, 29.8, 0.06], [104.7, 29.3, 0.04],
+  // 中部走廊
+  [113.4, 30.2, 0.06], [113.0, 28.8, 0.05], [115.0, 30.5, 0.05],
+  [112.5, 34.2, 0.05], [116.5, 33.5, 0.04], [111.7, 29.4, 0.04],
+  [114.5, 36.6, 0.04], [113.7, 27.8, 0.04],
+  // 东部沿海带
+  [119.0, 25.5, 0.05], [118.5, 24.9, 0.06], [120.7, 28.0, 0.05],
+  [117.3, 34.8, 0.04], [118.3, 33.9, 0.04], [116.7, 23.4, 0.05],
+  [110.4, 21.2, 0.04], [109.1, 21.5, 0.03],
+  // ── 东北 ──
+  [124.5, 42.8, 0.05], [125.8, 44.5, 0.04], [123.0, 41.1, 0.06],
+  [121.6, 38.9, 0.06], [122.0, 41.1, 0.04], [123.9, 47.3, 0.03],
+  [124.8, 45.7, 0.03], [126.9, 47.4, 0.03], [129.6, 44.6, 0.02],
+  [127.0, 41.8, 0.02], [130.3, 47.3, 0.02], [121.2, 45.0, 0.02],
+  [120.4, 41.8, 0.03], [122.8, 45.2, 0.02],
+  // ── 内蒙古 ──
+  [109.8, 40.6, 0.05], [110.0, 41.0, 0.04], [106.8, 39.7, 0.03],
+  [114.0, 40.8, 0.03], [116.8, 43.6, 0.02], [119.7, 49.2, 0.02],
+  [117.4, 47.4, 0.02], [108.7, 40.0, 0.03], [112.0, 43.0, 0.02],
+  [115.0, 42.0, 0.02], [120.7, 48.0, 0.02],
+  // ── 新疆 ──
+  [87.6, 43.8, 0.06], [86.1, 41.8, 0.03], [81.3, 43.9, 0.03],
+  [80.3, 41.2, 0.03], [76.0, 39.5, 0.03], [79.9, 37.1, 0.02],
+  [88.1, 47.8, 0.02], [84.9, 45.6, 0.02], [89.2, 42.9, 0.02],
+  [82.0, 29.3, 0.01], [85.0, 41.0, 0.02], [91.7, 46.7, 0.02],
+  // ── 西藏 ──
+  [91.1, 29.7, 0.04], [88.9, 29.3, 0.02], [86.0, 29.0, 0.02],
+  [97.2, 31.5, 0.02], [94.4, 29.7, 0.02], [80.1, 32.5, 0.01],
+  [84.2, 31.5, 0.01], [92.0, 31.0, 0.01],
+  // ── 青海 ──
+  [101.8, 36.6, 0.04], [97.4, 37.4, 0.02], [95.4, 33.0, 0.01],
+  [100.6, 34.5, 0.02], [102.0, 35.0, 0.02], [98.1, 36.4, 0.02],
+  // ── 甘肃 ──
+  [103.8, 36.1, 0.05], [98.3, 39.7, 0.03], [104.6, 35.6, 0.03],
+  [105.7, 34.6, 0.03], [106.7, 35.5, 0.03], [100.5, 38.9, 0.02],
+  [97.0, 39.0, 0.02], [95.0, 40.1, 0.02], [102.2, 38.0, 0.02],
+  // ── 宁夏 ──
+  [106.3, 38.5, 0.04], [105.2, 37.5, 0.03],
+  // ── 云贵 ──
+  [106.6, 26.6, 0.05], [104.8, 26.6, 0.04], [100.2, 26.9, 0.03],
+  [103.8, 25.0, 0.04], [106.7, 27.7, 0.03], [107.9, 27.1, 0.03],
+  [104.3, 23.4, 0.02], [108.3, 22.8, 0.03],
+  // ── 广西 ──
+  [109.4, 24.3, 0.04], [110.3, 25.3, 0.03], [107.4, 23.7, 0.03],
+  [111.3, 23.5, 0.03], [108.1, 24.7, 0.02],
+  // ── 陕西 ──
+  [108.9, 34.3, 0.06], [109.5, 36.6, 0.03], [107.1, 34.4, 0.03],
+  [107.8, 33.1, 0.02], [110.1, 35.1, 0.03],
+  // ── 山西 ──
+  [112.5, 37.9, 0.05], [113.1, 36.2, 0.03], [111.5, 36.1, 0.03],
+  [112.7, 35.5, 0.03], [113.3, 40.1, 0.03],
+  // ── 海南 ──
+  [110.3, 20.0, 0.04], [109.5, 18.2, 0.03], [110.0, 19.2, 0.02],
+  // ── 河南补充 ──
+  [114.3, 34.0, 0.05], [112.4, 35.0, 0.04], [115.6, 34.4, 0.04],
+  [111.2, 34.0, 0.03], [113.9, 33.0, 0.03], [114.0, 32.1, 0.03],
+  // ── 安徽补充 ──
+  [117.8, 30.9, 0.04], [116.5, 31.7, 0.04], [118.3, 32.9, 0.03],
+  [115.8, 33.9, 0.03], [117.0, 30.0, 0.03],
+  // ── 江西补充 ──
+  [115.0, 27.8, 0.04], [114.4, 27.1, 0.04], [116.4, 28.3, 0.03],
+  [114.9, 26.0, 0.03], [117.0, 29.3, 0.03], [116.0, 25.8, 0.02],
+  // ── 湖北补充 ──
+  [112.1, 31.0, 0.04], [110.8, 32.6, 0.03], [111.3, 30.7, 0.03],
+  [109.5, 30.3, 0.03], [113.4, 31.7, 0.03],
+  // ── 湖南补充 ──
+  [110.0, 27.2, 0.04], [109.7, 28.3, 0.03], [111.6, 26.4, 0.03],
+  [112.6, 27.0, 0.03], [110.5, 29.4, 0.03],
+  // ── 四川盆地 ──
+  [105.1, 31.5, 0.04], [106.8, 31.2, 0.03], [103.0, 30.0, 0.03],
+  [104.8, 28.8, 0.03], [105.6, 30.8, 0.03], [107.5, 31.8, 0.02],
+  // ── 吉林补充 ──
+  [126.5, 43.8, 0.03], [127.5, 42.9, 0.02], [124.3, 43.2, 0.02],
+  // ── 黑龙江补充 ──
+  [128.0, 46.6, 0.03], [124.0, 46.6, 0.02], [127.5, 50.2, 0.01],
+  [131.0, 46.0, 0.02],
+  // ── 河北补充 ──
+  [114.5, 37.1, 0.04], [116.1, 39.6, 0.03], [118.2, 39.6, 0.03],
+  [115.5, 37.7, 0.03],
+  // ── 山东补充 ──
+  [118.0, 36.8, 0.04], [119.1, 35.4, 0.03], [116.0, 35.4, 0.03],
+  [121.4, 37.5, 0.03],
+];
+
+type StaticDot = { x: number; y: number; alpha: number; r: number; phase: number };
+type FlashDot = { x: number; y: number; life: number; maxLife: number; r: number };
+
+const HeatCanvas = ({
+  projection,
+  width,
+  height,
+  mapTop,
+  chinaPaths,
+}: {
+  projection: any;
+  width: number;
+  height: number;
+  mapTop: number;
+  chinaPaths: string[];
+}) => {
+  const cvRef = useRef<HTMLCanvasElement>(null);
+  const staticRef = useRef<HTMLCanvasElement | null>(null);
+  const maskRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (!projection || width < 1 || height < 1 || !chinaPaths.length) return;
+    const cv = cvRef.current;
+    if (!cv) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(width * dpr);
+    cv.height = Math.round(height * dpr);
+    cv.style.width = width + "px";
+    cv.style.height = height + "px";
+
+    const cw = cv.width;
+    const ch = cv.height;
+
+    // build China boundary mask (used to clip all dots to within China)
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = cw;
+    maskCanvas.height = ch;
+    const mctx = maskCanvas.getContext("2d")!;
+    mctx.scale(dpr, dpr);
+    mctx.translate(0, mapTop);
+    mctx.fillStyle = "#fff";
+    const chinaPath = new Path2D();
+    for (const d of chinaPaths) {
+      chinaPath.addPath(new Path2D(d));
+    }
+    mctx.fill(chinaPath);
+    maskRef.current = maskCanvas;
+
+    // pre-generate ALL static dots at once
+    const allSources: { cx: number; cy: number; weight: number }[] = [];
+    HEAT_CITIES.forEach((city) => {
+      const p = projectPoint(projection, city.coord);
+      if (!p) return;
+      allSources.push({ cx: p[0] * dpr, cy: (p[1] + mapTop) * dpr, weight: city.weight });
+    });
+    EXTRA_POINTS.forEach(([lon, lat, w]) => {
+      const p = projectPoint(projection, [lon, lat]);
+      if (!p) return;
+      allSources.push({ cx: p[0] * dpr, cy: (p[1] + mapTop) * dpr, weight: w });
+    });
+
+    const staticDots: StaticDot[] = [];
+    allSources.forEach((src) => {
+      const count = Math.round(src.weight * 800);
+      const spread = (20 + src.weight * 50) * dpr;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random();
+        const dist = r * r * spread;
+        staticDots.push({
+          x: src.cx + Math.cos(angle) * dist,
+          y: src.cy + Math.sin(angle) * dist,
+          alpha: (0.3 + Math.random() * 0.5) * src.weight,
+          r: (0.4 + Math.random() * 0.8) * dpr,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    });
+
+    // bake static layer and clip to China boundary
+    const offscreen = document.createElement("canvas");
+    offscreen.width = cw;
+    offscreen.height = ch;
+    const octx = offscreen.getContext("2d")!;
+    octx.globalCompositeOperation = "lighter";
+    for (const d of staticDots) {
+      if (d.x < 0 || d.x >= cw || d.y < 0 || d.y >= ch) continue;
+      octx.globalAlpha = d.alpha;
+      octx.fillStyle = "rgb(60, 140, 220)";
+      octx.beginPath();
+      octx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      octx.fill();
+    }
+    octx.globalCompositeOperation = "destination-in";
+    octx.globalAlpha = 1;
+    octx.drawImage(maskCanvas, 0, 0);
+    staticRef.current = offscreen;
+
+    // flash dots (real-time business sparks with clusters)
+    const flashDots: FlashDot[] = [];
+    let alive = true;
+
+    const loop = () => {
+      if (!alive) return;
+      const ctx = cv.getContext("2d");
+      if (!ctx || !staticRef.current || !maskRef.current) { requestAnimationFrame(loop); return; }
+
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(staticRef.current, 0, 0);
+      ctx.globalCompositeOperation = "lighter";
+
+      // spawn flash dots — each main dot brings a cluster of smaller ones
+      const spawnCount = 2 + Math.floor(Math.random() * 3);
+      for (let s = 0; s < spawnCount; s++) {
+        const src = allSources[Math.floor(Math.random() * allSources.length)];
+        const spread = (15 + src.weight * 35) * dpr;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * spread;
+        const mainX = src.cx + Math.cos(angle) * dist;
+        const mainY = src.cy + Math.sin(angle) * dist;
+        flashDots.push({
+          x: mainX, y: mainY,
+          life: 0, maxLife: 30 + Math.random() * 50,
+          r: (1.5 + Math.random() * 2.5) * dpr,
+        });
+        const clusterCount = 3 + Math.floor(Math.random() * 6);
+        for (let c = 0; c < clusterCount; c++) {
+          const ca = Math.random() * Math.PI * 2;
+          const cd = (3 + Math.random() * 12) * dpr;
+          flashDots.push({
+            x: mainX + Math.cos(ca) * cd,
+            y: mainY + Math.sin(ca) * cd,
+            life: Math.floor(Math.random() * 8),
+            maxLife: 20 + Math.random() * 35,
+            r: (0.3 + Math.random() * 0.8) * dpr,
+          });
+        }
+      }
+
+      // draw + update flash dots
+      for (let i = flashDots.length - 1; i >= 0; i--) {
+        const f = flashDots[i];
+        f.life++;
+        const p = f.life / f.maxLife;
+        if (p >= 1) { flashDots.splice(i, 1); continue; }
+        const a = p < 0.12 ? p / 0.12 : 1 - (p - 0.12) / 0.88;
+        ctx.globalAlpha = a * 0.95;
+        ctx.fillStyle = "#cef";
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r * (0.4 + a * 0.6), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // clip everything to China boundary
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.globalAlpha = 1;
+      ctx.drawImage(maskRef.current, 0, 0);
+
+      while (flashDots.length > 800) flashDots.shift();
+
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+    return () => { alive = false; };
+  }, [projection, width, height, mapTop, chinaPaths]);
+
+  return (
+    <canvas
+      ref={cvRef}
+      style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 1,
+      }}
+    />
+  );
+};
+
 export const ChinaMap = () => {
   const geo = useChinaGeoJson();
   const worldGeo = useWorldGeoJson();
@@ -284,10 +587,12 @@ export const ChinaMap = () => {
 
   const provincePaths = useMemo(() => {
     if (!path) return [];
-    return cleanedFeatures.map((f, idx) => ({
-      id: f.properties?.adcode ?? idx,
-      d: path(f as any) || "",
-    }));
+    return cleanedFeatures
+      .filter((f) => f.properties?.adcode !== 710000)
+      .map((f, idx) => ({
+        id: f.properties?.adcode ?? idx,
+        d: path(f as any) || "",
+      }));
   }, [cleanedFeatures, path]);
 
   const worldPaths = useMemo(() => {
@@ -335,6 +640,17 @@ export const ChinaMap = () => {
       return { id, name: c.name, x: p[0], y: p[1], tier: c.tier };
     }).filter(Boolean) as { id: string; name: string; x: number; y: number; tier: number }[];
   }, [projection]);
+
+  const neighborProjected = useMemo(() => {
+    if (!projection) return [];
+    return NEIGHBOR_LABELS.map((n) => {
+      const p = projectPoint(projection, n.coord);
+      if (!p) return null;
+      return { name: n.name, x: p[0], y: p[1] };
+    }).filter(Boolean) as { name: string; x: number; y: number }[];
+  }, [projection]);
+
+  const chinaPathStrings = useMemo(() => provincePaths.map((p) => p.d), [provincePaths]);
 
   const flightLines = useMemo(() => {
     if (!projection) return [];
@@ -598,25 +914,34 @@ export const ChinaMap = () => {
                 ))}
               </g>
 
+              <g className="cm-neighbor-labels">
+                {neighborProjected.map((n) => (
+                  <text
+                    key={n.name}
+                    x={n.x}
+                    y={n.y}
+                    className="cm-neighbor-label"
+                    textAnchor="middle"
+                  >
+                    {n.name}
+                  </text>
+                ))}
+              </g>
+
               <g className="cm-graticule">
                 {graticule.lats.map((d, i) => <path key={`lat-${i}`} d={d} />)}
                 {graticule.lons.map((d, i) => <path key={`lon-${i}`} d={d} />)}
               </g>
 
               <g className="cm-china">
-                {provincePaths.map((p, idx) => (
+                {provincePaths.map((p) => (
                   <path
                     key={p.id}
                     d={p.d}
-                    fill={heatProvinces.has(idx)
-                      ? "rgba(86, 196, 255, 0.18)"
-                      : "rgba(26, 64, 130, 0.22)"}
-                    stroke={heatProvinces.has(idx)
-                      ? "rgba(120, 200, 255, 0.75)"
-                      : "rgba(120, 190, 240, 0.55)"}
-                    strokeWidth="0.9"
+                    fill="rgba(8, 18, 40, 0.3)"
+                    stroke="rgba(80, 160, 220, 0.25)"
+                    strokeWidth="0.6"
                     strokeLinejoin="round"
-                    className="cm-province"
                   />
                 ))}
               </g>
@@ -693,6 +1018,7 @@ export const ChinaMap = () => {
               </g>
             </g>
           </svg>
+          {projection && <HeatCanvas projection={projection} width={W} height={H} mapTop={mapTop} chinaPaths={chinaPathStrings} />}
         </div>
 
         <EventFeed />

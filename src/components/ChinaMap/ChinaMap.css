@@ -73,6 +73,16 @@
   stroke-linejoin: round;
 }
 
+/* ── 周边国家标注 ── */
+.cm-neighbor-label {
+  fill: rgba(140, 170, 210, 0.3);
+  font-size: clamp(7px, 0.55vw, 14px);
+  font-family: var(--ff-num), sans-serif;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  pointer-events: none;
+}
+
 /* ── 经纬度网格 ── */
 .cm-graticule path {
   fill: none;
@@ -218,14 +228,14 @@
   filter: drop-shadow(0 0 4px rgba(155, 231, 255, 0.6));
 }
 .cm-city-label {
-  fill: rgba(200, 225, 255, 0.75);
-  font-size: clamp(6px, 0.5vw, 12px);
+  fill: rgba(210, 232, 255, 0.88);
+  font-size: clamp(8px, 0.7vw, 16px);
   font-family: var(--ff-zh);
   letter-spacing: 0.5px;
-  font-weight: 500;
+  font-weight: 600;
   paint-order: stroke;
-  stroke: rgba(4, 8, 26, 0.85);
-  stroke-width: 2.5;
+  stroke: rgba(4, 8, 26, 0.9);
+  stroke-width: 3;
   stroke-linejoin: round;
 }
 
