@@ -1,0 +1,231 @@
+/* ── 横向跑马灯事件条 ── */
+.etk {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 14px;
+  background: linear-gradient(90deg, rgba(11, 23, 51, 0.92), rgba(8, 16, 38, 0.85));
+  border-bottom: 1px solid var(--border-subtle);
+  overflow: hidden;
+  flex-shrink: 0;
+  gap: 12px;
+  z-index: 3;
+}
+
+/* 左侧：标题 + 统计 */
+.etk-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.etk-bar {
+  width: 3px;
+  height: 14px;
+  background: var(--c-cyan-1);
+  box-shadow: var(--glow-cyan);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.etk-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+}
+
+.etk-stats {
+  display: flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+.etk-stat {
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(86, 196, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.etk-stat em {
+  font-style: normal;
+  margin-left: 3px;
+  color: var(--text-secondary);
+}
+.etk-stat-on {
+  border-color: var(--c-cyan-2);
+  color: var(--c-cyan-1);
+  background: rgba(86, 196, 255, 0.12);
+}
+.etk-stat-on em { color: var(--c-cyan-1); }
+.etk-stat-warn { color: var(--c-red); border-color: rgba(255, 94, 108, 0.3); background: rgba(255, 94, 108, 0.06); }
+.etk-stat-warn em { color: var(--c-red); }
+.etk-stat-amber { color: var(--c-amber); border-color: rgba(255, 184, 77, 0.3); background: rgba(255, 184, 77, 0.06); }
+.etk-stat-amber em { color: var(--c-amber); }
+
+/* 分隔线 */
+.etk-left::after {
+  content: "";
+  width: 1px;
+  height: 20px;
+  background: var(--border-line);
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+/* 跑马灯区域 */
+.etk-marquee {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* 单条事件 */
+.etk-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+/* 进入/展示/退出动画 */
+.etk-enter {
+  animation: etk-slide-in 0.5s var(--ease) forwards;
+}
+.etk-show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.etk-exit {
+  animation: etk-slide-out 0.5s var(--ease) forwards;
+}
+
+@keyframes etk-slide-in {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes etk-slide-out {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(-60px); opacity: 0; }
+}
+
+/* 竖线指示器 */
+.etk-indicator {
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  flex-shrink: 0;
+  background: var(--c-cyan-2);
+}
+.etk-indicator.ind-risk { background: var(--c-red); box-shadow: var(--glow-red); }
+.etk-indicator.ind-warn { background: var(--c-amber); }
+.etk-indicator.ind-ok   { background: var(--c-green); box-shadow: var(--glow-green); }
+
+/* 时间 */
+.etk-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+/* 场景图标 */
+.etk-scene-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 3px rgba(86,196,255,0.4));
+  flex-shrink: 0;
+}
+.etk-event.lvl-risk .etk-scene-icon {
+  filter: drop-shadow(0 0 4px rgba(255,94,108,0.55));
+}
+
+/* 银行 */
+.etk-bank {
+  padding: 1px 6px;
+  border: 1px solid;
+  border-radius: 2px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* 区域 */
+.etk-zone {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* 分隔符 */
+.etk-sep {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+/* 场景 */
+.etk-scene {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* 动作 */
+.etk-action {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* 智能体 */
+.etk-agent {
+  font-size: 11px;
+  color: var(--c-cyan-1);
+  text-shadow: 0 0 6px var(--c-cyan-glow);
+}
+
+/* 状态标签 */
+.etk-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  margin-left: 4px;
+}
+.etk-tag-icon { width: 10px; height: 10px; }
+.tag-normal { color: var(--c-cyan-1); background: var(--c-cyan-soft); }
+.tag-ok     { color: var(--c-green);  background: var(--c-green-soft); }
+.tag-warn   { color: var(--c-amber);  background: var(--c-amber-soft); }
+.tag-risk   { color: var(--c-red);    background: var(--c-red-soft); }
+
+/* 风险行高亮 */
+.etk-event.lvl-risk {
+  background: linear-gradient(90deg, rgba(255,94,108,0.12), transparent 60%);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.etk-event.lvl-warn {
+  background: linear-gradient(90deg, rgba(255,184,77,0.08), transparent 60%);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* 扫描线 */
+.etk-scan {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(86,196,255,0.06), transparent);
+  animation: scan-line 5s linear infinite;
+  pointer-events: none;
+}

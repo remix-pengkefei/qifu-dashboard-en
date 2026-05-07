@@ -1,5 +1,5 @@
 import { Header } from "./components/Header/Header";
-import { EventStream } from "./components/EventStream/EventStream";
+import { EventTicker } from "./components/EventTicker/EventTicker";
 import { ChinaMap } from "./components/ChinaMap/ChinaMap";
 import { LiveBusiness } from "./components/LiveBusiness/LiveBusiness";
 import { BankCloud } from "./components/BankCloud/BankCloud";
@@ -10,13 +10,9 @@ const Shell = () => {
   return (
     <div className="app">
       <Header />
+      <EventTicker />
       <main className="main">
-        {/* 左：事件流 */}
-        <section className="col-l panel">
-          <EventStream />
-        </section>
-
-        {/* 中：上为地图，下为业务实时进展 */}
+        {/* 左：地图 + 业务实时进展 */}
         <section className="col-c">
           <div className="col-c-top">
             <ChinaMap />

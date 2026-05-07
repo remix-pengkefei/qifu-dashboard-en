@@ -26,7 +26,7 @@ const levelRoll = (): EventLevel => {
   return "normal";
 };
 
-const buildBase = (level: EventLevel, mode: Mode): LiveEvent => {
+const buildBase = (level: EventLevel, _mode: Mode): LiveEvent => {
   const bank = pick(BANKS);
   const zone = pick(ZONES);
   const scene = pick(SCENES);
@@ -37,43 +37,16 @@ const buildBase = (level: EventLevel, mode: Mode): LiveEvent => {
   else if (level === "ok") action = pick(["智能审批通过", "用信划款执行", "提前还款受理"]);
   else action = pick(ACTIONS);
 
-  // 模式微调，让事件流跟模式耦合
-  if (mode === "bank") {
-    return {
-      id: nextSeq(),
-      time: formatTime(new Date()),
-      bank: bank.name,
-      bankColor: bank.color,
-      zone,
-      scene,
-      action,
-      agent: Math.random() < 0.5 ? agent.name : undefined,
-      level,
-    };
-  }
-  if (mode === "agent") {
-    return {
-      id: nextSeq(),
-      time: formatTime(new Date()),
-      bank: Math.random() < 0.6 ? bank.name : undefined,
-      bankColor: Math.random() < 0.6 ? bank.color : undefined,
-      zone,
-      scene,
-      action: `${agent.name} · ${action}`,
-      agent: agent.name,
-      level,
-    };
-  }
-  // overview
+  // 每条事件都写全：银行、区域、场景、动作、智能体
   return {
     id: nextSeq(),
     time: formatTime(new Date()),
-    bank: Math.random() < 0.7 ? bank.name : undefined,
-    bankColor: Math.random() < 0.7 ? bank.color : undefined,
+    bank: bank.name,
+    bankColor: bank.color,
     zone,
     scene,
     action,
-    agent: Math.random() < 0.4 ? agent.name : undefined,
+    agent: agent.name,
     level,
   };
 };

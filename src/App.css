@@ -21,11 +21,11 @@
   z-index: 1;
 }
 
-/* 三列：左 事件流 / 中 地图+业务进展 / 右 智能体+银行调用 */
+/* 两列：左 地图+业务进展 / 右 智能体+银行调用 */
 .main {
   flex: 1;
   display: grid;
-  grid-template-columns: var(--col-left) 1fr var(--col-right);
+  grid-template-columns: 1fr var(--col-right);
   grid-template-rows: minmax(0, 1fr);
   gap: 10px;
   padding: 10px;
@@ -33,12 +33,6 @@
   overflow: hidden;
   position: relative;
   z-index: 2;
-}
-
-.col-l {
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
 }
 
 /* 中列：上下分割（地图 70% / 业务进展 30%） */
@@ -82,7 +76,7 @@
 
 @media (max-width: 1024px) {
   .main {
-    grid-template-columns: 220px 1fr 240px;
+    grid-template-columns: 1fr 280px;
     gap: 8px;
     padding: 8px;
   }
@@ -97,7 +91,7 @@
     padding: 8px;
     overflow-y: auto;
   }
-  .col-l, .col-c, .col-r {
+  .col-c, .col-r {
     height: auto;
     flex-shrink: 0;
   }
