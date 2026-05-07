@@ -149,6 +149,13 @@ export const ChinaMap = () => {
 
   return (
     <div ref={ref} className="cm">
+      <div className="cm-head">
+        <span className="cm-bar" />
+        全国业务覆盖 · 实时态势
+        <span className="cm-meta">
+          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">367</em> 城市
+        </span>
+      </div>
       <svg
         className="cm-svg"
         viewBox={`0 0 ${W} ${H}`}

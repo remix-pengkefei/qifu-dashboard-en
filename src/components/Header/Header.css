@@ -1,14 +1,13 @@
 .hdr {
   height: var(--header-height);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   padding: 0 18px;
   border-bottom: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, rgba(8, 18, 42, 0.92), rgba(6, 14, 32, 0.55));
   position: relative;
   z-index: 5;
-  gap: 18px;
+  gap: 14px;
 }
 
 .hdr::before {
@@ -24,124 +23,111 @@
 .hdr-l {
   display: flex;
   align-items: center;
-  gap: 10px;
   flex-shrink: 0;
+  padding-right: 14px;
+  border-right: 1px solid var(--border-subtle);
 }
 .hdr-logo-img {
   height: 22px;
   width: auto;
   filter: drop-shadow(0 0 6px rgba(47, 217, 150, 0.55));
 }
-.hdr-l-tag {
-  font-size: 13px;
-  letter-spacing: 2px;
-  color: var(--text-primary);
-  font-weight: 600;
-  padding-left: 12px;
-  border-left: 1px solid var(--border-subtle);
-}
 
-/* 中：核心 KPIs 平铺 */
-.hdr-kpis {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  justify-content: center;
-  flex-wrap: nowrap;
+/* 跑马灯区域 */
+.hdr-marquee {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
-}
-.hdr-kpi {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  white-space: nowrap;
-}
-.hdr-kpi-label {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  letter-spacing: 1px;
-}
-.hdr-kpi-value {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--c-cyan-1);
-  text-shadow: 0 0 10px var(--c-cyan-glow);
-  letter-spacing: 0.5px;
-}
-.hdr-kpi-value em {
-  font-style: normal;
-  font-size: 11px;
-  margin-left: 2px;
-  color: var(--text-tertiary);
-  font-weight: 400;
-}
-
-/* 右：状态 + 时钟 */
-.hdr-r {
+  position: relative;
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex-shrink: 0;
 }
-.hdr-stat {
-  font-size: 11px;
-  color: var(--c-green);
-  display: inline-flex;
+
+/* 单条事件 */
+.hdr-evt {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  letter-spacing: 1px;
-}
-.hdr-stat .dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--c-green);
-  box-shadow: var(--glow-green);
-  animation: blink-soft 1.6s ease-in-out infinite;
-}
-
-.hdr-clock {
-  display: inline-flex;
-  align-items: baseline;
   gap: 8px;
-  color: var(--text-secondary);
-  padding-left: 14px;
-  border-left: 1px solid var(--border-subtle);
-}
-.hdr-date {
-  font-size: 11px;
-  color: var(--text-tertiary);
   white-space: nowrap;
+  width: 100%;
+  justify-content: flex-end;
+  will-change: transform, opacity;
 }
-.hdr-time {
-  font-size: 16px;
-  color: var(--c-cyan-1);
-  text-shadow: 0 0 10px var(--c-cyan-glow);
-  letter-spacing: 1px;
-  font-weight: 600;
+
+/* 进入/展示/退出动画 */
+.hdr-evt-enter {
+  animation: hdr-slide-in 0.6s var(--ease) forwards;
+}
+.hdr-evt-show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.hdr-evt-exit {
+  animation: hdr-slide-out 0.5s var(--ease) forwards;
+}
+
+@keyframes hdr-slide-in {
+  from { transform: translateX(80px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes hdr-slide-out {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(-80px); opacity: 0; }
+}
+
+/* 事件类型 icon */
+.hdr-evt-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(86,196,255,0.5));
+}
+.hdr-evt.lvl-risk .hdr-evt-icon {
+  filter: drop-shadow(0 0 5px rgba(255,94,108,0.6));
+}
+.hdr-evt.lvl-warn .hdr-evt-icon {
+  filter: drop-shadow(0 0 4px rgba(255,184,77,0.5));
+}
+.hdr-evt.lvl-ok .hdr-evt-icon {
+  filter: drop-shadow(0 0 4px rgba(47,217,150,0.5));
+}
+
+/* 事件描述 */
+.hdr-evt-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-@media (max-width: 1366px) {
-  .hdr-kpis { gap: 18px; }
-  .hdr-kpi-value { font-size: 16px; }
-  .hdr-l-tag { font-size: 12px; padding-left: 8px; }
+/* 时间（末尾） */
+.hdr-evt-ago {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  padding-left: 12px;
+}
+
+/* 风险/预警行背景高亮 */
+.hdr-evt.lvl-risk {
+  background: linear-gradient(90deg, rgba(255,94,108,0.12), transparent 60%);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.hdr-evt.lvl-warn {
+  background: linear-gradient(90deg, rgba(255,184,77,0.08), transparent 60%);
+  padding: 2px 8px;
+  border-radius: 2px;
 }
 
 @media (max-width: 1024px) {
   .hdr { padding: 0 12px; gap: 10px; }
-  .hdr-kpis { gap: 12px; }
-  .hdr-kpi-label { font-size: 10px; }
-  .hdr-kpi-value { font-size: 14px; }
-  .hdr-stat { display: none; }
 }
 
 @media (max-width: 720px) {
-  .hdr {
-    grid-template-columns: 1fr auto;
-    padding: 0 10px;
-    height: 48px;
-  }
-  .hdr-kpis { display: none; }
+  .hdr { padding: 0 10px; height: 48px; }
 }

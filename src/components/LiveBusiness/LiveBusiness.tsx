@@ -20,7 +20,7 @@ const cumBase = {
   creditUsers: 63_600_000,         // 累计授信用户 6360 万
   borrowers: 38_900_000,           // 累计成功借款人 3890 万
   loanCount: 87_025_089,           // 累计放款笔数
-  agentDecisions: 100_000_000,     // 智能体累计决策过亿
+  microBiz: 4_560_000,              // 累计服务小微用户 456 万
 };
 
 /** 今日起始（模拟开盘已有部分量） */
@@ -29,7 +29,7 @@ const todayBase = {
   creditUsers: 8_500,           // 今日新增授信
   borrowers: 5_200,             // 今日新增借款人
   loanCount: 112_000,           // 今日放款笔数
-  agentDecisions: 580_000,      // 今日智能体决策
+  microBiz: 1_280,               // 今日新增小微用户
 };
 
 type Nums = {
@@ -37,7 +37,7 @@ type Nums = {
   creditUsers: number;
   borrowers: number;
   loanCount: number;
-  agentDecisions: number;
+  microBiz: number;
 };
 
 const fmtYi = (n: number) => (n / 100_000_000).toFixed(2) + " 亿";
@@ -61,22 +61,22 @@ export const LiveBusiness = () => {
       const dBorrow = Math.random() < 0.2 ? 1 : 0;
       // 放款笔数：每秒 ~2.7（日 ~238000 ÷ 86400）→ 每次 +1~4
       const dCount = Math.floor(Math.random() * 3 + 1);
-      // 智能体决策：最快，每秒 +3~8
-      const dAgent = Math.floor(Math.random() * 6 + 3);
+      // 小微服务：较慢，25% 概率 +1
+      const dMicro = Math.random() < 0.25 ? 1 : 0;
 
       setCum((p) => ({
         loanAmount: p.loanAmount + dLoanAmt,
         creditUsers: p.creditUsers + dCredit,
         borrowers: p.borrowers + dBorrow,
         loanCount: p.loanCount + dCount,
-        agentDecisions: p.agentDecisions + dAgent,
+        microBiz: p.microBiz + dMicro,
       }));
       setToday((p) => ({
         loanAmount: p.loanAmount + dLoanAmt,
         creditUsers: p.creditUsers + dCredit,
         borrowers: p.borrowers + dBorrow,
         loanCount: p.loanCount + dCount,
-        agentDecisions: p.agentDecisions + dAgent,
+        microBiz: p.microBiz + dMicro,
       }));
     };
 
@@ -113,10 +113,10 @@ export const LiveBusiness = () => {
       todayValue: "+" + today.loanCount.toLocaleString() + " 笔",
     },
     {
-      label: "智能体决策次数",
-      value: fmtYi(cum.agentDecisions),
-      todayLabel: "今日决策",
-      todayValue: "+" + today.agentDecisions.toLocaleString(),
+      label: "累计小微服务用户",
+      value: fmtWan(cum.microBiz),
+      todayLabel: "今日新增",
+      todayValue: "+" + today.microBiz.toLocaleString(),
     },
   ];
 

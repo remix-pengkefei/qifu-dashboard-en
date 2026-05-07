@@ -5,6 +5,43 @@
   overflow: hidden;
 }
 
+/* 标题栏 */
+.cm-head {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  z-index: 4;
+  pointer-events: none;
+}
+.cm-bar {
+  width: 3px;
+  height: 12px;
+  background: var(--c-cyan-1);
+  box-shadow: var(--glow-cyan);
+  flex-shrink: 0;
+}
+.cm-meta {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.cm-em {
+  font-style: normal;
+  margin: 0 4px;
+  color: var(--c-cyan-1);
+}
+
 .cm-svg {
   position: absolute;
   inset: 0;
