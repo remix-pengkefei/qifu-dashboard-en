@@ -7,6 +7,13 @@
   flex-direction: column;
 }
 
+/* ── 主体：地图 + 事件流 ── */
+.cm-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
 /* 标题栏 */
 .cm-head {
   position: absolute;
@@ -16,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: clamp(4px, 0.5vw, 12px);
-  font-size: clamp(10px, 0.8vw, 20px);
+  font-size: clamp(12px, 1.0vw, 24px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 1px;
@@ -24,15 +31,15 @@
   pointer-events: none;
 }
 .cm-bar {
-  width: clamp(2px, 0.2vw, 5px);
-  height: clamp(8px, 0.75vw, 18px);
+  width: clamp(2px, 0.22vw, 6px);
+  height: clamp(10px, 0.85vw, 20px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
   flex-shrink: 0;
 }
 .cm-meta {
   margin-left: auto;
-  font-size: clamp(8px, 0.6vw, 14px);
+  font-size: clamp(10px, 0.75vw, 18px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   font-weight: 400;
@@ -42,13 +49,6 @@
   font-style: normal;
   margin: 0 clamp(2px, 0.25vw, 6px);
   color: var(--c-cyan-1);
-}
-
-/* ── 主体：地图 + 事件流 ── */
-.cm-body {
-  flex: 1;
-  display: flex;
-  min-height: 0;
 }
 
 .cm-map {
@@ -76,7 +76,7 @@
 /* ── 周边国家标注 ── */
 .cm-neighbor-label {
   fill: rgba(140, 170, 210, 0.3);
-  font-size: clamp(7px, 0.55vw, 14px);
+  font-size: clamp(10px, 0.7vw, 17px);
   font-family: var(--ff-num), sans-serif;
   font-weight: 400;
   letter-spacing: 1.5px;
@@ -146,7 +146,7 @@
 
 /* ── 浮动数据标签 ── */
 .cm-data-label {
-  font-size: clamp(7px, 0.55vw, 14px);
+  font-size: clamp(10px, 0.75vw, 18px);
   font-family: var(--ff-zh);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -229,7 +229,7 @@
 }
 .cm-city-label {
   fill: rgba(210, 232, 255, 0.88);
-  font-size: clamp(8px, 0.7vw, 16px);
+  font-size: clamp(10px, 0.8vw, 18px);
   font-family: var(--ff-zh);
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -243,21 +243,24 @@
    实时事件流（右侧竖栏）
    ══════════════════════════════════════ */
 .cm-feed {
-  width: clamp(180px, 17vw, 380px);
+  width: clamp(200px, 18vw, 380px);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid rgba(86, 196, 255, 0.15);
-  background: linear-gradient(180deg, rgba(6, 14, 32, 0.6), rgba(4, 8, 20, 0.8));
+  border: 1px solid rgba(86, 196, 255, 0.15);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(11, 23, 51, 0.85), rgba(8, 16, 38, 0.7));
   overflow: hidden;
+  margin-left: clamp(4px, 0.4vw, 10px);
+  margin-bottom: clamp(4px, 0.4vw, 10px);
 }
 
 .cm-feed-head {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.4vw, 10px);
-  padding: clamp(6px, 0.6vw, 14px) clamp(8px, 0.7vw, 16px);
-  font-size: clamp(8px, 0.65vw, 16px);
+  gap: clamp(6px, 0.55vw, 14px);
+  padding: clamp(10px, 0.8vw, 20px) clamp(12px, 0.9vw, 22px);
+  font-size: clamp(12px, 1.0vw, 24px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.8px;
@@ -265,8 +268,8 @@
   flex-shrink: 0;
 }
 .cm-feed-dot {
-  width: clamp(4px, 0.4vw, 10px);
-  height: clamp(4px, 0.4vw, 10px);
+  width: clamp(6px, 0.5vw, 12px);
+  height: clamp(6px, 0.5vw, 12px);
   border-radius: 50%;
   background: #2fd996;
   box-shadow: 0 0 6px rgba(47, 217, 150, 0.6);
@@ -280,18 +283,18 @@
 .cm-feed-list {
   flex: 1;
   overflow: hidden;
-  padding: clamp(3px, 0.3vw, 8px);
+  padding: clamp(6px, 0.5vw, 12px);
   display: flex;
   flex-direction: column;
-  gap: clamp(3px, 0.25vw, 6px);
+  gap: clamp(5px, 0.4vw, 10px);
 }
 
 .cm-feed-item {
   flex-shrink: 0;
-  padding: clamp(4px, 0.35vw, 9px) clamp(5px, 0.45vw, 11px);
+  padding: clamp(8px, 0.6vw, 14px) clamp(10px, 0.7vw, 16px);
   background: linear-gradient(135deg, rgba(13, 28, 60, 0.7), rgba(8, 16, 38, 0.5));
   border: 1px solid rgba(86, 196, 255, 0.1);
-  border-left: 2px solid var(--ac, #56c4ff);
+  border-left: 2px solid #56c4ff;
   border-radius: 3px;
   animation: cm-feed-drop 0.4s ease-out backwards;
   position: relative;
@@ -301,9 +304,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--ac, #56c4ff), transparent);
-  opacity: 0;
-  animation: cm-feed-flash 0.6s ease-out forwards;
+  background: linear-gradient(90deg, rgba(86, 196, 255, 0.08), transparent);
   pointer-events: none;
 }
 
@@ -311,50 +312,52 @@
   0%   { opacity: 0; transform: translateY(-16px) scale(0.97); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes cm-feed-flash {
-  0%   { opacity: 0.12; }
-  100% { opacity: 0; }
-}
 
 .cm-feed-row1 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2px;
+  gap: clamp(5px, 0.4vw, 10px);
+  margin-bottom: clamp(3px, 0.25vw, 6px);
 }
-.cm-feed-city {
-  font-size: clamp(7px, 0.55vw, 14px);
+.cm-feed-biz {
+  font-size: clamp(11px, 0.85vw, 20px);
   color: var(--ac, #56c4ff);
   font-weight: 600;
   letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.cm-feed-detail {
+  font-size: clamp(11px, 0.85vw, 20px);
+  color: var(--ac, #56c4ff);
+  font-family: var(--ff-num);
+  font-weight: 700;
+  white-space: nowrap;
 }
 .cm-feed-time {
-  font-size: clamp(6px, 0.45vw, 11px);
+  font-size: clamp(10px, 0.7vw, 17px);
   color: var(--text-muted);
   font-family: var(--ff-num);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .cm-feed-row2 {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.35vw, 8px);
+  gap: clamp(6px, 0.45vw, 12px);
+}
+.cm-feed-city {
+  font-size: clamp(10px, 0.7vw, 17px);
+  color: var(--text-tertiary);
+  letter-spacing: 0.3px;
 }
 .cm-feed-action {
-  font-size: clamp(7px, 0.5vw, 13px);
-  color: var(--text-secondary);
+  font-size: clamp(10px, 0.7vw, 17px);
+  color: var(--text-muted);
   letter-spacing: 0.2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.cm-feed-detail {
-  font-size: clamp(7px, 0.5vw, 13px);
-  color: var(--ac, #56c4ff);
-  font-family: var(--ff-num);
-  font-weight: 600;
-  white-space: nowrap;
-  margin-left: auto;
-  text-shadow: 0 0 4px var(--ac, rgba(86, 196, 255, 0.4));
 }
 
 /* ══════════════════════════════════════
@@ -362,7 +365,7 @@
    ══════════════════════════════════════ */
 .cm-wave {
   flex-shrink: 0;
-  height: clamp(56px, 6.5vw, 140px);
+  height: clamp(48px, 5vw, 110px);
   border-top: 1px solid rgba(86, 196, 255, 0.15);
   background: linear-gradient(180deg, rgba(4, 10, 24, 0.85), rgba(2, 6, 16, 0.95));
   position: relative;
@@ -371,8 +374,8 @@
 
 .cm-wave-labels {
   position: absolute;
-  top: clamp(3px, 0.3vw, 8px);
-  left: clamp(6px, 0.6vw, 14px);
+  bottom: clamp(3px, 0.3vw, 8px);
+  right: clamp(6px, 0.6vw, 14px);
   display: flex;
   gap: clamp(8px, 0.8vw, 20px);
   z-index: 2;
@@ -381,15 +384,15 @@
 .cm-wave-tag {
   display: flex;
   align-items: center;
-  gap: clamp(3px, 0.25vw, 6px);
-  font-size: clamp(6px, 0.45vw, 12px);
+  gap: clamp(4px, 0.3vw, 8px);
+  font-size: clamp(10px, 0.7vw, 17px);
   font-family: var(--ff-zh);
   letter-spacing: 0.3px;
   opacity: 0.7;
 }
 .cm-wave-tag-dot {
-  width: clamp(4px, 0.35vw, 9px);
-  height: clamp(2px, 0.18vw, 5px);
+  width: clamp(6px, 0.45vw, 11px);
+  height: clamp(3px, 0.22vw, 6px);
   border-radius: 1px;
   flex-shrink: 0;
 }

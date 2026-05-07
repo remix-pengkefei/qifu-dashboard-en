@@ -9,6 +9,8 @@
   z-index: 2;
   flex-shrink: 0;
   overflow: hidden;
+  margin: clamp(6px, 0.52vw, 16px) clamp(6px, 0.52vw, 16px) 0;
+  border-radius: 4px;
 }
 
 /* scan-line overlay */
@@ -32,47 +34,33 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(4px, 0.35vw, 10px) clamp(6px, 0.5vw, 14px);
+  padding: clamp(6px, 0.55vw, 14px) clamp(8px, 0.6vw, 16px);
   border-right: 1px solid rgba(0, 255, 65, 0.1);
   position: relative;
-  transition: background 300ms ease;
+  background: rgba(0, 255, 65, 0.06);
 }
 .lb-cell:last-child {
   border-right: none;
 }
 
-.lb-cell-blip {
-  background: rgba(0, 255, 65, 0.08);
-}
-
 .lb-label {
-  font-size: clamp(7px, 0.55vw, 14px);
-  color: rgba(0, 255, 65, 0.5);
+  font-size: clamp(9px, 0.7vw, 17px);
+  color: rgba(0, 255, 65, 0.55);
   letter-spacing: 1px;
   font-weight: 400;
   white-space: nowrap;
-  text-transform: uppercase;
 }
 
 .lb-value {
-  font-size: clamp(14px, 1.3vw, 34px);
+  font-size: clamp(16px, 1.5vw, 38px);
   font-weight: 700;
   color: #00ff41;
-  text-shadow: 0 0 8px rgba(0, 255, 65, 0.6), 0 0 20px rgba(0, 255, 65, 0.3);
   font-family: var(--ff-num);
   letter-spacing: 0.5px;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.lb-sub {
-  font-size: clamp(7px, 0.5vw, 13px);
-  color: rgba(0, 255, 65, 0.4);
-  font-family: var(--ff-num);
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  margin-top: 1px;
-}
 
 /* ── flip digit machinery ── */
 .lb-flip-num {

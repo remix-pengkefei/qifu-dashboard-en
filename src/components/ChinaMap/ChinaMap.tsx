@@ -55,27 +55,55 @@ const LABEL_COLORS = ["#56c4ff", "#2fd996", "#a78bfa", "#ffb84d", "#ff5e6c"];
 type CityPulse = { id: number; x: number; y: number; color: string };
 type DataLabel = { id: number; x: number; y: number; text: string; color: string };
 type FlyDot = { id: number; pathD: string; dur: number };
-// ── 实时事件流数据 ──
-const EVENT_TEMPLATES = [
-  { action: "贷款审批通过", gen: () => `¥${(Math.random() * 200 + 5).toFixed(1)}万` },
-  { action: "风控模型命中", gen: () => `${(Math.random() * 50 + 1).toFixed(0)}ms` },
-  { action: "反欺诈拦截", gen: () => ["高风险", "中风险"][Math.floor(Math.random() * 2)] },
-  { action: "授信额度评估", gen: () => `¥${(Math.random() * 100 + 10).toFixed(0)}万` },
-  { action: "身份核验完成", gen: () => "已通过" },
-  { action: "智能决策引擎", gen: () => `策略${Math.floor(Math.random() * 20 + 1)}号` },
-  { action: "贷后监控预警", gen: () => ["低风险", "中风险"][Math.floor(Math.random() * 2)] },
-  { action: "实时撮合完成", gen: () => `+${Math.floor(Math.random() * 5 + 1)}笔` },
-  { action: "信用评分更新", gen: () => `${Math.floor(Math.random() * 200 + 600)}分` },
-  { action: "合规校验通过", gen: () => "合规" },
-  { action: "秒级放款完成", gen: () => `¥${(Math.random() * 80 + 3).toFixed(1)}万` },
-  { action: "智能催收触达", gen: () => `批次${Math.floor(Math.random() * 50 + 1)}` },
-];
+// ── 业务类型定义（颜色贯穿事件流+心电图） ──
+const BIZ_TYPES = [
+  { key: "credit",   label: "信贷撮合", color: "#e8b866", weight: 35 },
+  { key: "risk",     label: "风控决策", color: "#36d6b6", weight: 25 },
+  { key: "sme",      label: "小微信贷", color: "#56c4ff", weight: 20 },
+  { key: "platform", label: "平台服务", color: "#7b8cce", weight: 15 },
+  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 5 },
+] as const;
+
+const BIZ_POOL: typeof BIZ_TYPES[number][] = [];
+BIZ_TYPES.forEach((b) => { for (let i = 0; i < b.weight; i++) BIZ_POOL.push(b); });
+const pickBiz = () => BIZ_POOL[Math.floor(Math.random() * BIZ_POOL.length)];
+
+const EVENT_ACTIONS: Record<string, { action: string; gen: () => string }[]> = {
+  credit: [
+    { action: "消费贷审批通过", gen: () => `¥${(Math.random() * 50 + 3).toFixed(1)}万` },
+    { action: "秒级放款完成", gen: () => `¥${(Math.random() * 80 + 5).toFixed(1)}万` },
+    { action: "授信额度评估", gen: () => `¥${(Math.random() * 100 + 10).toFixed(0)}万` },
+    { action: "实时撮合完成", gen: () => `+${Math.floor(Math.random() * 5 + 1)}笔` },
+  ],
+  risk: [
+    { action: "风控模型命中", gen: () => `${(Math.random() * 50 + 8).toFixed(0)}ms` },
+    { action: "反欺诈识别", gen: () => ["已拦截", "已通过"][Math.floor(Math.random() * 2)] },
+    { action: "信用评分更新", gen: () => `${Math.floor(Math.random() * 200 + 650)}分` },
+    { action: "智能决策引擎", gen: () => `策略${Math.floor(Math.random() * 20 + 1)}号` },
+  ],
+  sme: [
+    { action: "经营贷审批通过", gen: () => `¥${(Math.random() * 200 + 20).toFixed(0)}万` },
+    { action: "周转灵放款", gen: () => `¥${(Math.random() * 150 + 10).toFixed(1)}万` },
+    { action: "小微授信完成", gen: () => `¥${(Math.random() * 300 + 50).toFixed(0)}万` },
+  ],
+  platform: [
+    { action: "银行撮合对接", gen: () => `+${Math.floor(Math.random() * 3 + 1)}笔` },
+    { action: "FocusPRO引擎", gen: () => `${Math.floor(Math.random() * 8 + 1)}家机构` },
+    { action: "助贷服务完成", gen: () => `¥${(Math.random() * 500 + 100).toFixed(0)}万` },
+  ],
+  postloan: [
+    { action: "贷后监控预警", gen: () => ["低风险", "中风险"][Math.floor(Math.random() * 2)] },
+    { action: "合规校验通过", gen: () => "合规" },
+    { action: "智能催收触达", gen: () => `批次${Math.floor(Math.random() * 50 + 1)}` },
+  ],
+};
 
 const CITY_NAMES = ["北京", "上海", "广州", "深圳", "重庆", "成都", "武汉", "杭州", "南京", "长沙", "西安", "济南", "沈阳", "哈尔滨", "福州", "昆明", "南宁"];
 
 type FeedEvent = {
   id: number;
   city: string;
+  bizLabel: string;
   action: string;
   detail: string;
   color: string;
@@ -89,28 +117,41 @@ const genTime = () => {
   return `${h}:${m}:${s}`;
 };
 
+const genEvent = (id: number): FeedEvent => {
+  const biz = pickBiz();
+  const actions = EVENT_ACTIONS[biz.key];
+  const tpl = actions[Math.floor(Math.random() * actions.length)];
+  return {
+    id,
+    city: CITY_NAMES[Math.floor(Math.random() * CITY_NAMES.length)],
+    bizLabel: biz.label,
+    action: tpl.action,
+    detail: tpl.gen(),
+    color: biz.color,
+    time: genTime(),
+  };
+};
+
 // ── 事件流组件 ──
 const EventFeed = () => {
   const seqRef = useRef(0);
-  const [events, setEvents] = useState<FeedEvent[]>([]);
+  const [events, setEvents] = useState<FeedEvent[]>(() => {
+    const init: FeedEvent[] = [];
+    for (let i = 0; i < 12; i++) {
+      init.push(genEvent(seqRef.current++));
+    }
+    return init;
+  });
 
   useEffect(() => {
     let alive = true;
     const fire = () => {
       if (!alive) return;
-      const tpl = EVENT_TEMPLATES[Math.floor(Math.random() * EVENT_TEMPLATES.length)];
-      const evt: FeedEvent = {
-        id: seqRef.current++,
-        city: CITY_NAMES[Math.floor(Math.random() * CITY_NAMES.length)],
-        action: tpl.action,
-        detail: tpl.gen(),
-        color: LABEL_COLORS[Math.floor(Math.random() * LABEL_COLORS.length)],
-        time: genTime(),
-      };
-      setEvents((prev) => [evt, ...prev].slice(0, 40));
-      window.setTimeout(fire, 600 + Math.random() * 900);
+      const evt = genEvent(seqRef.current++);
+      setEvents((prev) => [evt, ...prev].slice(0, 12));
+      window.setTimeout(fire, 2000 + Math.random() * 1500);
     };
-    fire();
+    window.setTimeout(fire, 2000);
     return () => { alive = false; };
   }, []);
 
@@ -124,12 +165,13 @@ const EventFeed = () => {
         {events.map((e) => (
           <div key={e.id} className="cm-feed-item" style={{ "--ac": e.color } as React.CSSProperties}>
             <div className="cm-feed-row1">
-              <span className="cm-feed-city">{e.city}</span>
+              <span className="cm-feed-biz">{e.bizLabel}</span>
+              <span className="cm-feed-detail">{e.detail}</span>
               <span className="cm-feed-time">{e.time}</span>
             </div>
             <div className="cm-feed-row2">
+              <span className="cm-feed-city">{e.city}</span>
               <span className="cm-feed-action">{e.action}</span>
-              <span className="cm-feed-detail">{e.detail}</span>
             </div>
           </div>
         ))}
@@ -139,18 +181,39 @@ const EventFeed = () => {
 };
 
 // ── 心电图波形：只往上跳，高度=请求量，颜色=业务类型 ──
-const WAVE_SEGMENTS = [
-  { label: "撮合放款", color: "#2fd996" },
-  { label: "风控决策", color: "#56c4ff" },
-  { label: "预警拦截", color: "#ff5e6c" },
-  { label: "智能授信", color: "#a78bfa" },
-];
+const WAVE_SEGMENTS = BIZ_TYPES.map((b) => ({ label: b.label, color: b.color }));
 
-type WavePt = { v: number; seg: number };
-const waveBuffer: WavePt[] = [];
+const waveBuf: number[] = [];
 let waveT = 0;
-let waveSeg = 0;
-let waveSegLen = 0;
+
+type WaveDot = { idx: number; seg: number };
+const waveDots: WaveDot[] = [];
+let nextDotT = 0;
+let waveInited = false;
+
+function initWave(maxPts: number) {
+  if (waveInited) return;
+  waveInited = true;
+  for (let i = 0; i < maxPts; i++) {
+    waveT++;
+    let v = 0.15;
+    v += Math.abs(Math.sin(waveT * 0.008)) * 0.25;
+    v += Math.abs(Math.sin(waveT * 0.025 + 1.3)) * 0.18;
+    v += Math.abs(Math.sin(waveT * 0.07 + 2.7)) * 0.12;
+    v += Math.abs(Math.sin(waveT * 0.18)) * 0.08;
+    v += Math.abs(Math.sin(waveT * 0.5 + 0.8)) * 0.05;
+    v += Math.random() * 0.05;
+    if (Math.random() < 0.04) v += Math.random() * 0.3 + 0.15;
+    waveBuf.push(Math.min(0.95, v));
+
+    if (waveT >= nextDotT) {
+      const seg = pickBiz();
+      const si = WAVE_SEGMENTS.findIndex((s) => s.label === seg.label);
+      waveDots.push({ idx: waveBuf.length - 1, seg: si >= 0 ? si : 0 });
+      nextDotT = waveT + 3 + Math.floor(Math.random() * 8);
+    }
+  }
+}
 
 function drawWaves(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d");
@@ -162,67 +225,67 @@ function drawWaves(canvas: HTMLCanvasElement) {
   const dpr = window.devicePixelRatio || 1;
   const maxPts = Math.ceil(w / dpr);
 
-  for (let p = 0; p < 4; p++) {
-    waveT++;
-    if (waveSegLen <= 0) {
-      waveSeg = (waveSeg + 1) % WAVE_SEGMENTS.length;
-      waveSegLen = 80 + Math.floor(Math.random() * 200);
-    }
-    waveSegLen--;
+  initWave(maxPts);
 
-    const t = waveT;
-    let v = 0;
-    v += Math.abs(Math.sin(t * 0.004)) * 0.15;
-    v += Math.abs(Math.sin(t * 0.015 + 1.3)) * 0.12;
-    v += Math.abs(Math.sin(t * 0.05 + 2.7)) * 0.1;
-    v += Math.abs(Math.sin(t * 0.13)) * 0.06;
-    v += Math.abs(Math.sin(t * 0.35 + 0.8)) * 0.04;
-    v += Math.abs(Math.sin(t * 0.8 + 3.1)) * 0.03;
-    v += Math.random() * 0.04;
-    if (Math.random() < 0.01) v += Math.random() * 0.25 + 0.1;
-    waveBuffer.push({ v: Math.min(0.95, v), seg: waveSeg });
+  for (let p = 0; p < 3; p++) {
+    waveT++;
+    let v = 0.15;
+    v += Math.abs(Math.sin(waveT * 0.008)) * 0.25;
+    v += Math.abs(Math.sin(waveT * 0.025 + 1.3)) * 0.18;
+    v += Math.abs(Math.sin(waveT * 0.07 + 2.7)) * 0.12;
+    v += Math.abs(Math.sin(waveT * 0.18)) * 0.08;
+    v += Math.abs(Math.sin(waveT * 0.5 + 0.8)) * 0.05;
+    v += Math.random() * 0.05;
+    if (Math.random() < 0.04) v += Math.random() * 0.3 + 0.15;
+    waveBuf.push(Math.min(0.95, v));
+
+    if (waveT >= nextDotT) {
+      const seg = pickBiz();
+      const si = WAVE_SEGMENTS.findIndex((s) => s.label === seg.label);
+      waveDots.push({ idx: waveBuf.length - 1, seg: si >= 0 ? si : 0 });
+      nextDotT = waveT + 3 + Math.floor(Math.random() * 8);
+    }
   }
-  while (waveBuffer.length > maxPts) waveBuffer.shift();
+  while (waveBuf.length > maxPts) {
+    waveBuf.shift();
+    for (const d of waveDots) d.idx--;
+  }
+  while (waveDots.length > 0 && waveDots[0].idx < 0) waveDots.shift();
 
   ctx.clearRect(0, 0, w, h);
 
-  const baseline = h * 0.88;
-  const maxH = h * 0.8;
-  const len = waveBuffer.length;
+  const baseline = h * 0.85;
+  const maxH = h * 0.7;
+  const len = waveBuf.length;
+  if (len < 2) return;
 
-  // baseline
+  // main line
   ctx.save();
-  ctx.strokeStyle = "rgba(180, 220, 255, 0.15)";
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(86, 196, 255, 0.7)";
+  ctx.lineWidth = 1 * dpr;
   ctx.beginPath();
-  ctx.moveTo(0, baseline);
-  ctx.lineTo(w, baseline);
+  for (let j = 0; j < len; j++) {
+    const x = (j / (maxPts - 1)) * w;
+    const y = baseline - waveBuf[j] * maxH;
+    j === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
   ctx.stroke();
   ctx.restore();
 
-  if (len < 2) return;
-
-  // draw colored line segments
-  let runStart = 0;
-  for (let i = 1; i <= len; i++) {
-    if (i < len && waveBuffer[i].seg === waveBuffer[i - 1].seg) continue;
-
-    const seg = WAVE_SEGMENTS[waveBuffer[runStart].seg];
+  // colored dots on the line
+  const dotR = 2 * dpr;
+  for (const d of waveDots) {
+    if (d.idx < 0 || d.idx >= len) continue;
+    const x = (d.idx / (maxPts - 1)) * w;
+    const y = baseline - waveBuf[d.idx] * maxH;
+    const color = WAVE_SEGMENTS[d.seg].color;
 
     ctx.save();
-    ctx.strokeStyle = seg.color;
-    ctx.lineWidth = 1 * dpr;
-    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = color;
     ctx.beginPath();
-    for (let j = runStart; j < i; j++) {
-      const x = (j / (maxPts - 1)) * w;
-      const y = baseline - waveBuffer[j].v * maxH;
-      j === runStart ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+    ctx.arc(x, y, dotR, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
-
-    runStart = i;
   }
 }
 
