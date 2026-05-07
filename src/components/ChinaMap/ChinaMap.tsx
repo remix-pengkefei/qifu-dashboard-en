@@ -120,26 +120,142 @@ const EventFeed = () => {
   );
 };
 
-const TICKER_ITEMS = [
-  "▶ 风控引擎 v6.3 已上线 · 模型覆盖率 99.7%",
-  "▶ 今日累计撮合 ¥32.8亿 · 同比 +18.3%",
-  "▶ 反欺诈系统拦截 1,247 笔 · 拦截率 99.2%",
-  "▶ 智能决策平均响应 23ms · P99 < 80ms",
-  "▶ AI 智能体调用 37,186 次 · 成功率 99.98%",
-  "▶ 合作银行 167 家 · 新增 3 家接入中",
-  "▶ 小微企业授信 ¥89.6亿 · 覆盖 31 省",
-  "▶ 贷后监控预警准确率 96.8% · AUC 0.973",
-  "▶ 实时风控规则 2,847 条 · 策略命中率 87.3%",
-  "▶ 身份核验日均 42 万次 · 通过率 98.1%",
+// ── 心电图波形：只往上跳，高度=请求量，颜色=业务类型 ──
+const WAVE_SEGMENTS = [
+  { label: "撮合放款", color: "#2fd996" },
+  { label: "风控决策", color: "#56c4ff" },
+  { label: "预警拦截", color: "#ff5e6c" },
+  { label: "智能授信", color: "#a78bfa" },
 ];
 
-const TickerContent = () => (
-  <div className="cm-ticker-content">
-    {TICKER_ITEMS.map((t, i) => (
-      <span key={i} className="cm-ticker-item">{t}</span>
-    ))}
-  </div>
-);
+type WavePt = { v: number; seg: number };
+const waveBuffer: WavePt[] = [];
+let waveT = 0;
+let waveSeg = 0;
+let waveSegLen = 0;
+
+function drawWaves(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  if (w < 1 || h < 1) return;
+  const dpr = window.devicePixelRatio || 1;
+  const maxPts = Math.ceil(w / dpr);
+
+  for (let p = 0; p < 4; p++) {
+    waveT++;
+    if (waveSegLen <= 0) {
+      waveSeg = (waveSeg + 1) % WAVE_SEGMENTS.length;
+      waveSegLen = 80 + Math.floor(Math.random() * 200);
+    }
+    waveSegLen--;
+
+    const t = waveT;
+    let v = 0;
+    v += Math.abs(Math.sin(t * 0.004)) * 0.15;
+    v += Math.abs(Math.sin(t * 0.015 + 1.3)) * 0.12;
+    v += Math.abs(Math.sin(t * 0.05 + 2.7)) * 0.1;
+    v += Math.abs(Math.sin(t * 0.13)) * 0.06;
+    v += Math.abs(Math.sin(t * 0.35 + 0.8)) * 0.04;
+    v += Math.abs(Math.sin(t * 0.8 + 3.1)) * 0.03;
+    v += Math.random() * 0.04;
+    if (Math.random() < 0.01) v += Math.random() * 0.25 + 0.1;
+    waveBuffer.push({ v: Math.min(0.95, v), seg: waveSeg });
+  }
+  while (waveBuffer.length > maxPts) waveBuffer.shift();
+
+  ctx.clearRect(0, 0, w, h);
+
+  const baseline = h * 0.88;
+  const maxH = h * 0.8;
+  const len = waveBuffer.length;
+
+  // baseline
+  ctx.save();
+  ctx.strokeStyle = "rgba(180, 220, 255, 0.15)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, baseline);
+  ctx.lineTo(w, baseline);
+  ctx.stroke();
+  ctx.restore();
+
+  if (len < 2) return;
+
+  // draw colored line segments
+  let runStart = 0;
+  for (let i = 1; i <= len; i++) {
+    if (i < len && waveBuffer[i].seg === waveBuffer[i - 1].seg) continue;
+
+    const seg = WAVE_SEGMENTS[waveBuffer[runStart].seg];
+
+    ctx.save();
+    ctx.strokeStyle = seg.color;
+    ctx.lineWidth = 1 * dpr;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    for (let j = runStart; j < i; j++) {
+      const x = (j / (maxPts - 1)) * w;
+      const y = baseline - waveBuffer[j].v * maxH;
+      j === runStart ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    runStart = i;
+  }
+}
+
+const WaveMonitor = () => {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const cvRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    const cv = cvRef.current;
+    if (!box || !cv) return;
+    let id = 0;
+    let alive = true;
+
+    const fit = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const r = box.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) return;
+      cv.width = Math.round(r.width * dpr);
+      cv.height = Math.round(r.height * dpr);
+      cv.style.width = r.width + "px";
+      cv.style.height = r.height + "px";
+    };
+    requestAnimationFrame(fit);
+    const ro = new ResizeObserver(fit);
+    ro.observe(box);
+
+    const loop = () => {
+      if (!alive) return;
+      drawWaves(cv);
+      id = requestAnimationFrame(loop);
+    };
+    id = requestAnimationFrame(loop);
+
+    return () => { alive = false; cancelAnimationFrame(id); ro.disconnect(); };
+  }, []);
+
+  return (
+    <div className="cm-wave" ref={boxRef}>
+      <div className="cm-wave-labels">
+        {WAVE_SEGMENTS.map((ch, i) => (
+          <span key={i} className="cm-wave-tag" style={{ color: ch.color }}>
+            <span className="cm-wave-tag-dot" style={{ background: ch.color }} />
+            {ch.label}
+          </span>
+        ))}
+      </div>
+      <canvas ref={cvRef} className="cm-wave-canvas" />
+    </div>
+  );
+};
 
 export const ChinaMap = () => {
   const geo = useChinaGeoJson();
@@ -582,13 +698,8 @@ export const ChinaMap = () => {
         <EventFeed />
       </div>
 
-      {/* 底部横向滚动信息条 */}
-      <div className="cm-ticker">
-        <div className="cm-ticker-track">
-          <TickerContent />
-          <TickerContent />
-        </div>
-      </div>
+      {/* 底部心跳波形图 */}
+      <WaveMonitor />
     </div>
   );
 };
