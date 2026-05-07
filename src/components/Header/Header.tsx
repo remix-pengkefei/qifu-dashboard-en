@@ -40,8 +40,15 @@ type TickerItem = {
   agoSec: number;
 };
 
+/** 模拟系统运行天数（从 2019-10-01 奇富科技品牌成立起算） */
+const getRunDays = () => {
+  const start = new Date("2019-10-01").getTime();
+  return Math.floor((Date.now() - start) / 86_400_000);
+};
+
 export const Header = () => {
   const { events } = useApp();
+  const runDays = getRunDays();
   const [current, setCurrent] = useState<TickerItem | null>(null);
   const [phase, setPhase] = useState<"enter" | "show" | "exit">("show");
   const queueRef = useRef<TickerItem[]>([]);
@@ -133,6 +140,18 @@ export const Header = () => {
             <span className="hdr-evt-ago num">{current.agoSec}秒前</span>
           </div>
         )}
+      </div>
+
+      {/* 右：系统状态 */}
+      <div className="hdr-r">
+        <span className="hdr-r-item">
+          <i className="hdr-dot" />
+          系统稳定运行 <em className="hdr-r-em num">{runDays.toLocaleString()}</em> 天
+        </span>
+        <span className="hdr-r-sep" />
+        <span className="hdr-r-item">
+          可用性 <em className="hdr-r-em num">99.99</em>%
+        </span>
       </div>
     </header>
   );

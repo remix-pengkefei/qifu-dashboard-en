@@ -81,6 +81,23 @@
   white-space: nowrap;
 }
 
+/* +1 弹出 */
+.lb-blip-text {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  animation: lb-blip-pop 0.7s var(--ease) forwards;
+  pointer-events: none;
+  text-shadow: 0 0 6px currentColor;
+}
+@keyframes lb-blip-pop {
+  0%   { opacity: 0; transform: translateY(4px) scale(0.7); }
+  25%  { opacity: 1; transform: translateY(-2px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-12px) scale(0.85); }
+}
+
 @media (max-width: 1366px) {
   .lb-card-value { font-size: 18px; }
   .lb-card-label { font-size: 10px; }

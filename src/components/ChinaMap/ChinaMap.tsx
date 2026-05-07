@@ -9,21 +9,29 @@ import {
   geoContains,
   projectPoint,
 } from "../../utils/projection";
-import { CITY_NODES, MAJOR_LINKS } from "../../data/regions";
+import { CITY_NODES } from "../../data/regions";
 import { WorldMini } from "../WorldMini/WorldMini";
 import "./ChinaMap.css";
 
-const tierStyle: Record<
-  number,
-  { r: number; color: string; ring: string; labelSize: number }
-> = {
-  1: { r: 4.5, color: "#ffe9b3", ring: "rgba(255,233,179,0.45)", labelSize: 12 },
-  2: { r: 3.4, color: "#9be7ff", ring: "rgba(155,231,255,0.32)", labelSize: 10 },
-  3: { r: 2.6, color: "#9be7ff", ring: "rgba(155,231,255,0.22)", labelSize: 9 },
-  4: { r: 4.2, color: "#2fd996", ring: "rgba(47,217,150,0.4)", labelSize: 11 },
-};
+/** 只标注主要城市 */
+const KEY_CITIES = [
+  "bj", "sh", "gz", "sz", "cq",
+  "cd", "wh", "hz", "nj", "cs",
+  "xa", "jn", "sy", "hb", "fz",
+  "km", "nn", "ur", "lz_lhasa", "hk_city",
+];
 
-type Spark = { id: number; x: number; y: number; bornAt: number };
+type Spark = { id: number; x: number; y: number; color: string; size: number };
+
+/** 星光底色 — 明亮冷色调 */
+const starColors = [
+  "#9be7ff",
+  "#78d4ff",
+  "#56c4ff",
+  "#b0ecff",
+  "#ffe9b3",
+];
+const pickStarColor = () => starColors[Math.floor(Math.random() * starColors.length)];
 
 export const ChinaMap = () => {
   const geo = useChinaGeoJson();
@@ -31,10 +39,8 @@ export const ChinaMap = () => {
 
   const W = size.width || 1;
   const H = size.height || 1;
-
   const mapTop = 8;
-  const mapBottom = H - 8;
-  const mapH = Math.max(mapBottom - mapTop, 100);
+  const mapH = Math.max(H - 16, 100);
   const mapW = W;
 
   const projection = useMemo(() => {
@@ -57,95 +63,201 @@ export const ChinaMap = () => {
     return cleanedFeatures.map((f, idx) => ({
       id: f.properties?.adcode ?? idx,
       d: path(f as any) || "",
-      name: f.properties?.name,
     }));
   }, [cleanedFeatures, path]);
 
-  // 预生成每个省份内部的随机采样点（经纬度），用于"业务发生"微闪
-  const provinceSamples = useMemo(() => {
-    if (!cleanedFeatures.length) return [];
-    const out: { feature: any; samples: [number, number][] }[] = [];
+  // 经纬度网格线
+  const graticule = useMemo(() => {
+    if (!projection) return { lats: [], lons: [] };
+    const lats: string[] = [];
+    const lons: string[] = [];
+    // 纬线 18°~50°，每 5°
+    for (let lat = 18; lat <= 50; lat += 5) {
+      const pts: string[] = [];
+      for (let lon = 73; lon <= 136; lon += 1) {
+        const p = projectPoint(projection, [lon, lat]);
+        if (p) pts.push(`${p[0]},${p[1]}`);
+      }
+      if (pts.length > 1) lats.push("M" + pts.join("L"));
+    }
+    // 经线 75°~135°，每 10°
+    for (let lon = 75; lon <= 135; lon += 10) {
+      const pts: string[] = [];
+      for (let lat = 16; lat <= 54; lat += 1) {
+        const p = projectPoint(projection, [lon, lat]);
+        if (p) pts.push(`${p[0]},${p[1]}`);
+      }
+      if (pts.length > 1) lons.push("M" + pts.join("L"));
+    }
+    return { lats, lons };
+  }, [projection]);
+
+  // 主要城市投影
+  const keyCityProjected = useMemo(() => {
+    if (!projection) return [];
+    return KEY_CITIES.map((id) => {
+      const c = CITY_NODES.find((n) => n.id === id);
+      if (!c) return null;
+      const p = projectPoint(projection, c.coord);
+      if (!p) return null;
+      return { id, name: c.name, x: p[0], y: p[1], tier: c.tier };
+    }).filter(Boolean) as { id: string; name: string; x: number; y: number; tier: number }[];
+  }, [projection]);
+
+  // 上海 → 各主要城市飞线
+  const flightLines = useMemo(() => {
+    if (!projection) return [];
+    const shNode = CITY_NODES.find((n) => n.id === "sh");
+    if (!shNode) return [];
+    const shPt = projectPoint(projection, shNode.coord);
+    if (!shPt) return [];
+    const targets = [
+      "bj", "gz", "sz", "cq", "cd", "wh", "cs", "xa",
+      "sy", "hb", "km", "nn", "fz", "jn", "hz", "nj", "ur",
+    ];
+    return targets.map((tid) => {
+      const tc = CITY_NODES.find((n) => n.id === tid);
+      if (!tc) return null;
+      const tPt = projectPoint(projection, tc.coord);
+      if (!tPt) return null;
+      const mx = (shPt[0] + tPt[0]) / 2;
+      const my = (shPt[1] + tPt[1]) / 2;
+      const dx = tPt[0] - shPt[0];
+      const dy = tPt[1] - shPt[1];
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const bend = dist * 0.2;
+      const nx = -dy / dist;
+      const ny = dx / dist;
+      const cx = mx + nx * bend;
+      const cy = my + ny * bend;
+      const d = `M${shPt[0]},${shPt[1]} Q${cx},${cy} ${tPt[0]},${tPt[1]}`;
+      // 飞行时长按距离：近的快，远的慢
+      const flyDur = 1.8 + (dist / 200) * 1.5;
+      return { id: tid, d, flyDur };
+    }).filter(Boolean) as { id: string; d: string; flyDur: number }[];
+  }, [projection]);
+
+  // 随机发射飞行光点
+  type FlyDot = { id: number; pathD: string; dur: number };
+  const flySeqRef = useRef(0);
+  const [flyDots, setFlyDots] = useState<FlyDot[]>([]);
+
+  useEffect(() => {
+    if (!flightLines.length) return;
+    let alive = true;
+    const fire = () => {
+      if (!alive) return;
+      // 随机挑 1~3 条线同时发射
+      const count = 1 + Math.floor(Math.random() * 3);
+      const picked = new Set<number>();
+      while (picked.size < count) {
+        picked.add(Math.floor(Math.random() * flightLines.length));
+      }
+      const batch: FlyDot[] = [];
+      picked.forEach((idx) => {
+        const fl = flightLines[idx];
+        batch.push({ id: flySeqRef.current++, pathD: fl.d, dur: fl.flyDur });
+      });
+      setFlyDots((prev) => [...prev.slice(-20), ...batch]);
+      // 最长的飞完后清除
+      const maxDur = Math.max(...batch.map((b) => b.dur));
+      const ids = batch.map((b) => b.id);
+      window.setTimeout(() => {
+        setFlyDots((prev) => prev.filter((d) => !ids.includes(d.id)));
+      }, maxDur * 1000 + 100);
+      // 下一次发射间隔 1.5~4s
+      window.setTimeout(fire, 1500 + Math.random() * 2500);
+    };
+    const initTimer = window.setTimeout(fire, 500);
+    return () => { alive = false; clearTimeout(initTimer); };
+  }, [flightLines]);
+
+  // 预生成大量省份内部采样点
+  const projectedSamples = useMemo(() => {
+    if (!projection || !cleanedFeatures.length) return [];
+    const pts: [number, number][] = [];
     for (const f of cleanedFeatures) {
       try {
         const [[minLon, minLat], [maxLon, maxLat]] = geoBounds(f as any);
-        const samples: [number, number][] = [];
         let attempts = 0;
-        // 尝试取 80 个样本点，最多尝试 1500 次
-        while (samples.length < 80 && attempts < 1500) {
+        while (pts.length < 600 && attempts < 4000) {
           const lon = minLon + Math.random() * (maxLon - minLon);
           const lat = minLat + Math.random() * (maxLat - minLat);
           if (geoContains(f as any, [lon, lat])) {
-            samples.push([lon, lat]);
+            const p = projectPoint(projection, [lon, lat]);
+            if (p) pts.push(p);
           }
           attempts++;
         }
-        if (samples.length > 0) out.push({ feature: f, samples });
-      } catch {
-        /* skip */
-      }
+      } catch { /* skip */ }
     }
-    return out;
-  }, [cleanedFeatures]);
+    return pts;
+  }, [projection, cleanedFeatures]);
 
-  // 把样本点投影到 SVG 坐标
-  const projectedSamples = useMemo(() => {
-    if (!projection) return [];
-    return provinceSamples
-      .map(({ samples }) =>
-        samples
-          .map((s) => projectPoint(projection, s))
-          .filter((p) => p) as [number, number][]
-      )
-      .flat();
-  }, [projection, provinceSamples]);
+  const projectedRef = useRef(projectedSamples);
+  projectedRef.current = projectedSamples;
 
-  const cityProjected = useMemo(() => {
-    if (!projection) return new Map();
-    const m = new Map<
-      string,
-      { x: number; y: number; tier: 1 | 2 | 3 | 4; name: string; zone: string }
-    >();
-    for (const c of CITY_NODES) {
-      const p = projectPoint(projection, c.coord);
-      if (p) m.set(c.id, { x: p[0], y: p[1], tier: c.tier, name: c.name, zone: c.zone });
-    }
-    return m;
-  }, [projection]);
-
-  const internalLinks = useMemo(() => {
-    const out: { from: string; to: string; x1: number; y1: number; x2: number; y2: number }[] = [];
-    for (const [a, b] of MAJOR_LINKS) {
-      const A = cityProjected.get(a);
-      const B = cityProjected.get(b);
-      if (A && B) out.push({ from: a, to: b, x1: A.x, y1: A.y, x2: B.x, y2: B.y });
-    }
-    return out;
-  }, [cityProjected]);
-
-  // ─── 业务发生微闪：每 ~150ms 在某个省内随机一个点冒一次小光，1.2s 后消失 ───
-  const sparkSeqRef = useRef(1);
-  const [sparks, setSparks] = useState<Spark[]>([]);
+  // ── 星光层：高频持续闪烁 ──
+  const starSeqRef = useRef(1);
+  const [stars, setStars] = useState<Spark[]>([]);
 
   useEffect(() => {
     if (!projectedSamples.length) return;
     let alive = true;
+
     const tick = () => {
       if (!alive) return;
-      const pt = projectedSamples[Math.floor(Math.random() * projectedSamples.length)];
-      const id = sparkSeqRef.current++;
-      const now = performance.now();
-      setSparks((prev) => [...prev.slice(-40), { id, x: pt[0], y: pt[1], bornAt: now }]);
-      // 1300ms 后清除
+      const pts = projectedRef.current;
+      // 每次冒 5~10 个星光
+      const count = 5 + Math.floor(Math.random() * 6);
+      const batch: Spark[] = [];
+      for (let i = 0; i < count; i++) {
+        const pt = pts[Math.floor(Math.random() * pts.length)];
+        batch.push({
+          id: starSeqRef.current++,
+          x: pt[0],
+          y: pt[1],
+          color: pickStarColor(),
+          size: 1.5 + Math.random() * 2,
+        });
+      }
+      setStars((prev) => [...prev.slice(-120), ...batch]);
+
+      const ids = batch.map((s) => s.id);
       window.setTimeout(() => {
-        setSparks((prev) => prev.filter((s) => s.id !== id));
-      }, 1300);
+        setStars((prev) => prev.filter((s) => !ids.includes(s.id)));
+      }, 1500 + Math.random() * 800);
     };
-    const interval = window.setInterval(tick, 130 + Math.random() * 80);
-    return () => {
-      alive = false;
-      window.clearInterval(interval);
+
+    // 每 80ms 一波
+    const id = window.setInterval(tick, 80);
+    return () => { alive = false; window.clearInterval(id); };
+  }, [projectedSamples.length]); // eslint-disable-line
+
+  // ── 业务联动彩色亮点 ──
+  const bizSeqRef = useRef(100000);
+  const [bizSparks, setBizSparks] = useState<Spark[]>([]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const pts = projectedRef.current;
+      if (!pts.length) return;
+      const { color } = (e as CustomEvent).detail;
+      const count = 3 + Math.floor(Math.random() * 3);
+      const batch: Spark[] = [];
+      for (let i = 0; i < count; i++) {
+        const pt = pts[Math.floor(Math.random() * pts.length)];
+        batch.push({ id: bizSeqRef.current++, x: pt[0], y: pt[1], color, size: 2.5 });
+      }
+      setBizSparks((prev) => [...prev.slice(-30), ...batch]);
+      const ids = batch.map((s) => s.id);
+      window.setTimeout(() => {
+        setBizSparks((prev) => prev.filter((s) => !ids.includes(s.id)));
+      }, 1800);
     };
-  }, [projectedSamples]);
+    window.addEventListener("biz-spark", handler);
+    return () => window.removeEventListener("biz-spark", handler);
+  }, []);
 
   return (
     <div ref={ref} className="cm">
@@ -161,16 +273,27 @@ export const ChinaMap = () => {
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
       >
+        {/* 中国版图裁切区域 */}
         <defs>
-          <radialGradient id="cm-spark-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(255,233,179,0.95)" />
-            <stop offset="60%" stopColor="rgba(255,233,179,0.18)" />
-            <stop offset="100%" stopColor="rgba(255,233,179,0)" />
-          </radialGradient>
+          <clipPath id="cm-china-clip">
+            {provincePaths.map((p) => (
+              <path key={p.id} d={p.d} />
+            ))}
+          </clipPath>
         </defs>
 
-        {/* 地图层（包括省份+链路+城市点）整体下移 mapTop */}
         <g transform={`translate(0, ${mapTop})`}>
+          {/* 经纬度网格 */}
+          <g className="cm-graticule">
+            {graticule.lats.map((d, i) => (
+              <path key={`lat-${i}`} d={d} />
+            ))}
+            {graticule.lons.map((d, i) => (
+              <path key={`lon-${i}`} d={d} />
+            ))}
+          </g>
+
+          {/* 省份轮廓 */}
           <g className="cm-china">
             {provincePaths.map((p) => (
               <path
@@ -185,58 +308,69 @@ export const ChinaMap = () => {
             ))}
           </g>
 
-          <g className="cm-links">
-            {internalLinks.map((l, i) => (
-              <line
-                key={i}
-                x1={l.x1}
-                y1={l.y1}
-                x2={l.x2}
-                y2={l.y2}
-                stroke="rgba(86,196,255,0.16)"
-                strokeWidth="0.7"
+          {/* 上海飞线 — 静态底线 */}
+          <g className="cm-flights">
+            {flightLines.map((fl) => (
+              <path key={fl.id} d={fl.d} className="cm-flight-line" />
+            ))}
+          </g>
+          {/* 飞行光点 — 随机发射 */}
+          <g className="cm-fly-dots">
+            {flyDots.map((fd) => (
+              <circle key={fd.id} r="3" className="cm-flight-dot">
+                <animateMotion
+                  dur={`${fd.dur}s`}
+                  begin="0s"
+                  fill="freeze"
+                  path={fd.pathD}
+                />
+              </circle>
+            ))}
+          </g>
+
+          {/* 星光层 — 裁切到中国版图内 */}
+          <g className="cm-stars" clipPath="url(#cm-china-clip)">
+            {stars.map((s) => (
+              <circle
+                key={s.id}
+                cx={s.x}
+                cy={s.y}
+                r={s.size}
+                fill={s.color}
+                className="cm-star"
               />
             ))}
           </g>
 
-          {/* 业务发生微闪 — 在省份内随机点 */}
-          <g className="cm-sparks">
-            {sparks.map((s) => (
+          {/* 业务联动彩色亮点 — 裁切到中国版图内 */}
+          <g className="cm-biz-sparks" clipPath="url(#cm-china-clip)">
+            {bizSparks.map((s) => (
               <g key={s.id} transform={`translate(${s.x},${s.y})`}>
-                <circle r="6" fill="url(#cm-spark-glow)" className="cm-spark-halo" />
-                <circle r="1.2" fill="#fff5d6" className="cm-spark-dot" />
+                <circle r="12" fill={s.color} opacity="0.1" className="cm-biz-wave" />
+                <circle r="4" fill={s.color} opacity="0.3" className="cm-biz-ring" />
+                <circle r={s.size} fill={s.color} className="cm-biz-core" />
               </g>
             ))}
           </g>
 
-          {/* 省会 / 直辖市 / 经济强市 — 常显，不闪 */}
-          <g>
-            {Array.from(cityProjected.entries()).map(([id, c]) => {
-              const s = tierStyle[c.tier];
-              return (
-                <g key={id} transform={`translate(${c.x},${c.y})`} className="cm-node">
-                  {c.tier <= 2 && (
-                    <circle r={s.r * 2.2} fill={s.ring} className="cm-node-ring" />
-                  )}
-                  <circle r={s.r} fill={s.color} className="cm-node-dot" />
-                  <circle r={s.r * 0.45} fill="#fff" />
-                  <text
-                    className="cm-node-label"
-                    x={0}
-                    y={-s.r - 5}
-                    textAnchor="middle"
-                    fontSize={s.labelSize}
-                  >
-                    {c.name}
-                  </text>
-                </g>
-              );
-            })}
+          {/* 主要城市标注 */}
+          <g className="cm-cities">
+            {keyCityProjected.map((c) => (
+              <g key={c.id} transform={`translate(${c.x},${c.y})`}>
+                <circle
+                  r={c.tier === 1 ? 2.5 : 1.8}
+                  fill={c.tier === 1 ? "#9be7ff" : "rgba(155,231,255,0.6)"}
+                  className="cm-city-dot"
+                />
+                <text className="cm-city-label" x={0} y={-6} textAnchor="middle">
+                  {c.name}
+                </text>
+              </g>
+            ))}
           </g>
         </g>
       </svg>
 
-      {/* 右下：海外合作迷你世界图 */}
       <WorldMini />
     </div>
   );

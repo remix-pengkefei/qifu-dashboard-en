@@ -1,35 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./LiveBusiness.css";
 
 /**
  * 核心指标卡（中区地图下方）：
  *  - 主数字：成立以来累计数据（公开财报 FY2025）
  *  - 副数字：今日实时（按年度÷365 推算日均基线 + 实时递增）
- *
- * 数据基线来自奇富科技 2025 全年公开财报：
- *  - 累计撮合放款 > 2 万亿
- *  - 累计授信用户 6360 万
- *  - 累计成功借款人 3890 万
- *  - 年度放款 3270.7 亿 → 日均 ≈ 8.96 亿
- *  - 智能体决策次数：过亿条
  */
 
 /** 成立以来累计基线 */
 const cumBase = {
-  loanAmount: 2_000_000_000_000,  // 累计撮合放款 2 万亿
-  creditUsers: 63_600_000,         // 累计授信用户 6360 万
-  borrowers: 38_900_000,           // 累计成功借款人 3890 万
-  loanCount: 87_025_089,           // 累计放款笔数
-  microBiz: 4_560_000,              // 累计服务小微用户 456 万
+  loanAmount: 2_000_000_000_000,
+  creditUsers: 63_600_000,
+  borrowers: 38_900_000,
+  loanCount: 87_025_089,
+  microBiz: 4_560_000,
 };
 
-/** 今日起始（模拟开盘已有部分量） */
+/** 今日起始 */
 const todayBase = {
-  loanAmount: 3_200_000_000,   // 今日已撮合 ~3.2 亿（到当前时间的进度）
-  creditUsers: 8_500,           // 今日新增授信
-  borrowers: 5_200,             // 今日新增借款人
-  loanCount: 112_000,           // 今日放款笔数
-  microBiz: 1_280,               // 今日新增小微用户
+  loanAmount: 3_200_000_000,
+  creditUsers: 8_500,
+  borrowers: 5_200,
+  loanCount: 112_000,
+  microBiz: 1_280,
 };
 
 type Nums = {
@@ -40,29 +33,42 @@ type Nums = {
   microBiz: number;
 };
 
+const CARD_COLORS = ["#56c4ff", "#a78bfa", "#2fd996", "#ffb84d", "#ff5e6c"];
+
 const fmtYi = (n: number) => (n / 100_000_000).toFixed(2) + " 亿";
 const fmtWan = (n: number) => (n / 10_000).toFixed(1) + " 万";
 
 export const LiveBusiness = () => {
   const [cum, setCum] = useState<Nums>(cumBase);
   const [today, setToday] = useState<Nums>(todayBase);
+  const [blipIdx, setBlipIdx] = useState<number | null>(null);
+  const blipTimer = useRef<number>(0);
 
   useEffect(() => {
     let alive = true;
     const tick = () => {
       if (!alive) return;
 
-      // 不同指标不同增速：
-      // 放款金额：每秒 ~10 万（日 8.96 亿 ÷ 86400 ≈ 10.4 万/s）
       const dLoanAmt = Math.floor(Math.random() * 80000 + 60000);
-      // 授信用户：每秒 ~0.2（日 ~17000 ÷ 86400）→ 30% 概率 +1
       const dCredit = Math.random() < 0.3 ? 1 : 0;
-      // 借款人：更慢，20% 概率 +1
       const dBorrow = Math.random() < 0.2 ? 1 : 0;
-      // 放款笔数：每秒 ~2.7（日 ~238000 ÷ 86400）→ 每次 +1~4
       const dCount = Math.floor(Math.random() * 3 + 1);
-      // 小微服务：较慢，25% 概率 +1
       const dMicro = Math.random() < 0.25 ? 1 : 0;
+
+      // 选一个有增量的卡片做 blip
+      const deltas = [dLoanAmt, dCredit, dBorrow, dCount, dMicro];
+      const active = deltas.map((d, i) => (d > 0 ? i : -1)).filter((i) => i >= 0);
+      const pick = active[Math.floor(Math.random() * active.length)];
+
+      if (pick !== undefined) {
+        setBlipIdx(pick);
+        // 通知地图冒泡
+        window.dispatchEvent(
+          new CustomEvent("biz-spark", { detail: { color: CARD_COLORS[pick] } })
+        );
+        clearTimeout(blipTimer.current);
+        blipTimer.current = window.setTimeout(() => setBlipIdx(null), 600);
+      }
 
       setCum((p) => ({
         loanAmount: p.loanAmount + dLoanAmt,
@@ -131,6 +137,9 @@ export const LiveBusiness = () => {
               <span className="lb-sub-label">{c.todayLabel}</span>
               <span className="lb-sub-value num">{c.todayValue}</span>
             </div>
+            {blipIdx === i && (
+              <span className="lb-blip-text" style={{ color: CARD_COLORS[i] }}>+1</span>
+            )}
           </div>
         ))}
       </div>
