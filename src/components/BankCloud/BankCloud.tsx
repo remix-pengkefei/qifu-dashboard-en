@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import cloud from "d3-cloud";
 import { BANKS_167 } from "../../data/banks167";
 import { useSize } from "../../utils/useSize";
 import "./BankCloud.css";
@@ -17,7 +16,7 @@ import "./BankCloud.css";
 
 const AGENTS = [
   { id: "approver", name: "AI 审批官", color: "#56c4ff", iconKey: "approver" },
-  { id: "risk", name: "AI 决策助手", color: "#9be7ff", iconKey: "risk" },
+  { id: "risk", name: "AI 决策助手", color: "#a78bfa", iconKey: "risk" },
   { id: "compliance", name: "AI 合规助手", color: "#2fd996", iconKey: "compliance" },
   { id: "marketing", name: "AI 营销助手", color: "#ffb84d", iconKey: "marketing" },
 ];
@@ -64,26 +63,13 @@ const badgeChar = (name: string): string => {
   return (trimmed || name).charAt(0);
 };
 
-type ActiveCall = {
-  id: number;
-  bankIdx: number;
-  agentIdx: number;
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  color: string;
-};
-
 export const BankCloud = () => {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const { ref: cloudRef, size: cloudSize } = useSize<HTMLDivElement>();
-  const agentRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const seqRef = useRef(1);
 
-  const [active, setActive] = useState<ActiveCall[]>([]);
   const [agentCalls, setAgentCalls] = useState<Record<string, number>>(baseAgentCalls);
   const [agentBlip, setAgentBlip] = useState<string | null>(null);
+  const [hitBankIdx, setHitBankIdx] = useState(-1);
+  const [hitColor, setHitColor] = useState("");
 
   // 字号档位：weight 1=9, 2=11, 3=14, 4=18, 5=22
   const sizeOf = (w: number) =>
@@ -205,81 +191,71 @@ export const BankCloud = () => {
       .sort((a, b) => a.emphasis - b.emphasis); // 边缘画在底层、中心画在顶层
   }, [projected, R_x, R_y]);
 
-  // 调用动效：每 220ms 选一个当前在前半球的词，绑定到一个智能体
+  // 用 ref 持有最新 rendered，避免 effect 依赖每帧变化的 rendered 数组
+  const renderedRef = useRef(rendered);
+  renderedRef.current = rendered;
+
+  // 调用动效：每 800–1800ms 随机选一个智能体 + 一个可见银行
+  // 智能体闪 + 计数 +1 + 银行同色高亮
   useEffect(() => {
     let alive = true;
-    const tick = () => {
+    const fire = () => {
       if (!alive) return;
-      const wrap = wrapRef.current;
-      const cloud = cloudRef.current;
-      if (!wrap || !cloud) return;
-      // 仅在前半球（rz > 0.1）
-      const candidates = rendered.filter((w) => w.rz > 0.1);
-      if (candidates.length === 0) return;
+      const cur = renderedRef.current;
+      if (!cur.length) return;
+      // 仅前半球可见词
+      const candidates = cur.filter((w) => w.rz > 0.1);
+      if (!candidates.length) return;
+
       const word = candidates[Math.floor(Math.random() * candidates.length)];
-      const agentIdx = Math.floor(Math.random() * AGENTS.length);
-      const agentEl = agentRefs.current[agentIdx];
-      if (!agentEl) return;
+      const agent = AGENTS[Math.floor(Math.random() * AGENTS.length)];
 
-      const wrapBox = wrap.getBoundingClientRect();
-      const cloudBox = cloud.getBoundingClientRect();
-      const cloudCx = cloudBox.left - wrapBox.left + cloudBox.width / 2;
-      const cloudCy = cloudBox.top - wrapBox.top + cloudBox.height / 2;
-      const aBox = agentEl.getBoundingClientRect();
-      const ax = aBox.left - wrapBox.left + aBox.width / 2;
-      const ay = aBox.top - wrapBox.top + aBox.height - 2;
-
-      const startX = cloudCx + word.screenX;
-      const startY = cloudCy + word.screenY;
-
-      const id = seqRef.current++;
-      const agent = AGENTS[agentIdx];
-
-      setActive((prev) => [
-        ...prev.slice(-25),
-        {
-          id,
-          bankIdx: word.idx,
-          agentIdx,
-          startX,
-          startY,
-          endX: ax,
-          endY: ay,
-          color: agent.color,
-        },
-      ]);
-      setAgentCalls((prev) => ({ ...prev, [agent.id]: (prev[agent.id] || 0) + 1 }));
+      // 智能体闪亮 + 计数 +1
       setAgentBlip(agent.id);
+      setAgentCalls((prev) => ({ ...prev, [agent.id]: (prev[agent.id] || 0) + 1 }));
+
+      // 银行同色高亮
+      setHitBankIdx(word.idx);
+      setHitColor(agent.color);
+
+      // 600ms 后清智能体闪
       window.setTimeout(() => {
-        setActive((prev) => prev.filter((c) => c.id !== id));
-      }, 1100);
-      window.setTimeout(() => {
-        setAgentBlip((cur) => (cur === agent.id ? null : cur));
+        if (!alive) return;
+        setAgentBlip((c) => (c === agent.id ? null : c));
       }, 600);
+
+      // 800ms 后清银行高亮
+      window.setTimeout(() => {
+        if (!alive) return;
+        setHitBankIdx((c) => (c === word.idx ? -1 : c));
+        setHitColor("");
+      }, 800);
     };
-    const interval = window.setInterval(tick, 240);
+
+    // 循环：随机间隔 800–1800ms
+    let timer: number;
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        fire();
+        if (alive) schedule();
+      }, 800 + Math.random() * 1000);
+    };
+    schedule();
+
     return () => {
       alive = false;
-      window.clearInterval(interval);
+      window.clearTimeout(timer);
     };
-  }, [rendered, cloudRef]);
-
-  // 调用线弧形 path
-  const arcPath = (c: ActiveCall) => {
-    const midX = (c.startX + c.endX) / 2;
-    const midY = Math.min(c.startY, c.endY) - 26;
-    return `M${c.startX},${c.startY} Q${midX},${midY} ${c.endX},${c.endY}`;
-  };
+  }, [cloudRef]);
 
   const totalCalls = Object.values(agentCalls).reduce((s, n) => s + n, 0);
-  const activeBankIdx = new Set(active.map((c) => c.bankIdx));
 
   // 椭圆边框（视觉提示）
   const W = cloudSize.width || 0;
   const H = cloudSize.height || 0;
 
   return (
-    <div className="bcl" ref={wrapRef}>
+    <div className="bcl">
       <div className="bcl-head">
         <span className="bcl-bar" />
         合作银行调用 · AI 智能体
@@ -287,27 +263,6 @@ export const BankCloud = () => {
           <em className="bcl-em num">167</em> 家合作机构 · 累计调用
           <em className="bcl-em num">{totalCalls.toLocaleString()}</em>
         </span>
-      </div>
-
-      <div className="bcl-agents">
-        {AGENTS.map((a, i) => (
-          <div
-            key={a.id}
-            ref={(el) => { agentRefs.current[i] = el; }}
-            className={`bcl-agent ${agentBlip === a.id ? "bcl-agent-blip" : ""}`}
-            style={{ borderColor: a.color }}
-          >
-            <img className="bcl-agent-icon" src={`/assets/agents/agent-${a.iconKey}.svg`} alt="" />
-            <div className="bcl-agent-info">
-              <div className="bcl-agent-name">{a.name}</div>
-              <div className="bcl-agent-count num" style={{ color: a.color }}>
-                {(agentCalls[a.id] ?? 0).toLocaleString()}
-                <em>次</em>
-              </div>
-            </div>
-            {agentBlip === a.id && <span className="bcl-agent-plus">+1</span>}
-          </div>
-        ))}
       </div>
 
       <div className="bcl-cloud" ref={cloudRef}>
@@ -329,13 +284,12 @@ export const BankCloud = () => {
             {/* 微光底（去掉硬边椭圆，让球感更纯净） */}
             <ellipse cx="0" cy="0" rx={R_x + 8} ry={R_y + 8} fill="url(#bcl-bg)" stroke="none" />
 
-            {/* 词：纯文字，靠字号 / 字重区分层次 */}
+            {/* 词：纯文字，靠字号 / 字重区分层次；被调用时用智能体颜色高亮 */}
             {rendered.map((w) => {
-              const isActive = activeBankIdx.has(w.idx);
+              const isHit = w.idx === hitBankIdx;
               const fontSize = w.size * w.scale;
-              // 单色：根据 weight 给一个亮度档（不再使用品牌色）
-              const fill = isActive
-                ? "#ffffff"
+              const fill = isHit
+                ? hitColor
                 : w.weight === 5
                 ? "rgba(235, 245, 255, 0.95)"
                 : w.weight === 4
@@ -350,15 +304,16 @@ export const BankCloud = () => {
               return (
                 <text
                   key={w.idx}
-                  className={`bcl-word ${isActive ? "bcl-word-active" : ""}`}
+                  className={`bcl-word ${isHit ? "bcl-word-active" : ""}`}
                   x={w.screenX}
                   y={w.screenY}
-                  fontSize={fontSize}
-                  fontWeight={fontWeight}
+                  fontSize={isHit ? fontSize * 1.15 : fontSize}
+                  fontWeight={isHit ? 700 : fontWeight}
                   textAnchor="middle"
                   dominantBaseline="central"
                   fill={fill}
-                  opacity={isActive ? 1 : w.opacity}
+                  opacity={isHit ? 1 : w.opacity}
+                  style={isHit ? { filter: `drop-shadow(0 0 8px ${hitColor})` } : undefined}
                 >
                   {w.text}
                 </text>
@@ -366,22 +321,31 @@ export const BankCloud = () => {
             })}
           </svg>
         )}
+      </div>
 
-        {/* 调用动线（绝对坐标，覆盖整个 bcl 容器） */}
-        <svg className="bcl-lines" width="100%" height="100%">
-          {active.map((c) => (
-            <path
-              key={c.id}
-              d={arcPath(c)}
-              fill="none"
-              stroke={c.color}
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              className="bcl-line"
-              style={{ filter: `drop-shadow(0 0 4px ${c.color})` }}
-            />
-          ))}
-        </svg>
+      <div className="bcl-agents">
+        {AGENTS.map((a, i) => (
+          <div
+            key={a.id}
+            className={`bcl-agent ${agentBlip === a.id ? "bcl-agent-blip" : ""}`}
+            style={{
+              borderColor: a.color,
+              "--agent-glow": `${a.color}66`,
+            } as React.CSSProperties}
+          >
+            <img className="bcl-agent-icon" src={`/assets/agents/agent-${a.iconKey}.svg`} alt="" />
+            <div className="bcl-agent-info">
+              <div className="bcl-agent-name">{a.name}</div>
+              <div className="bcl-agent-count num" style={{ color: a.color }}>
+                {(agentCalls[a.id] ?? 0).toLocaleString()}
+                <em>次</em>
+              </div>
+            </div>
+            {agentBlip === a.id && (
+              <span className="bcl-agent-plus" style={{ color: a.color, textShadow: `0 0 6px ${a.color}` }}>+1</span>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
