@@ -1,157 +1,88 @@
 import { useEffect, useRef, useState } from "react";
-import { useApp } from "../../store/AppContext";
-import type { LiveEvent } from "../../engine/eventGen";
 import "./Header.css";
 
-/** 智能体名称 → icon 路径 */
-const agentIcon = (name: string): string => {
-  if (name.includes("审批")) return "/assets/agents/agent-approver.svg";
-  if (name.includes("风控") || name.includes("决策")) return "/assets/agents/agent-risk.svg";
-  if (name.includes("合规")) return "/assets/agents/agent-compliance.svg";
-  if (name.includes("营销")) return "/assets/agents/agent-marketing.svg";
-  if (name.includes("贷后")) return "/assets/agents/agent-post.svg";
-  if (name.includes("服务")) return "/assets/agents/agent-service.svg";
-  return "/assets/agents/agent-approver.svg";
-};
-
-/** 把事件拼成一句完整的描述 */
-const buildDesc = (e: LiveEvent): string => {
-  const amount = (Math.random() * 80 + 5).toFixed(1);
-  const bank = e.bank || "合作机构";
-  const agent = e.agent || "AI 智能体";
-
-  if (e.level === "risk") {
-    return `${bank}${e.zone}地区触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
-  }
-  if (e.level === "warn") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ${amount} 万元`;
-  }
-  if (e.level === "ok") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}完成，${agent}确认放款 ${amount} 万元已到账`;
-  }
-  return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ${amount} 万元`;
-};
-
-type TickerItem = {
-  id: number;
-  icon: string;
-  desc: string;
-  level: LiveEvent["level"];
-  agoSec: number;
-};
-
-/** 模拟系统运行天数（从 2019-10-01 奇富科技品牌成立起算） */
-const getRunDays = () => {
-  const start = new Date("2019-10-01").getTime();
-  return Math.floor((Date.now() - start) / 86_400_000);
-};
+const NEWS_ITEMS = [
+  `奇富科技连续两年荣获Extel亚洲"最受尊敬公司"称号`,
+  `奇富科技成为2025年央视财经新媒体金融科技合作伙伴`,
+  `奇富科技CEO受邀出席中国发展高层论坛2025年年会`,
+  `奇富科技入选AIIA人工智能先锋案例，大模型赋能小微`,
+  `奇富科技论文入选IJCAI 2025国际人工智能顶级会议`,
+  `奇富科技语音情感框架受邀亮相IEEE ASRU 2025大会`,
+  `奇富科技连续六年入选毕马威中国领先金融科技企业榜`,
+  `奇富科技通过中国信通院数据安全治理能力最高级认证`,
+  `奇富科技荣获2024年度ESG先锋60"社会责任优秀奖"`,
+  `奇富科技ICDAR国际文档分析与识别大赛OCR荣获榜首`,
+  `奇富科技信贷多模态大模型Qfin-VL综合评测排名第一`,
+  `奇富科技联合工信部助力脐橙产业，科技赋能乡村振兴`,
+  `奇富科技累计协助环保企业发放绿色贷款超过245亿元`,
+  `奇富科技2025年助力小微企业放款超千亿惠及百万用户`,
+];
 
 export const Header = () => {
-  const { events } = useApp();
-  const runDays = getRunDays();
-  const [current, setCurrent] = useState<TickerItem | null>(null);
-  const [phase, setPhase] = useState<"enter" | "show" | "exit">("show");
-  const queueRef = useRef<TickerItem[]>([]);
-  const showingIdRef = useRef<number>(-1);
-  const seqRef = useRef(0);
+  const [idx, setIdx] = useState(0);
+  const [phase, setPhase] = useState<"enter" | "show" | "exit">("enter");
+  const aliveRef = useRef(true);
 
-  // 新事件入队
   useEffect(() => {
-    if (!events.length) return;
-    const latest = events[0];
-    if (latest.id !== showingIdRef.current && !queueRef.current.some((q) => q.id === latest.id)) {
-      queueRef.current.push({
-        id: latest.id,
-        icon: agentIcon(latest.agent || ""),
-        desc: buildDesc(latest),
-        level: latest.level,
-        agoSec: Math.floor(Math.random() * 5 + 1),
-      });
-    }
-  }, [events]);
+    aliveRef.current = true;
+    let cur = 0;
 
-  // 跑马灯循环：enter(0.6s) → show(5s) → exit(0.5s) → 下一条
-  useEffect(() => {
-    let alive = true;
-
-    const next = () => {
-      if (!alive) return;
-      let item = queueRef.current.shift();
-      if (!item) {
-        if (events.length > 0) {
-          const pick = events[Math.floor(Math.random() * Math.min(events.length, 8))];
-          item = {
-            id: --seqRef.current,
-            icon: agentIcon(pick.agent || ""),
-            desc: buildDesc(pick),
-            level: pick.level,
-            agoSec: Math.floor(Math.random() * 20 + 5),
-          };
-        } else {
-          setTimeout(next, 500);
-          return;
-        }
-      }
-      run(item);
-    };
-
-    const run = (item: TickerItem) => {
-      if (!alive) return;
-      showingIdRef.current = item.id;
-      setCurrent(item);
+    const run = () => {
+      if (!aliveRef.current) return;
+      setIdx(cur);
       setPhase("enter");
 
       setTimeout(() => {
-        if (!alive) return;
+        if (!aliveRef.current) return;
         setPhase("show");
 
         setTimeout(() => {
-          if (!alive) return;
+          if (!aliveRef.current) return;
           setPhase("exit");
 
           setTimeout(() => {
-            if (!alive) return;
-            next();
-          }, 500);
-        }, 5000);
-      }, 600);
+            if (!aliveRef.current) return;
+            cur = (cur + 1) % NEWS_ITEMS.length;
+            run();
+          }, 600);
+        }, 8000);
+      }, 700);
     };
 
-    const initTimer = setTimeout(next, 400);
-    return () => {
-      alive = false;
-      clearTimeout(initTimer);
-    };
-  }, [events.length > 0]); // eslint-disable-line
+    run();
+    return () => { aliveRef.current = false; };
+  }, []);
 
   return (
     <header className="hdr">
-      {/* 左：Logo */}
       <div className="hdr-l">
         <img src="/assets/logo/qifu-official.png" alt="奇富科技" className="hdr-logo-img" />
+        <span className="hdr-slogan">用先进科技改变金融服务</span>
       </div>
 
-      {/* 跑马灯 */}
-      <div className="hdr-marquee">
-        {current && (
-          <div className={`hdr-evt lvl-${current.level} hdr-evt-${phase}`} key={current.id}>
-            <img className="hdr-evt-icon" src={current.icon} alt="" />
-            <span className="hdr-evt-desc">{current.desc}</span>
-            <span className="hdr-evt-ago num">{current.agoSec}秒前</span>
+      <div className="hdr-honor">
+        <div className="hdr-news-title">
+          <svg className="hdr-news-icon" viewBox="0 0 20 22" fill="none">
+            <path d="M7.5 1h5l1 2h-7z" fill="#e8a830" />
+            <path d="M6.5 3L10 9.5 13.5 3" fill="none" stroke="#c8880a" strokeWidth="1.2" strokeLinecap="round" />
+            <circle cx="10" cy="14" r="6.5" fill="url(#hdr-medal-g)" stroke="#c8880a" strokeWidth="0.8" />
+            <path d="M10 9.8l1.3 2.6 2.9.4-2.1 2 .5 2.9L10 16.2l-2.6 1.5.5-2.9-2.1-2 2.9-.4z" fill="rgba(255,255,255,0.35)" />
+            <defs>
+              <radialGradient id="hdr-medal-g" cx="45%" cy="40%">
+                <stop offset="0%" stopColor="#ffe6a0" />
+                <stop offset="60%" stopColor="#e8a830" />
+                <stop offset="100%" stopColor="#b07808" />
+              </radialGradient>
+            </defs>
+          </svg>
+          企业荣誉
+        </div>
+        <div className="hdr-news-divider" />
+        <div className="hdr-news-scroll">
+          <div className={`hdr-news hdr-evt-${phase}`} key={idx}>
+            <span className="hdr-news-text">{NEWS_ITEMS[idx]}</span>
           </div>
-        )}
-      </div>
-
-      {/* 右：系统状态 */}
-      <div className="hdr-r">
-        <span className="hdr-r-item">
-          <i className="hdr-dot" />
-          系统稳定运行 <em className="hdr-r-em num">{runDays.toLocaleString()}</em> 天
-        </span>
-        <span className="hdr-r-sep" />
-        <span className="hdr-r-item">
-          可用性 <em className="hdr-r-em num">99.99</em>%
-        </span>
+        </div>
       </div>
     </header>
   );
