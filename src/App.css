@@ -35,30 +35,18 @@
   z-index: 2;
 }
 
-/* 中列：上下分割（地图 / 业务进展） */
+/* 左列：地图 */
 .col-c {
-  display: grid;
-  grid-template-rows: 1fr clamp(120px, 12vw, 260px);
-  gap: clamp(6px, 0.52vw, 16px);
+  position: relative;
   height: 100%;
   min-width: 0;
   min-height: 0;
-}
-.col-c-top {
-  position: relative;
   border-radius: 4px;
   background:
     radial-gradient(80% 80% at 50% 40%, rgba(20, 60, 130, 0.18), transparent 70%),
     linear-gradient(180deg, rgba(8, 18, 42, 0.65), rgba(4, 10, 26, 0.75));
   border: 1px solid var(--border-line);
   overflow: hidden;
-  min-height: 0;
-}
-.col-c-bottom {
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
-  overflow: hidden;
-  min-height: 0;
 }
 
 /* 右列：单一组件（167 家银行词云 + 4 智能体） */

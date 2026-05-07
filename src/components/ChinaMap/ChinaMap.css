@@ -3,6 +3,8 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 标题栏 */
@@ -42,11 +44,33 @@
   color: var(--c-cyan-1);
 }
 
+/* ── 主体：地图 + 事件流 ── */
+.cm-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.cm-map {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
 .cm-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+/* ── 周边国家暗底 ── */
+.cm-world-country {
+  fill: rgba(16, 36, 72, 0.25);
+  stroke: rgba(72, 130, 200, 0.12);
+  stroke-width: 0.5;
+  stroke-linejoin: round;
 }
 
 /* ── 经纬度网格 ── */
@@ -61,22 +85,87 @@
   transition: fill 600ms var(--ease), stroke 600ms var(--ease);
 }
 
-/* ── 上海飞线 ── */
+/* ── 全网络飞线 ── */
 .cm-flight-line {
   fill: none;
-  stroke: rgba(86, 196, 255, 0.28);
-  stroke-width: 1.2;
-  filter: drop-shadow(0 0 2px rgba(86, 196, 255, 0.3));
+  stroke: rgba(140, 210, 255, 0.45);
+  stroke-width: 1.0;
+  filter: drop-shadow(0 0 3px rgba(86, 196, 255, 0.5));
 }
 .cm-flight-dot {
   fill: #fff;
-  r: 3;
-  filter: drop-shadow(0 0 8px rgba(86, 196, 255, 1))
-         drop-shadow(0 0 14px rgba(86, 196, 255, 0.7))
+  r: 2.5;
+  filter: drop-shadow(0 0 6px rgba(160, 220, 255, 1))
+         drop-shadow(0 0 12px rgba(86, 196, 255, 0.8))
          drop-shadow(0 0 3px #fff);
 }
 
-/* ── 星光层 — 密集闪烁 ── */
+/* ── 城市雷达脉冲 ── */
+.cm-pulse-core {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: cm-pulse-core-blink 1.8s ease-out forwards;
+}
+@keyframes cm-pulse-core-blink {
+  0%   { opacity: 0; transform: scale(0.3); }
+  15%  { opacity: 0.9; transform: scale(1.2); }
+  50%  { opacity: 0.6; }
+  100% { opacity: 0; transform: scale(0.5); }
+}
+
+.cm-pulse-ring1 {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: cm-pulse-expand1 1.8s ease-out forwards;
+}
+@keyframes cm-pulse-expand1 {
+  0%   { transform: scale(0.3); opacity: 0.7; stroke-width: 1.5; }
+  100% { transform: scale(4);   opacity: 0;   stroke-width: 0.3; }
+}
+
+.cm-pulse-ring2 {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: cm-pulse-expand2 1.8s 0.25s ease-out forwards;
+  opacity: 0;
+}
+@keyframes cm-pulse-expand2 {
+  0%   { transform: scale(0.3); opacity: 0.5; stroke-width: 0.8; }
+  100% { transform: scale(5.5); opacity: 0;   stroke-width: 0.2; }
+}
+
+/* ── 浮动数据标签 ── */
+.cm-data-label {
+  font-size: clamp(7px, 0.55vw, 14px);
+  font-family: var(--ff-zh);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  paint-order: stroke;
+  stroke: rgba(4, 8, 26, 0.7);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  pointer-events: none;
+  animation: cm-label-rise 2.8s ease-out forwards;
+}
+@keyframes cm-label-rise {
+  0%   { opacity: 0; transform: translateY(0); }
+  12%  { opacity: 1; }
+  60%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-28px); }
+}
+
+/* ── 一线城市外圈 ── */
+.cm-city-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: cm-ring-breathe 3s ease-in-out infinite;
+}
+@keyframes cm-ring-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.65; transform: scale(1.3); }
+}
+
+/* ── 星光层 ── */
 .cm-star {
   transform-origin: center;
   transform-box: fill-box;
@@ -91,7 +180,7 @@
   100% { opacity: 0;   transform: scale(0.15); }
 }
 
-/* ── 业务联动彩色亮点 — 三层更醒目 ── */
+/* ── 业务联动彩色亮点 ── */
 .cm-biz-wave {
   transform-origin: center;
   transform-box: fill-box;
@@ -101,7 +190,6 @@
   0%   { transform: scale(0.2); opacity: 0.15; }
   100% { transform: scale(3);   opacity: 0; }
 }
-
 .cm-biz-ring {
   transform-origin: center;
   transform-box: fill-box;
@@ -112,7 +200,6 @@
   40%  { opacity: 0.25; }
   100% { transform: scale(2.2); opacity: 0; }
 }
-
 .cm-biz-core {
   transform-origin: center;
   transform-box: fill-box;
@@ -128,7 +215,7 @@
 
 /* ── 主要城市标注 ── */
 .cm-city-dot {
-  filter: drop-shadow(0 0 3px rgba(155, 231, 255, 0.5));
+  filter: drop-shadow(0 0 4px rgba(155, 231, 255, 0.6));
 }
 .cm-city-label {
   fill: rgba(200, 225, 255, 0.75);
@@ -140,4 +227,180 @@
   stroke: rgba(4, 8, 26, 0.85);
   stroke-width: 2.5;
   stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════
+   实时事件流（右侧竖栏）
+   ══════════════════════════════════════ */
+.cm-feed {
+  width: clamp(180px, 17vw, 380px);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(86, 196, 255, 0.15);
+  background: linear-gradient(180deg, rgba(6, 14, 32, 0.6), rgba(4, 8, 20, 0.8));
+  overflow: hidden;
+}
+
+.cm-feed-head {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.4vw, 10px);
+  padding: clamp(6px, 0.6vw, 14px) clamp(8px, 0.7vw, 16px);
+  font-size: clamp(8px, 0.65vw, 16px);
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid rgba(86, 196, 255, 0.12);
+  flex-shrink: 0;
+}
+.cm-feed-dot {
+  width: clamp(4px, 0.4vw, 10px);
+  height: clamp(4px, 0.4vw, 10px);
+  border-radius: 50%;
+  background: #2fd996;
+  box-shadow: 0 0 6px rgba(47, 217, 150, 0.6);
+  animation: cm-feed-pulse 1.5s ease-in-out infinite;
+}
+@keyframes cm-feed-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.cm-feed-list {
+  flex: 1;
+  overflow: hidden;
+  padding: clamp(3px, 0.3vw, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.25vw, 6px);
+}
+
+.cm-feed-item {
+  flex-shrink: 0;
+  padding: clamp(4px, 0.35vw, 9px) clamp(5px, 0.45vw, 11px);
+  background: linear-gradient(135deg, rgba(13, 28, 60, 0.7), rgba(8, 16, 38, 0.5));
+  border: 1px solid rgba(86, 196, 255, 0.1);
+  border-left: 2px solid var(--ac, #56c4ff);
+  border-radius: 3px;
+  animation: cm-feed-drop 0.4s ease-out backwards;
+  position: relative;
+  overflow: hidden;
+}
+.cm-feed-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--ac, #56c4ff), transparent);
+  opacity: 0;
+  animation: cm-feed-flash 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes cm-feed-drop {
+  0%   { opacity: 0; transform: translateY(-16px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes cm-feed-flash {
+  0%   { opacity: 0.12; }
+  100% { opacity: 0; }
+}
+
+.cm-feed-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.cm-feed-city {
+  font-size: clamp(7px, 0.55vw, 14px);
+  color: var(--ac, #56c4ff);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.cm-feed-time {
+  font-size: clamp(6px, 0.45vw, 11px);
+  color: var(--text-muted);
+  font-family: var(--ff-num);
+}
+
+.cm-feed-row2 {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.35vw, 8px);
+}
+.cm-feed-action {
+  font-size: clamp(7px, 0.5vw, 13px);
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cm-feed-detail {
+  font-size: clamp(7px, 0.5vw, 13px);
+  color: var(--ac, #56c4ff);
+  font-family: var(--ff-num);
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: auto;
+  text-shadow: 0 0 4px var(--ac, rgba(86, 196, 255, 0.4));
+}
+
+/* ══════════════════════════════════════
+   底部横向滚动信息条
+   ══════════════════════════════════════ */
+.cm-ticker {
+  flex-shrink: 0;
+  height: clamp(24px, 2vw, 48px);
+  border-top: 1px solid rgba(86, 196, 255, 0.15);
+  background: linear-gradient(90deg, rgba(6, 14, 32, 0.8), rgba(10, 20, 46, 0.6), rgba(6, 14, 32, 0.8));
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.cm-ticker::before,
+.cm-ticker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(20px, 2vw, 50px);
+  z-index: 2;
+  pointer-events: none;
+}
+.cm-ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(6, 14, 32, 1), transparent);
+}
+.cm-ticker::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(6, 14, 32, 1), transparent);
+}
+
+.cm-ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: cm-ticker-scroll 40s linear infinite;
+}
+
+.cm-ticker-content {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.cm-ticker-item {
+  flex-shrink: 0;
+  padding: 0 clamp(12px, 1.2vw, 28px);
+  font-size: clamp(7px, 0.55vw, 14px);
+  color: var(--c-cyan-2);
+  font-family: var(--ff-zh);
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+}
+
+@keyframes cm-ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

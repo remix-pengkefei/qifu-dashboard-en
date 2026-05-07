@@ -9,15 +9,11 @@ const Shell = () => {
   return (
     <div className="app">
       <Header />
+      <LiveBusiness />
       <main className="main">
-        {/* 左：地图 + 业务实时进展 */}
+        {/* 左：地图 */}
         <section className="col-c">
-          <div className="col-c-top">
-            <ChinaMap />
-          </div>
-          <div className="col-c-bottom">
-            <LiveBusiness />
-          </div>
+          <ChinaMap />
         </section>
 
         {/* 右：167 家银行词云 + 4 大智能体 */}

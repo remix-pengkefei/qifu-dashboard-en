@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./LiveBusiness.css";
 
-/**
- * 核心指标卡（中区地图下方）：
- *  - 主数字：成立以来累计数据（公开财报 FY2025）
- *  - 副数字：今日实时（按年度÷365 推算日均基线 + 实时递增）
- */
-
-/** 成立以来累计基线 */
 const cumBase = {
   loanAmount: 2_000_000_000_000,
   creditUsers: 63_600_000,
@@ -16,7 +9,6 @@ const cumBase = {
   microBiz: 4_560_000,
 };
 
-/** 今日起始 */
 const todayBase = {
   loanAmount: 3_200_000_000,
   creditUsers: 8_500,
@@ -33,10 +25,39 @@ type Nums = {
   microBiz: number;
 };
 
-const CARD_COLORS = ["#56c4ff", "#a78bfa", "#2fd996", "#ffb84d", "#ff5e6c"];
+const CARD_COLORS = ["#00ff41", "#00ff41", "#00ff41", "#00ff41", "#00ff41"];
 
 const fmtYi = (n: number) => (n / 100_000_000).toFixed(2) + " 亿";
 const fmtWan = (n: number) => (n / 10_000).toFixed(1) + " 万";
+
+const FlipChar = ({ char }: { char: string }) => {
+  if (/\d/.test(char)) {
+    const n = parseInt(char);
+    return (
+      <span className="lb-flip-slot">
+        <span
+          className="lb-flip-strip"
+          style={{ transform: `translateY(${-n * 10}%)` }}
+        >
+          {Array.from({ length: 10 }, (_, i) => (
+            <span key={i} className="lb-flip-cell">
+              {i}
+            </span>
+          ))}
+        </span>
+      </span>
+    );
+  }
+  return <span className="lb-flip-static">{char}</span>;
+};
+
+const FlipNumber = ({ value }: { value: string }) => (
+  <span className="lb-flip-num">
+    {value.split("").map((ch, i) => (
+      <FlipChar key={i} char={ch} />
+    ))}
+  </span>
+);
 
 export const LiveBusiness = () => {
   const [cum, setCum] = useState<Nums>(cumBase);
@@ -55,14 +76,12 @@ export const LiveBusiness = () => {
       const dCount = Math.floor(Math.random() * 3 + 1);
       const dMicro = Math.random() < 0.25 ? 1 : 0;
 
-      // 选一个有增量的卡片做 blip
       const deltas = [dLoanAmt, dCredit, dBorrow, dCount, dMicro];
       const active = deltas.map((d, i) => (d > 0 ? i : -1)).filter((i) => i >= 0);
       const pick = active[Math.floor(Math.random() * active.length)];
 
       if (pick !== undefined) {
         setBlipIdx(pick);
-        // 通知地图冒泡
         window.dispatchEvent(
           new CustomEvent("biz-spark", { detail: { color: CARD_COLORS[pick] } })
         );
@@ -96,53 +115,47 @@ export const LiveBusiness = () => {
   const cards = [
     {
       label: "累计撮合放款",
-      value: "¥" + (cum.loanAmount / 100_000_000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " 亿",
-      todayLabel: "今日撮合",
-      todayValue: "¥" + fmtYi(today.loanAmount),
+      value:
+        "¥" +
+        (cum.loanAmount / 100_000_000)
+          .toFixed(0)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " 亿",
+      sub: "今日 ¥" + fmtYi(today.loanAmount),
     },
     {
       label: "累计授信用户",
       value: fmtWan(cum.creditUsers),
-      todayLabel: "今日新增",
-      todayValue: "+" + today.creditUsers.toLocaleString(),
+      sub: "今日 +" + today.creditUsers.toLocaleString(),
     },
     {
       label: "累计成功借款人",
       value: fmtWan(cum.borrowers),
-      todayLabel: "今日新增",
-      todayValue: "+" + today.borrowers.toLocaleString(),
+      sub: "今日 +" + today.borrowers.toLocaleString(),
     },
     {
       label: "累计放款笔数",
       value: cum.loanCount.toLocaleString(),
-      todayLabel: "今日放款",
-      todayValue: "+" + today.loanCount.toLocaleString() + " 笔",
+      sub: "今日 +" + today.loanCount.toLocaleString() + " 笔",
     },
     {
       label: "累计小微服务用户",
       value: fmtWan(cum.microBiz),
-      todayLabel: "今日新增",
-      todayValue: "+" + today.microBiz.toLocaleString(),
+      sub: "今日 +" + today.microBiz.toLocaleString(),
     },
   ];
 
   return (
     <div className="lb">
-      <div className="lb-cards">
-        {cards.map((c, i) => (
-          <div key={i} className="lb-card">
-            <div className="lb-card-label">{c.label}</div>
-            <div className="lb-card-value num">{c.value}</div>
-            <div className="lb-card-sub">
-              <span className="lb-sub-label">{c.todayLabel}</span>
-              <span className="lb-sub-value num">{c.todayValue}</span>
-            </div>
-            {blipIdx === i && (
-              <span className="lb-blip-text" style={{ color: CARD_COLORS[i] }}>+1</span>
-            )}
-          </div>
-        ))}
-      </div>
+      {cards.map((c, i) => (
+        <div key={i} className={`lb-cell${blipIdx === i ? " lb-cell-blip" : ""}`}>
+          <span className="lb-label">{c.label}</span>
+          <span className="lb-value">
+            <FlipNumber value={c.value} />
+          </span>
+          <span className="lb-sub">{c.sub}</span>
+        </div>
+      ))}
     </div>
   );
 };
