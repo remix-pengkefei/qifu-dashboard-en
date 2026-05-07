@@ -2,12 +2,12 @@
   height: var(--header-height);
   display: flex;
   align-items: center;
-  padding: 0 18px;
+  padding: 0 clamp(12px, 1vw, 24px);
   border-bottom: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, rgba(8, 18, 42, 0.92), rgba(6, 14, 32, 0.55));
   position: relative;
   z-index: 5;
-  gap: 14px;
+  gap: clamp(8px, 0.8vw, 20px);
 }
 
 .hdr::before {
@@ -24,11 +24,11 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  padding-right: 14px;
+  padding-right: clamp(8px, 0.8vw, 20px);
   border-right: 1px solid var(--border-subtle);
 }
 .hdr-logo-img {
-  height: 22px;
+  height: clamp(16px, 1.5vw, 40px);
   width: auto;
   filter: drop-shadow(0 0 6px rgba(47, 217, 150, 0.55));
 }
@@ -48,7 +48,7 @@
 .hdr-evt {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(4px, 0.5vw, 12px);
   white-space: nowrap;
   width: 100%;
   justify-content: flex-start;
@@ -78,8 +78,8 @@
 
 /* 事件类型 icon */
 .hdr-evt-icon {
-  width: 20px;
-  height: 20px;
+  width: clamp(14px, 1.2vw, 28px);
+  height: clamp(14px, 1.2vw, 28px);
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(86,196,255,0.5));
 }
@@ -95,7 +95,7 @@
 
 /* 事件描述 */
 .hdr-evt-desc {
-  font-size: 12px;
+  font-size: clamp(10px, 0.73vw, 18px);
   color: var(--text-secondary);
   letter-spacing: 0.3px;
   overflow: hidden;
@@ -105,11 +105,11 @@
 
 /* 时间（末尾） */
 .hdr-evt-ago {
-  font-size: 10px;
+  font-size: clamp(8px, 0.6vw, 14px);
   color: var(--text-muted);
   letter-spacing: 0.3px;
   flex-shrink: 0;
-  padding-left: 12px;
+  padding-left: clamp(6px, 0.6vw, 16px);
 }
 
 /* 风险/预警行背景高亮 */
@@ -128,19 +128,19 @@
 .hdr-r {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 0.6vw, 16px);
   flex-shrink: 0;
-  padding-left: 14px;
+  padding-left: clamp(8px, 0.8vw, 20px);
   border-left: 1px solid var(--border-subtle);
 }
 .hdr-r-item {
-  font-size: 11px;
+  font-size: clamp(9px, 0.65vw, 16px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: clamp(3px, 0.35vw, 8px);
 }
 .hdr-r-em {
   font-style: normal;
@@ -150,23 +150,15 @@
 }
 .hdr-r-sep {
   width: 1px;
-  height: 14px;
+  height: clamp(10px, 0.9vw, 20px);
   background: var(--border-subtle);
 }
 .hdr-dot {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: clamp(4px, 0.4vw, 10px);
+  height: clamp(4px, 0.4vw, 10px);
   border-radius: 50%;
   background: var(--c-green);
   box-shadow: var(--glow-green);
   animation: blink-soft 1.6s ease-in-out infinite;
-}
-
-@media (max-width: 1024px) {
-  .hdr { padding: 0 12px; gap: 10px; }
-}
-
-@media (max-width: 720px) {
-  .hdr { padding: 0 10px; height: 48px; }
 }

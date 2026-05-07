@@ -56,18 +56,10 @@
   --t-slow: 600ms;
   --ease: cubic-bezier(0.4, 0.0, 0.2, 1);
 
-  /* 布局 */
-  --col-left: 19vw;
+  /* 布局 — 全部用 vw/vh 适配大屏 */
   --col-right: 26vw;
-  --bar-height: 84px;
-  --header-height: 56px;
-}
+  --header-height: clamp(44px, 3.6vw, 72px);
 
-@media (max-width: 1366px) {
-  :root {
-    --col-left: 220px;
-    --col-right: 320px;
-    --bar-height: 72px;
-    --header-height: 48px;
-  }
+  /* 自适应缩放因子：基于视口宽度，1920px 时为 1 */
+  --s: clamp(0.65, 0.0005208vw + 0.0000001, 2);
 }

@@ -8,13 +8,13 @@
 /* 标题栏 */
 .cm-head {
   position: absolute;
-  top: 8px;
-  left: 12px;
-  right: 12px;
+  top: clamp(4px, 0.5vw, 12px);
+  left: clamp(8px, 0.7vw, 18px);
+  right: clamp(8px, 0.7vw, 18px);
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: clamp(4px, 0.5vw, 12px);
+  font-size: clamp(10px, 0.8vw, 20px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 1px;
@@ -22,15 +22,15 @@
   pointer-events: none;
 }
 .cm-bar {
-  width: 3px;
-  height: 12px;
+  width: clamp(2px, 0.2vw, 5px);
+  height: clamp(8px, 0.75vw, 18px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
   flex-shrink: 0;
 }
 .cm-meta {
   margin-left: auto;
-  font-size: 10px;
+  font-size: clamp(8px, 0.6vw, 14px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   font-weight: 400;
@@ -38,7 +38,7 @@
 }
 .cm-em {
   font-style: normal;
-  margin: 0 4px;
+  margin: 0 clamp(2px, 0.25vw, 6px);
   color: var(--c-cyan-1);
 }
 
@@ -132,7 +132,7 @@
 }
 .cm-city-label {
   fill: rgba(200, 225, 255, 0.75);
-  font-size: 9px;
+  font-size: clamp(6px, 0.5vw, 12px);
   font-family: var(--ff-zh);
   letter-spacing: 0.5px;
   font-weight: 500;

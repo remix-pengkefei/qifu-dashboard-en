@@ -27,19 +27,19 @@
   display: grid;
   grid-template-columns: 1fr var(--col-right);
   grid-template-rows: minmax(0, 1fr);
-  gap: 10px;
-  padding: 10px;
+  gap: clamp(6px, 0.52vw, 16px);
+  padding: clamp(6px, 0.52vw, 16px);
   min-height: 0;
   overflow: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* 中列：上下分割（地图 70% / 业务进展 30%） */
+/* 中列：上下分割（地图 / 业务进展） */
 .col-c {
   display: grid;
-  grid-template-rows: 1fr 168px;
-  gap: 10px;
+  grid-template-rows: 1fr clamp(120px, 12vw, 260px);
+  gap: clamp(6px, 0.52vw, 16px);
   height: 100%;
   min-width: 0;
   min-height: 0;
@@ -70,25 +70,10 @@
   display: flex;
 }
 
-@media (max-width: 1366px) {
-  .col-c { grid-template-rows: 1fr 152px; }
-}
-
-@media (max-width: 1024px) {
-  .main {
-    grid-template-columns: 1fr 280px;
-    gap: 8px;
-    padding: 8px;
-  }
-  .col-c { grid-template-rows: 1fr 140px; }
-}
-
 @media (max-width: 720px) {
   .main {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
     overflow-y: auto;
   }
   .col-c, .col-r {
@@ -98,6 +83,5 @@
   .col-c { display: flex; flex-direction: column; gap: 8px; }
   .col-c-top { height: 56vh; min-height: 380px; }
   .col-c-bottom { height: 200px; }
-  .col-r { display: flex; flex-direction: column; gap: 8px; }
   body { overflow: auto; }
 }

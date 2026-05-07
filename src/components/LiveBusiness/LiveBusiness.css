@@ -2,7 +2,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px 12px 10px;
+  padding: clamp(4px, 0.5vw, 14px) clamp(6px, 0.7vw, 16px) clamp(6px, 0.6vw, 14px);
   background: linear-gradient(180deg, rgba(11, 23, 51, 0.65), rgba(8, 16, 38, 0.5));
   border-top: 1px solid var(--border-subtle);
   overflow: hidden;
@@ -13,7 +13,7 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: clamp(4px, 0.5vw, 12px);
   min-height: 0;
 }
 
@@ -21,7 +21,7 @@
   background: linear-gradient(180deg, rgba(13, 28, 60, 0.7), rgba(8, 16, 38, 0.85));
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: clamp(4px, 0.4vw, 10px) clamp(6px, 0.6vw, 14px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -32,13 +32,13 @@
   content: "";
   position: absolute;
   top: 0; left: 0;
-  width: 32px; height: 1px;
+  width: clamp(20px, 2vw, 48px); height: 1px;
   background: var(--c-cyan-1);
   box-shadow: 0 0 6px var(--c-cyan-glow);
 }
 
 .lb-card-label {
-  font-size: 11px;
+  font-size: clamp(8px, 0.65vw, 16px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -47,7 +47,7 @@
 }
 
 .lb-card-value {
-  font-size: 22px;
+  font-size: clamp(14px, 1.35vw, 36px);
   font-weight: 700;
   color: var(--c-cyan-1);
   text-shadow: 0 0 12px var(--c-cyan-glow);
@@ -63,17 +63,17 @@
 .lb-card-sub {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+  gap: clamp(3px, 0.35vw, 8px);
+  margin-top: clamp(2px, 0.25vw, 6px);
 }
 .lb-sub-label {
-  font-size: 9px;
+  font-size: clamp(7px, 0.52vw, 13px);
   color: var(--text-muted);
   letter-spacing: 0.3px;
   white-space: nowrap;
 }
 .lb-sub-value {
-  font-size: 10px;
+  font-size: clamp(8px, 0.6vw, 14px);
   color: var(--c-green);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -84,9 +84,9 @@
 /* +1 弹出 */
 .lb-blip-text {
   position: absolute;
-  top: 4px;
-  right: 8px;
-  font-size: 12px;
+  top: clamp(2px, 0.3vw, 6px);
+  right: clamp(4px, 0.5vw, 12px);
+  font-size: clamp(9px, 0.7vw, 16px);
   font-weight: 700;
   animation: lb-blip-pop 0.7s var(--ease) forwards;
   pointer-events: none;
@@ -96,19 +96,4 @@
   0%   { opacity: 0; transform: translateY(4px) scale(0.7); }
   25%  { opacity: 1; transform: translateY(-2px) scale(1.15); }
   100% { opacity: 0; transform: translateY(-12px) scale(0.85); }
-}
-
-@media (max-width: 1366px) {
-  .lb-card-value { font-size: 18px; }
-  .lb-card-label { font-size: 10px; }
-}
-
-@media (max-width: 1024px) {
-  .lb-cards { grid-template-columns: repeat(3, 1fr); }
-  .lb-card:nth-child(4), .lb-card:nth-child(5) { display: none; }
-}
-
-@media (max-width: 720px) {
-  .lb-cards { grid-template-columns: repeat(2, 1fr); }
-  .lb-card:nth-child(n+4) { display: none; }
 }

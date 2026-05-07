@@ -71,9 +71,10 @@ export const BankCloud = () => {
   const [hitBankIdx, setHitBankIdx] = useState(-1);
   const [hitColor, setHitColor] = useState("");
 
-  // 字号档位：weight 1=9, 2=11, 3=14, 4=18, 5=22
+  // 字号档位：基准值（对应 ~500px 容器宽度 / 1920px 视口）
+  const fontScale = Math.max((cloudSize.width || 500) / 500, 0.6);
   const sizeOf = (w: number) =>
-    ({ 1: 9, 2: 11, 3: 14, 4: 18, 5: 22 } as Record<number, number>)[w] || 12;
+    (({ 1: 9, 2: 11, 3: 14, 4: 18, 5: 22 } as Record<number, number>)[w] || 12) * fontScale;
 
   // Fibonacci 球面均匀分布：167 个银行均匀撒在球面
   // 关键修复：先用稳定的伪随机洗牌打乱顺序，避免数据里大字（消金/民营）
@@ -287,7 +288,7 @@ export const BankCloud = () => {
             {/* 词：纯文字，靠字号 / 字重区分层次；被调用时用智能体颜色高亮 */}
             {rendered.map((w) => {
               const isHit = w.idx === hitBankIdx;
-              const fontSize = w.size * w.scale;
+              const fontSize = sizeOf(w.weight) * w.scale;
               const fill = isHit
                 ? hitColor
                 : w.weight === 5

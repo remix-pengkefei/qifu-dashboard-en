@@ -1,12 +1,12 @@
 .wm {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 240px;
+  bottom: clamp(6px, 0.6vw, 16px);
+  right: clamp(6px, 0.6vw, 16px);
+  width: clamp(160px, 14vw, 380px);
   background: linear-gradient(180deg, rgba(8, 18, 42, 0.92), rgba(4, 10, 26, 0.92));
   border: 1px solid var(--border-line);
   border-radius: 4px;
-  padding: 6px 8px 8px;
+  padding: clamp(4px, 0.4vw, 10px) clamp(5px, 0.5vw, 12px) clamp(5px, 0.5vw, 12px);
   z-index: 5;
   pointer-events: none;
 }
@@ -14,21 +14,21 @@
 .wm-head {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10px;
+  gap: clamp(3px, 0.3vw, 8px);
+  font-size: clamp(7px, 0.6vw, 14px);
   font-weight: 600;
   letter-spacing: 1px;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: clamp(2px, 0.25vw, 6px);
 }
 .wm-bar {
-  width: 3px;
-  height: 11px;
+  width: clamp(2px, 0.2vw, 5px);
+  height: clamp(7px, 0.65vw, 16px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
 }
 .wm-en {
-  font-size: 9px;
+  font-size: clamp(6px, 0.5vw, 12px);
   font-family: var(--ff-num);
   color: var(--text-tertiary);
   letter-spacing: 1px;
@@ -38,7 +38,7 @@
 .wm-svg {
   display: block;
   width: 100%;
-  height: 100px;
+  height: clamp(60px, 6vw, 160px);
   background:
     radial-gradient(60% 60% at 50% 50%, rgba(86,196,255,0.06), transparent 70%),
     rgba(4, 10, 26, 0.5);
@@ -57,7 +57,7 @@
 
 .wm-china-label {
   fill: #56c4ff;
-  font-size: 8px;
+  font-size: clamp(5px, 0.5vw, 12px);
   font-family: var(--ff-num);
   font-weight: 700;
   paint-order: stroke;
@@ -66,26 +66,26 @@
 }
 
 .wm-list {
-  margin-top: 5px;
+  margin-top: clamp(3px, 0.3vw, 8px);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px 8px;
+  gap: clamp(2px, 0.25vw, 6px) clamp(4px, 0.5vw, 12px);
 }
 
 .wm-item {
   display: flex;
   align-items: flex-start;
-  gap: 4px;
-  font-size: 10px;
+  gap: clamp(2px, 0.25vw, 6px);
+  font-size: clamp(7px, 0.6vw, 14px);
 }
 
 .wm-dot {
-  width: 5px;
-  height: 5px;
+  width: clamp(3px, 0.3vw, 8px);
+  height: clamp(3px, 0.3vw, 8px);
   border-radius: 50%;
   background: var(--c-green);
   box-shadow: 0 0 6px rgba(47,217,150,0.7);
-  margin-top: 3px;
+  margin-top: clamp(2px, 0.2vw, 5px);
   flex-shrink: 0;
 }
 
@@ -96,7 +96,7 @@
 .wm-cn {
   color: var(--text-primary);
   font-weight: 500;
-  font-size: 9px;
+  font-size: clamp(6px, 0.55vw, 13px);
   letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
@@ -104,7 +104,7 @@
 }
 .wm-en-line {
   color: var(--text-tertiary);
-  font-size: 8px;
+  font-size: clamp(5px, 0.45vw, 11px);
   font-family: var(--ff-num);
   letter-spacing: 0.3px;
 }
