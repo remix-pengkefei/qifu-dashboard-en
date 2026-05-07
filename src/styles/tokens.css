@@ -1,0 +1,73 @@
+:root {
+  /* 背景 */
+  --bg-deep: #04081a;
+  --bg-base: #061026;
+  --bg-panel: #0a1733;
+  --bg-panel-2: #0e1d3f;
+  --bg-card: rgba(13, 28, 60, 0.6);
+  --bg-card-hover: rgba(20, 42, 84, 0.7);
+
+  /* 边框 */
+  --border-subtle: rgba(72, 130, 200, 0.18);
+  --border-line: rgba(72, 156, 220, 0.32);
+  --border-strong: rgba(86, 196, 255, 0.55);
+
+  /* 文字 */
+  --text-primary: #e8f3ff;
+  --text-secondary: #a9c1dc;
+  --text-tertiary: #6c829e;
+  --text-muted: #4a5a73;
+
+  /* 主色 - 青蓝 */
+  --c-cyan-1: #56c4ff;
+  --c-cyan-2: #38a6e6;
+  --c-cyan-3: #1d6fb6;
+  --c-cyan-glow: rgba(86, 196, 255, 0.45);
+  --c-cyan-soft: rgba(86, 196, 255, 0.14);
+
+  /* 品牌绿 */
+  --c-green: #2fd996;
+  --c-green-soft: rgba(47, 217, 150, 0.18);
+
+  /* 风险红 */
+  --c-red: #ff5e6c;
+  --c-red-soft: rgba(255, 94, 108, 0.18);
+
+  /* 数据黄 */
+  --c-amber: #ffb84d;
+  --c-amber-soft: rgba(255, 184, 77, 0.16);
+
+  /* 紫色（节制使用） */
+  --c-violet: #8a8eff;
+
+  /* 阴影/光 */
+  --glow-cyan: 0 0 18px rgba(86, 196, 255, 0.55);
+  --glow-cyan-strong: 0 0 32px rgba(86, 196, 255, 0.7);
+  --glow-green: 0 0 14px rgba(47, 217, 150, 0.55);
+  --glow-red: 0 0 14px rgba(255, 94, 108, 0.55);
+
+  /* 字体 */
+  --ff-zh: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", "Source Han Sans CN", sans-serif;
+  --ff-num: "D-DIN", "JetBrains Mono", "SF Mono", "Menlo", monospace;
+
+  /* 节奏 */
+  --t-fast: 180ms;
+  --t-med: 320ms;
+  --t-slow: 600ms;
+  --ease: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  /* 布局 */
+  --col-left: 19vw;
+  --col-right: 26vw;
+  --bar-height: 84px;
+  --header-height: 56px;
+}
+
+@media (max-width: 1366px) {
+  :root {
+    --col-left: 220px;
+    --col-right: 320px;
+    --bar-height: 72px;
+    --header-height: 48px;
+  }
+}

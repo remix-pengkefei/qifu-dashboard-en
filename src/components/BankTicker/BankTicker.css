@@ -1,0 +1,161 @@
+.bt {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(11, 23, 51, 0.85), rgba(8, 16, 38, 0.7));
+  border-top: 1px solid var(--border-subtle);
+  overflow: hidden;
+  position: relative;
+}
+
+.bt-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+.bt-bar {
+  width: 3px;
+  height: 13px;
+  background: var(--c-cyan-1);
+  box-shadow: var(--glow-cyan);
+}
+.bt-meta {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+/* 跑马灯轨道 */
+.bt-track-mask {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 4%, black 96%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 4%, black 96%, transparent 100%);
+  display: flex;
+  align-items: center;
+}
+
+.bt-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px;
+  animation: bt-scroll 90s linear infinite;
+  will-change: transform;
+}
+
+@keyframes bt-scroll {
+  to { transform: translateX(calc(-100% / 3)); }
+}
+
+.bt:hover .bt-track {
+  animation-play-state: paused;
+}
+
+/* 银行卡 */
+.bt-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(13, 28, 60, 0.78), rgba(8, 16, 38, 0.78));
+  flex-shrink: 0;
+  transition: transform 240ms var(--ease), box-shadow 240ms var(--ease), background 240ms var(--ease);
+  height: 56px;
+  min-width: 168px;
+}
+
+.bt-svg {
+  width: 56px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bt-led {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: blink-soft 1.6s ease-in-out infinite;
+}
+
+.bt-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bt-name {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.bt-count {
+  font-size: 14px;
+  color: var(--c-cyan-1);
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--c-cyan-glow);
+  letter-spacing: 0.3px;
+}
+.bt-count em {
+  font-style: normal;
+  font-size: 10px;
+  margin-left: 2px;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+/* 词云尺寸：业务量越大卡片越大 */
+.bt-card.bt-sm { height: 50px; min-width: 152px; opacity: 0.78; }
+.bt-card.bt-sm .bt-count { font-size: 13px; }
+.bt-card.bt-md { height: 56px; min-width: 168px; }
+.bt-card.bt-lg { height: 62px; min-width: 184px; opacity: 1; }
+.bt-card.bt-lg .bt-count { font-size: 16px; }
+.bt-card.bt-xl { height: 70px; min-width: 200px; }
+.bt-card.bt-xl .bt-count { font-size: 18px; }
+.bt-card.bt-xl .bt-name { font-size: 13px; font-weight: 600; }
+
+/* 业务发生：卡片高光 + 加粗背景 */
+.bt-card.bt-busy {
+  background: linear-gradient(180deg, rgba(40, 80, 160, 0.85), rgba(20, 50, 110, 0.85));
+  box-shadow: 0 0 18px rgba(86, 196, 255, 0.5);
+  transform: scale(1.06);
+  z-index: 2;
+  animation: bt-busy-flash 0.8s ease-out;
+}
+@keyframes bt-busy-flash {
+  0% { background: linear-gradient(180deg, rgba(86, 196, 255, 0.95), rgba(40, 100, 180, 0.95)); }
+  100% { background: linear-gradient(180deg, rgba(40, 80, 160, 0.85), rgba(20, 50, 110, 0.85)); }
+}
+
+/* "+1" 飘字 */
+.bt-plus {
+  position: absolute;
+  top: -4px;
+  right: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-green);
+  text-shadow: 0 0 8px rgba(47, 217, 150, 0.85);
+  font-family: var(--ff-num);
+  animation: bt-plus-rise 1.4s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes bt-plus-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { transform: translateY(-4px); opacity: 1; }
+  100% { transform: translateY(-26px); opacity: 0; }
+}

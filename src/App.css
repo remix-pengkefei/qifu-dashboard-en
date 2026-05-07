@@ -1,0 +1,109 @@
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-image:
+    linear-gradient(180deg, rgba(4,8,26,0.45), rgba(4,8,26,0.7)),
+    url("/assets/bg-starfield.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 1;
+}
+
+/* 三列：左 事件流 / 中 地图+业务进展 / 右 智能体+银行调用 */
+.main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: var(--col-left) 1fr var(--col-right);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.col-l {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* 中列：上下分割（地图 70% / 业务进展 30%） */
+.col-c {
+  display: grid;
+  grid-template-rows: 1fr 168px;
+  gap: 10px;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.col-c-top {
+  position: relative;
+  border-radius: 4px;
+  background:
+    radial-gradient(80% 80% at 50% 40%, rgba(20, 60, 130, 0.18), transparent 70%),
+    linear-gradient(180deg, rgba(8, 18, 42, 0.65), rgba(4, 10, 26, 0.75));
+  border: 1px solid var(--border-line);
+  overflow: hidden;
+  min-height: 0;
+}
+.col-c-bottom {
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 右列：单一组件（167 家银行词云 + 4 智能体） */
+.col-r {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+@media (max-width: 1366px) {
+  .col-c { grid-template-rows: 1fr 152px; }
+}
+
+@media (max-width: 1024px) {
+  .main {
+    grid-template-columns: 220px 1fr 240px;
+    gap: 8px;
+    padding: 8px;
+  }
+  .col-c { grid-template-rows: 1fr 140px; }
+}
+
+@media (max-width: 720px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    overflow-y: auto;
+  }
+  .col-l, .col-c, .col-r {
+    height: auto;
+    flex-shrink: 0;
+  }
+  .col-c { display: flex; flex-direction: column; gap: 8px; }
+  .col-c-top { height: 56vh; min-height: 380px; }
+  .col-c-bottom { height: 200px; }
+  .col-r { display: flex; flex-direction: column; gap: 8px; }
+  body { overflow: auto; }
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 256 160">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ff5e6c" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0d1f3a" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="12" y="44" rx="28" ry="28" width="232" height="144" fill="#081529" stroke="rgba(86,196,255,.35)"/>
+  <rect x="20" y="52" rx="24" ry="24" width="216" height="128" fill="url(#g)" opacity="0.22"/>
+  <g transform="translate(32 76)">
+    <circle cx="24" cy="24" r="20" fill="none" stroke="#ff5e6c" stroke-width="5" filter="url(#glow)"/>
+    <path d="M14 24h20M24 14v20" stroke="#ff5e6c" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <text x="64" y="22" fill="#e8f6ff" font-size="24" font-family="Arial, PingFang SC, sans-serif" font-weight="700">SYB</text>
+    <text x="64" y="50" fill="#a9d8ff" font-size="16" font-family="PingFang SC, Microsoft YaHei, sans-serif">盛京银行</text>
+  </g>
+</svg>

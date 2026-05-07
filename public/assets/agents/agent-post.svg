@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%">
+      <stop offset="0%" stop-color="#1dd8ff" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#0e213f" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="128" cy="128" r="92" fill="url(#bg)" stroke="#56c4ff" stroke-width="3"/>
+  <circle cx="128" cy="128" r="72" fill="rgba(6,20,40,.2)" stroke="rgba(86,196,255,.18)"/>
+  <g fill="none" stroke="#56c4ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M128 68a52 52 0 1052 52A52 52 0 00128 68zm0 18v36l24 18"/>
+  </g>
+  <text x="128" y="214" text-anchor="middle" fill="#dff5ff" font-size="18" font-family="PingFang SC, Microsoft YaHei, sans-serif">贷后</text>
+</svg>

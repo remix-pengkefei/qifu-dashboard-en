@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200">
+<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#2fd996"/><stop offset="100%" stop-color="#56c4ff"/></linearGradient></defs>
+<rect width="600" height="200" rx="28" fill="#061326"/>
+<g transform="translate(28 24)">
+<circle cx="76" cy="76" r="64" fill="#081a31" stroke="url(#g)" stroke-width="6"/>
+<path d="M46 48h36c18 0 30 12 30 28s-12 28-30 28H70v-20h12c8 0 14-3 14-8s-6-8-14-8H46z" fill="url(#g)"/>
+<path d="M70 82l38 38" stroke="#56c4ff" stroke-width="10" stroke-linecap="round"/>
+</g>
+<text x="170" y="92" fill="#e8fbff" font-size="70" font-family="Arial, sans-serif" font-weight="700">QFIN</text>
+<text x="172" y="146" fill="#9ee6ff" font-size="42" font-family="PingFang SC, Microsoft YaHei, sans-serif">奇富科技</text>
+</svg>

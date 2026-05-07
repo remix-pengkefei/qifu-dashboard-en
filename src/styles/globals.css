@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--ff-zh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+}
+
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(120% 70% at 50% 40%, rgba(20, 60, 130, 0.22), transparent 70%),
+    radial-gradient(60% 60% at 80% 90%, rgba(60, 120, 220, 0.08), transparent 70%),
+    radial-gradient(80% 80% at 0% 0%, rgba(40, 90, 180, 0.08), transparent 70%),
+    var(--bg-deep);
+  background-attachment: fixed;
+}
+
+/* 暗角 — 模拟巨型屏幕中心聚焦 */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+  z-index: 1;
+}
+
+#root {
+  position: relative;
+  z-index: 2;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+::selection {
+  background: var(--c-cyan-soft);
+  color: var(--text-primary);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(86, 196, 255, 0.18);
+  border-radius: 2px;
+}
+
+/* 动画 */
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.6); opacity: 0.25; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes flow-dash {
+  to { stroke-dashoffset: -80; }
+}
+
+@keyframes flow-dash-rev {
+  to { stroke-dashoffset: 80; }
+}
+
+@keyframes blink-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes fade-in-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes glow-breath {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--c-cyan-glow)); }
+  50% { filter: drop-shadow(0 0 14px var(--c-cyan-glow)); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.num {
+  font-family: var(--ff-num);
+  font-feature-settings: "tnum" 1;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(11, 23, 51, 0.9), rgba(8, 16, 38, 0.85));
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  position: relative;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(86, 196, 255, 0.06), transparent 25%);
+}
+
+.panel-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--c-cyan-1);
+  pointer-events: none;
+}
+.panel-corner.tl { top: -1px; left: -1px; border-top: 1px solid var(--c-cyan-1); border-left: 1px solid var(--c-cyan-1); }
+.panel-corner.tr { top: -1px; right: -1px; border-top: 1px solid var(--c-cyan-1); border-right: 1px solid var(--c-cyan-1); }
+.panel-corner.bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--c-cyan-1); border-left: 1px solid var(--c-cyan-1); }
+.panel-corner.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--c-cyan-1); border-right: 1px solid var(--c-cyan-1); }
