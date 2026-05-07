@@ -1,64 +1,98 @@
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "../../store/AppContext";
 import type { LiveEvent } from "../../engine/eventGen";
-import { sceneIconUrl } from "../../data/sceneIcons";
 import "./EventTicker.css";
 
-const levelLabel: Record<LiveEvent["level"], string> = {
-  normal: "运行中",
-  ok: "已完成",
-  warn: "复核中",
-  risk: "风险拦截",
+/** 智能体名称 → icon 路径 */
+const agentIcon = (name: string): string => {
+  if (name.includes("审批")) return "/assets/agents/agent-approver.svg";
+  if (name.includes("风控") || name.includes("决策")) return "/assets/agents/agent-risk.svg";
+  if (name.includes("合规")) return "/assets/agents/agent-compliance.svg";
+  if (name.includes("营销")) return "/assets/agents/agent-marketing.svg";
+  if (name.includes("贷后")) return "/assets/agents/agent-post.svg";
+  if (name.includes("服务")) return "/assets/agents/agent-service.svg";
+  return "/assets/agents/agent-approver.svg";
 };
 
-const levelStatusIcon: Record<LiveEvent["level"], string> = {
-  normal: "/assets/status/status-running.svg",
-  ok: "/assets/status/status-running.svg",
-  warn: "/assets/status/status-busy.svg",
-  risk: "/assets/status/status-error.svg",
+/** 把事件拼成一句完整的描述 */
+const buildDesc = (e: LiveEvent): string => {
+  const amount = (Math.random() * 80 + 5).toFixed(1);
+  const bank = e.bank || "合作机构";
+  const agent = e.agent || "AI 智能体";
+
+  if (e.level === "risk") {
+    return `${bank}${e.zone}地区触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
+  }
+  if (e.level === "warn") {
+    return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ${amount} 万元`;
+  }
+  if (e.level === "ok") {
+    return `${bank}${e.zone}地区${e.scene}场景${e.action}完成，${agent}确认放款 ${amount} 万元已到账`;
+  }
+  // normal
+  return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ${amount} 万元`;
+};
+
+type TickerItem = {
+  id: number;
+  icon: string;
+  desc: string;
+  level: LiveEvent["level"];
+  agoSec: number;
 };
 
 export const EventTicker = () => {
-  const { events, counters } = useApp();
-  const [current, setCurrent] = useState<LiveEvent | null>(null);
+  const { events } = useApp();
+  const [current, setCurrent] = useState<TickerItem | null>(null);
   const [phase, setPhase] = useState<"enter" | "show" | "exit">("show");
-  const queueRef = useRef<LiveEvent[]>([]);
+  const queueRef = useRef<TickerItem[]>([]);
   const showingIdRef = useRef<number>(-1);
+  const seqRef = useRef(0);
 
   // 新事件入队
   useEffect(() => {
     if (!events.length) return;
     const latest = events[0];
-    if (latest.id !== showingIdRef.current) {
-      queueRef.current.push(latest);
+    if (latest.id !== showingIdRef.current && !queueRef.current.some((q) => q.id === latest.id)) {
+      queueRef.current.push({
+        id: latest.id,
+        icon: agentIcon(latest.agent || ""),
+        desc: buildDesc(latest),
+        level: latest.level,
+        agoSec: Math.floor(Math.random() * 5 + 1),
+      });
     }
   }, [events]);
 
-  // 跑马灯循环：取一条 → enter(0.5s) → show(2.5s) → exit(0.5s) → 下一条
+  // 跑马灯循环：enter(0.6s) → show(5s) → exit(0.5s) → 下一条
   useEffect(() => {
     let alive = true;
+
     const next = () => {
       if (!alive) return;
-
-      // 从队列取，没有就从 events 里随机展示
-      const ev = queueRef.current.shift();
-      if (!ev) {
-        // 空闲时从已有事件轮播
+      let item = queueRef.current.shift();
+      if (!item) {
         if (events.length > 0) {
           const pick = events[Math.floor(Math.random() * Math.min(events.length, 8))];
-          run(pick);
+          item = {
+            id: --seqRef.current,
+            icon: agentIcon(pick.agent || ""),
+            desc: buildDesc(pick),
+            level: pick.level,
+            agoSec: Math.floor(Math.random() * 20 + 5),
+          };
         } else {
           setTimeout(next, 500);
+          return;
         }
-        return;
       }
-      run(ev);
+      run(item);
     };
 
-    const run = (ev: LiveEvent) => {
+    const run = (item: TickerItem) => {
       if (!alive) return;
-      showingIdRef.current = ev.id;
-      setCurrent(ev);
+      showingIdRef.current = item.id;
+      setCurrent(item);
       setPhase("enter");
 
       setTimeout(() => {
@@ -73,12 +107,11 @@ export const EventTicker = () => {
             if (!alive) return;
             next();
           }, 500);
-        }, 3000);
-      }, 500);
+        }, 5000);
+      }, 600);
     };
 
-    // 启动
-    const initTimer = setTimeout(next, 300);
+    const initTimer = setTimeout(next, 400);
     return () => {
       alive = false;
       clearTimeout(initTimer);
@@ -89,87 +122,22 @@ export const EventTicker = () => {
 
   return (
     <div className="etk">
-      {/* 左侧：标题 + 统计 */}
       <div className="etk-left">
         <i className="etk-bar" />
         <span className="etk-title">实时事件流</span>
-        <div className="etk-stats num">
-          <span className="etk-stat etk-stat-on">
-            全部 <em>{counters.totalEvents.toLocaleString()}</em>
-          </span>
-          <span className="etk-stat">
-            交易 <em>{counters.trade}</em>
-          </span>
-          <span className="etk-stat etk-stat-warn">
-            风控 <em>{counters.risk}</em>
-          </span>
-          <span className="etk-stat">
-            服务 <em>{counters.service}</em>
-          </span>
-          <span className="etk-stat etk-stat-amber">
-            预警 <em>{counters.alert}</em>
-          </span>
-        </div>
       </div>
 
-      {/* 右侧：跑马灯区域 */}
       <div className="etk-marquee">
         <div className={`etk-event lvl-${current.level} etk-${phase}`} key={current.id}>
-          {/* 竖线指示器 */}
-          <i className={`etk-indicator ind-${current.level}`} />
-
-          {/* 时间 */}
-          <span className="etk-time num">{current.time}</span>
-
-          {/* 场景图标 */}
-          <img
-            className="etk-scene-icon"
-            src={current.level === "risk" ? "/assets/alert-hex.svg" : sceneIconUrl(current.scene)}
-            alt=""
-          />
-
-          {/* 银行 */}
-          {current.bank && (
-            <span
-              className="etk-bank"
-              style={{ color: current.bankColor, borderColor: `${current.bankColor}66` }}
-            >
-              {current.bank}
-            </span>
-          )}
-
-          {/* 区域 */}
-          <span className="etk-zone">{current.zone}</span>
-
-          {/* 分隔 */}
-          <span className="etk-sep">|</span>
-
-          {/* 场景 */}
-          <span className="etk-scene">{current.scene}</span>
-
-          {/* 分隔 */}
-          <span className="etk-sep">-</span>
-
-          {/* 动作 */}
-          <span className="etk-action">{current.action}</span>
-
-          {/* 智能体 */}
-          {current.agent && (
-            <>
-              <span className="etk-sep">/</span>
-              <span className="etk-agent">{current.agent}</span>
-            </>
-          )}
-
-          {/* 状态标签 */}
-          <span className={`etk-tag tag-${current.level}`}>
-            <img src={levelStatusIcon[current.level]} alt="" className="etk-tag-icon" />
-            {levelLabel[current.level]}
-          </span>
+          {/* 1. icon */}
+          <img className="etk-icon" src={current.icon} alt="" />
+          {/* 2. 事件描述 */}
+          <span className="etk-desc">{current.desc}</span>
+          {/* 3. 时间 */}
+          <span className="etk-ago num">{current.agoSec}秒前</span>
         </div>
       </div>
 
-      {/* 扫描线 */}
       <div className="etk-scan" />
     </div>
   );
