@@ -16,7 +16,7 @@ import "./BankCloud.css";
 
 const AGENTS = [
   { id: "approver", name: "AI 审批官", color: "#56c4ff", iconKey: "approver" },
-  { id: "risk", name: "AI 决策助手", color: "#a78bfa", iconKey: "risk" },
+  { id: "risk", name: "AI 风控助手", color: "#a78bfa", iconKey: "risk" },
   { id: "compliance", name: "AI 合规助手", color: "#2fd996", iconKey: "compliance" },
   { id: "marketing", name: "AI 营销助手", color: "#ffb84d", iconKey: "marketing" },
 ];

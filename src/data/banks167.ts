@@ -84,7 +84,7 @@ const v: CloudBank[] = [
   { name: "宁夏银行", weight: 2 },
   { name: "青海银行", weight: 1 },
   { name: "内蒙古银行", weight: 2 },
-  { name: "包商银行", weight: 1 },
+  { name: "微众银行", weight: 5 },
   { name: "鄂尔多斯银行", weight: 1 },
   { name: "富滇银行", weight: 2 },
   { name: "贵州银行", weight: 2 },
@@ -169,7 +169,7 @@ const v: CloudBank[] = [
   { name: "宜兴农商", weight: 1 },
   { name: "江南农商", weight: 2 },
   { name: "紫金农商", weight: 1 },
-  { name: "江苏江南农商", weight: 1 },
+  { name: "网商银行", weight: 5 },
 
   // ── 消费金融（持牌） ────────────────
   { name: "招联消费金融", weight: 5 },
@@ -178,8 +178,8 @@ const v: CloudBank[] = [
   { name: "中邮消费金融", weight: 4 },
   { name: "海尔消费金融", weight: 3 },
   { name: "锦程消费金融", weight: 3 },
-  { name: "捷信消费金融", weight: 3 },
-  { name: "苏宁消费金融", weight: 3 },
+  { name: "百信银行", weight: 3 },
+  { name: "苏银凯基消费金融", weight: 3 },
   { name: "盛银消费金融", weight: 2 },
   { name: "马上消费金融", weight: 5 },
   { name: "小米消费金融", weight: 3 },
@@ -199,9 +199,7 @@ const v: CloudBank[] = [
   { name: "包银消费金融", weight: 1 },
   { name: "晋商消费金融", weight: 1 },
 
-  // ── 民营银行 ────────────────
-  { name: "微众银行", weight: 5 },
-  { name: "网商银行", weight: 5 },
+  // ── 民营银行（备选，已将微众/网商/百信移入前167） ────────────────
   { name: "新网银行", weight: 4 },
   { name: "众邦银行", weight: 3 },
   { name: "华瑞银行", weight: 2 },
@@ -216,9 +214,7 @@ const v: CloudBank[] = [
   { name: "客商银行", weight: 1 },
   { name: "锡商银行", weight: 1 },
   { name: "金城银行", weight: 2 },
-  { name: "蓝石融资租赁", weight: 1 },
   { name: "中银消费金融", weight: 4 },
-  { name: "百信银行", weight: 3 },
 ];
 
 export const BANKS_167: CloudBank[] = v.slice(0, 167);

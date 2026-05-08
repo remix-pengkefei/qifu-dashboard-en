@@ -94,7 +94,7 @@ const EVENT_ACTIONS: Record<string, { action: string; gen: () => string }[]> = {
   postloan: [
     { action: "贷后监控预警", gen: () => ["低风险", "中风险"][Math.floor(Math.random() * 2)] },
     { action: "合规校验通过", gen: () => "合规" },
-    { action: "智能催收触达", gen: () => `批次${Math.floor(Math.random() * 50 + 1)}` },
+    { action: "智能还款提醒", gen: () => `批次${Math.floor(Math.random() * 50 + 1)}` },
   ],
 };
 
@@ -111,9 +111,12 @@ type FeedEvent = {
 };
 
 const genTime = () => {
-  const h = String(Math.floor(Math.random() * 24)).padStart(2, "0");
-  const m = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  const s = String(Math.floor(Math.random() * 60)).padStart(2, "0");
+  const now = new Date();
+  const offset = Math.floor(Math.random() * 30);
+  const t = new Date(now.getTime() - offset * 1000);
+  const h = String(t.getHours()).padStart(2, "0");
+  const m = String(t.getMinutes()).padStart(2, "0");
+  const s = String(t.getSeconds()).padStart(2, "0");
   return `${h}:${m}:${s}`;
 };
 
