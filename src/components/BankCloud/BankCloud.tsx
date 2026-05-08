@@ -22,10 +22,10 @@ const AGENTS = [
 ];
 
 const baseAgentCalls: Record<string, number> = {
-  approver: 12407,
-  risk: 8654,
-  compliance: 6210,
-  marketing: 9831,
+  approver: 128_530,
+  risk: 96_718,
+  compliance: 83_246,
+  marketing: 115_907,
 };
 
 type SphereWord = {
