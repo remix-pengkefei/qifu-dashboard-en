@@ -16,9 +16,9 @@ import "./BankCloud.css";
 
 const AGENTS = [
   { id: "approver", name: "AI 审批官", color: "#56c4ff", iconKey: "approver" },
-  { id: "risk", name: "AI 风控助手", color: "#a78bfa", iconKey: "risk" },
-  { id: "compliance", name: "AI 合规助手", color: "#2fd996", iconKey: "compliance" },
-  { id: "marketing", name: "AI 营销助手", color: "#ffb84d", iconKey: "marketing" },
+  { id: "risk", name: "AI 风控助手", color: "#8b9dff", iconKey: "risk" },
+  { id: "compliance", name: "AI 合规助手", color: "#5be8c0", iconKey: "compliance" },
+  { id: "marketing", name: "AI 营销助手", color: "#e8b85e", iconKey: "marketing" },
 ];
 
 const baseAgentCalls: Record<string, number> = {
@@ -219,27 +219,27 @@ export const BankCloud = () => {
       setHitBankIdx(word.idx);
       setHitColor(agent.color);
 
-      // 600ms 后清智能体闪
+      // 350ms 后清智能体闪
       window.setTimeout(() => {
         if (!alive) return;
         setAgentBlip((c) => (c === agent.id ? null : c));
-      }, 600);
+      }, 350);
 
-      // 800ms 后清银行高亮
+      // 450ms 后清银行高亮
       window.setTimeout(() => {
         if (!alive) return;
         setHitBankIdx((c) => (c === word.idx ? -1 : c));
         setHitColor("");
-      }, 800);
+      }, 450);
     };
 
-    // 循环：随机间隔 800–1800ms
+    // 循环：随机间隔 400–900ms
     let timer: number;
     const schedule = () => {
       timer = window.setTimeout(() => {
         fire();
         if (alive) schedule();
-      }, 800 + Math.random() * 1000);
+      }, 400 + Math.random() * 500);
     };
     schedule();
 
@@ -260,10 +260,10 @@ export const BankCloud = () => {
       <div className="bcl-head">
         <span className="bcl-bar" />
         合作银行调用 · AI 智能体
-        <span className="bcl-meta">
-          <em className="bcl-em num">167</em> 家合作机构 · 累计调用
-          <em className="bcl-em num">{totalCalls.toLocaleString()}</em>
-        </span>
+      </div>
+
+      <div className="bcl-subtitle">
+        AI 智能体实时响应 <em>167</em> 家合作银行
       </div>
 
       <div className="bcl-cloud" ref={cloudRef}>

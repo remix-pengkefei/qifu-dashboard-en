@@ -195,6 +195,9 @@ const EventFeed = () => {
       <div className="cm-feed-head">
         <span className="cm-feed-dot" />
         实时事件流
+        <span className="cm-meta">
+          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">320</em> 城
+        </span>
       </div>
       <div className="cm-feed-list">
         {events.map((e, i) => (
@@ -988,9 +991,6 @@ export const ChinaMap = () => {
       <div className="cm-head">
         <span className="cm-bar" />
         全国业务覆盖 · 实时态势
-        <span className="cm-meta">
-          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">367</em> 城市
-        </span>
       </div>
       <div className="cm-body">
         <div ref={ref} className="cm-map">
