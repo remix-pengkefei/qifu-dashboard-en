@@ -107,17 +107,9 @@ const AGENT_MAP: Record<string, string[]> = {
   risk: ["AI风控助手", "AI反欺诈引擎", "AI信用评估"],
 };
 
-const CITY_NAMES = [
-  "北京", "上海", "广州", "深圳", "重庆", "成都", "武汉", "杭州",
-  "南京", "长沙", "西安", "济南", "沈阳", "哈尔滨", "福州", "昆明",
-  "南宁", "天津", "郑州", "合肥", "南昌", "石家庄", "太原", "贵阳",
-  "兰州", "大连", "青岛", "厦门", "温州", "无锡", "苏州", "宁波",
-  "佛山", "东莞",
-];
 
 type FeedEvent = {
   id: number;
-  city: string;
   bizLabel: string;
   action: string;
   detail: string;
@@ -200,7 +192,6 @@ const genEvent = (id: number, forceBiz?: typeof BIZ_TYPES[number]): FeedEvent =>
   if (_seenKeys.size > 2000) _seenKeys.clear();
   return {
     id,
-    city: _pick(CITY_NAMES),
     bizLabel: r.title,
     action: r.actionLabel,
     detail: "",
@@ -285,7 +276,6 @@ const EventFeed = () => {
               <span className="cm-feed-detail">{e.detail}</span>
             </div>
             <div className="cm-feed-row2">
-              <span className="cm-feed-city">{e.city}</span>
               <span className="cm-feed-action">{e.action}</span>
               <span className="cm-feed-time">{e.time}</span>
             </div>

@@ -28,15 +28,15 @@ const buildDesc = (e: LiveEvent): string => {
   const agent = e.agent || "AI 智能体";
 
   if (e.level === "risk") {
-    return `${bank}${e.zone}地区触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
+    return `${bank}触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
   }
   if (e.level === "warn") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ¥${amount}`;
+    return `${bank}${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ¥${amount}`;
   }
   if (e.level === "ok") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}完成，${agent}确认放款 ¥${amount}已到账`;
+    return `${bank}${e.scene}场景${e.action}完成，${agent}确认放款 ¥${amount}已到账`;
   }
-  return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ¥${amount}`;
+  return `${bank}${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ¥${amount}`;
 };
 
 type TickerItem = {
