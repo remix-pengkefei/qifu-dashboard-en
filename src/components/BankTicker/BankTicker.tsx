@@ -59,7 +59,7 @@ export const BankTicker = () => {
       <div className="bt-head">
         <span className="bt-bar" />
         银行业务实时词云
-        <span className="bt-meta">12 家合作机构 · 全天候</span>
+        <span className="bt-meta">235 家合作机构 · 全天候</span>
       </div>
 
       <div className="bt-track-mask">

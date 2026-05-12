@@ -253,7 +253,7 @@ export const BankNetwork = () => {
       <div className="bn-stats">
         <div className="bn-stat">
           <div className="bn-stat-label">合作机构</div>
-          <div className="bn-stat-value num">{BANKS.length}<em>家</em></div>
+          <div className="bn-stat-value num">235<em>家</em></div>
         </div>
         <div className="bn-stat">
           <div className="bn-stat-label">活跃机构</div>

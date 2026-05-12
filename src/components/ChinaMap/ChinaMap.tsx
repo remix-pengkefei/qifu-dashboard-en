@@ -51,9 +51,9 @@ type FlyDot = { id: number; pathD: string; dur: number };
 const BIZ_TYPES = [
   { key: "credit",   label: "智能信贷", color: "#e8b866", weight: 40 },
   { key: "risk",     label: "风控决策", color: "#36d6b6", weight: 12 },
-  { key: "sme",      label: "小微金融", color: "#56c4ff", weight: 30 },
-  { key: "platform", label: "联合放款", color: "#7b8cce", weight: 10 },
-  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 8 },
+  { key: "sme",      label: "小微金融", color: "#56c4ff", weight: 25 },
+  { key: "platform", label: "联合放款", color: "#7b8cce", weight: 13 },
+  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 10 },
 ] as const;
 
 const BIZ_POOL: typeof BIZ_TYPES[number][] = [];
@@ -61,14 +61,14 @@ BIZ_TYPES.forEach((b) => { for (let i = 0; i < b.weight; i++) BIZ_POOL.push(b); 
 const pickBiz = () => BIZ_POOL[Math.floor(Math.random() * BIZ_POOL.length)];
 
 const FEED_BANKS = [
-  "工商银行", "建设银行", "农业银行", "中国银行", "交通银行",
-  "招商银行", "浦发银行", "光大银行", "中信银行", "华夏银行",
-  "民生银行", "兴业银行", "平安银行", "北京银行", "上海银行",
-  "江苏银行", "宁波银行", "南京银行", "杭州银行", "长沙银行",
-  "常熟银行", "河南银行", "广发银行", "渤海银行", "浙商银行",
-  "徽商银行", "贵阳银行", "重庆银行", "成都银行", "苏州银行",
-  "青岛银行", "郑州银行", "厦门银行", "西安银行", "齐鲁银行",
-  "哈尔滨银行", "大连银行", "温州银行", "台州银行", "盛京银行",
+  "杭州银行", "北京银行", "上海银行", "宁波银行", "江苏银行",
+  "民生银行", "西安银行", "兰州银行", "青岛银行", "徽商银行",
+  "吉林银行", "汉口银行", "廊坊银行", "齐鲁银行", "天津银行",
+  "甘肃银行", "长安银行", "广州银行", "恒丰银行", "东营银行",
+  "南京银行", "威海银行", "九江银行", "桂林银行", "昆仑银行",
+  "烟台银行", "百信银行", "石嘴山银行", "海口银行", "张家口银行",
+  "辽宁盛京银行", "重庆农商行", "东莞农商行", "上海农商行",
+  "苏州农商行", "昆山农商行", "天津农商", "贵阳农商行",
 ];
 const FEED_PERSONS = [
   "张明", "李华", "王峰", "陈林", "刘强", "赵玲", "黄国", "周燕",
@@ -137,7 +137,7 @@ const _genOnce = (biz: typeof BIZ_TYPES[number]) => {
   switch (biz.key) {
     case "credit": {
       const p = maskName(_pick(FEED_PERSONS));
-      title = `${bank} 给 ${p} ${_pick(CREDIT_VERBS)}`;
+      title = `给 ${p} ${_pick(CREDIT_VERBS)}`;
       detail = fmtAmount(Math.random() * 14 + 1);
       actionLabel = `调用${_pick(agents)}`;
       break;
@@ -200,22 +200,8 @@ const genEvent = (id: number, forceBiz?: typeof BIZ_TYPES[number]): FeedEvent =>
   };
 };
 
-let lastDominant = -1;
 const genBatch = (count: number, seq: { current: number }): FeedEvent[] => {
-  const candidates = BIZ_TYPES.filter((_, i) => i !== lastDominant);
-  const domIdx = BIZ_TYPES.indexOf(candidates[Math.floor(Math.random() * candidates.length)]);
-  lastDominant = domIdx;
-  const dominant = BIZ_TYPES[domIdx];
-  const domCount = Math.floor(count * 0.5) + Math.floor(Math.random() * 2);
-  const others = BIZ_TYPES.filter((_, i) => i !== domIdx);
-  const slots: typeof BIZ_TYPES[number][] = [];
-  for (let i = 0; i < domCount; i++) slots.push(dominant);
-  for (let i = domCount; i < count; i++) slots.push(others[Math.floor(Math.random() * others.length)]);
-  for (let i = slots.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [slots[i], slots[j]] = [slots[j], slots[i]];
-  }
-  return slots.map((biz) => genEvent(seq.current++, biz));
+  return Array.from({ length: count }, () => genEvent(seq.current++));
 };
 
 // ── 事件流组件 ──
