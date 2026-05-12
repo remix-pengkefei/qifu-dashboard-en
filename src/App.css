@@ -58,18 +58,26 @@
   display: flex;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+  }
   .main {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: visible;
+    gap: 8px;
+    padding: 8px;
   }
-  .col-c, .col-r {
+  .col-c {
     height: auto;
+    min-height: 0;
     flex-shrink: 0;
   }
-  .col-c { display: flex; flex-direction: column; gap: 8px; }
-  .col-c-top { height: 56vh; min-height: 380px; }
-  .col-c-bottom { height: 200px; }
-  body { overflow: auto; }
+  .col-r {
+    height: auto;
+    min-height: 0;
+    flex-shrink: 0;
+  }
 }

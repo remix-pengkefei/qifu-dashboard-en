@@ -171,4 +171,45 @@
   font-weight: 700;
 }
 
-
+@media (max-width: 768px) {
+  .bcl {
+    height: auto;
+    padding: 10px;
+  }
+  .bcl-head {
+    font-size: 13px;
+  }
+  .bcl-cloud {
+    min-height: 220px;
+    height: 45vw;
+  }
+  .bcl-subtitle {
+    font-size: 13px;
+    letter-spacing: 2px;
+    top: 15px;
+  }
+  .bcl-subtitle em {
+    font-size: 18px;
+  }
+  .bcl-agents {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .bcl-agent {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .bcl-agent-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .bcl-agent-name {
+    font-size: 11px;
+  }
+  .bcl-agent-count {
+    font-size: 13px;
+  }
+  .bcl-agent-count em {
+    font-size: 10px;
+  }
+}

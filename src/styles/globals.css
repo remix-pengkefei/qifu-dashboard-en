@@ -150,3 +150,13 @@ button {
 .panel-corner.tr { top: -1px; right: -1px; border-top: 1px solid var(--c-cyan-1); border-right: 1px solid var(--c-cyan-1); }
 .panel-corner.bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--c-cyan-1); border-left: 1px solid var(--c-cyan-1); }
 .panel-corner.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--c-cyan-1); border-right: 1px solid var(--c-cyan-1); }
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+  body {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

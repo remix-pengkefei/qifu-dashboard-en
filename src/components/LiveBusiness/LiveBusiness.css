@@ -90,3 +90,29 @@
 .lb-flip-static {
   display: inline-block;
 }
+
+@media (max-width: 768px) {
+  .lb {
+    flex-wrap: wrap;
+    margin: 8px;
+  }
+  .lb-cell {
+    flex: 1 1 calc(50% - 1px);
+    max-width: 50%;
+    min-width: 0;
+    padding: 8px 6px;
+  }
+  .lb-cell:last-child {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .lb-label {
+    font-size: 10px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .lb-value {
+    font-size: 16px;
+  }
+}

@@ -129,3 +129,39 @@
   white-space: nowrap;
 }
 
+@media (max-width: 768px) {
+  .hdr {
+    height: auto;
+    min-height: 44px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .hdr-l {
+    border-right: none;
+    padding-right: 0;
+  }
+  .hdr-logo-img {
+    height: 20px;
+  }
+  .hdr-slogan {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .hdr-honor {
+    width: 100%;
+    margin-left: 0;
+  }
+  .hdr-news-title {
+    font-size: 10px;
+  }
+  .hdr-news-scroll {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+  }
+  .hdr-news-text {
+    font-size: 11px;
+  }
+}
+

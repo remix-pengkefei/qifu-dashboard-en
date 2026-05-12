@@ -407,3 +407,59 @@
   inset: 0;
   display: block;
 }
+
+@media (max-width: 768px) {
+  .cm {
+    height: auto;
+  }
+  .cm-body {
+    flex-direction: column;
+  }
+  .cm-map {
+    min-height: 50vw;
+    aspect-ratio: 4 / 3;
+  }
+  .cm-head {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .cm-feed {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 6px;
+    max-height: 300px;
+  }
+  .cm-feed-head {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .cm-feed-biz {
+    font-size: 12px;
+  }
+  .cm-feed-detail {
+    font-size: 12px;
+  }
+  .cm-feed-time {
+    font-size: 10px;
+  }
+  .cm-feed-city,
+  .cm-feed-action {
+    font-size: 10px;
+  }
+  .cm-wave {
+    height: 40px;
+  }
+  .cm-wave-tag {
+    font-size: 10px;
+  }
+  .cm-city-label {
+    font-size: 10px;
+  }
+  .cm-neighbor-label {
+    font-size: 9px;
+  }
+}

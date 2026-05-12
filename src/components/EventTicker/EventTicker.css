@@ -146,3 +146,28 @@
   animation: scan-line 5s linear infinite;
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .etk {
+    height: 32px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+  .etk-title {
+    font-size: 10px;
+  }
+  .etk-bar {
+    height: 10px;
+  }
+  .etk-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .etk-desc {
+    font-size: 11px;
+  }
+  .etk-ago {
+    font-size: 9px;
+    padding-left: 6px;
+  }
+}
