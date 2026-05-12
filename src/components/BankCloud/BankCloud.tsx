@@ -263,7 +263,7 @@ export const BankCloud = () => {
       </div>
 
       <div className="bcl-subtitle">
-        AI 智能体实时响应 <em>167</em> 家合作银行
+        AI 智能体实时响应 <em>235</em> 家合作机构
       </div>
 
       <div className="bcl-cloud" ref={cloudRef}>

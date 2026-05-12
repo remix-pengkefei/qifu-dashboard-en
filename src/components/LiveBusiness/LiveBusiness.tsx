@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import "./LiveBusiness.css";
 
 const cumBase = {
-  loanAmount: 200_038_527.64,
+  loanAmount: 232_820_147.93,
   creditUsers: 6360.82,
   borrowers: 3890.47,
-  loanCount: 87_025_089,
-  microBiz: 456.31,
+  loanCount: 573_742_849,
+  microBiz: 885.56,
 };
 
 type Nums = {
