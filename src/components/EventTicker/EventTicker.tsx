@@ -16,7 +16,8 @@ const agentIcon = (name: string): string => {
 
 /** 把事件拼成一句完整的描述 */
 const buildDesc = (e: LiveEvent): string => {
-  const amount = (Math.random() * 80 + 5).toFixed(1);
+  const k = Math.floor(Math.random() * 800 + 50);
+  const amount = k >= 1000 ? `${(k / 1000).toFixed(1)}百万` : `${k}千`;
   const bank = e.bank || "合作机构";
   const agent = e.agent || "AI 智能体";
 
@@ -24,13 +25,12 @@ const buildDesc = (e: LiveEvent): string => {
     return `${bank}${e.zone}地区触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
   }
   if (e.level === "warn") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ${amount} 万元`;
+    return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ¥${amount}`;
   }
   if (e.level === "ok") {
-    return `${bank}${e.zone}地区${e.scene}场景${e.action}完成，${agent}确认放款 ${amount} 万元已到账`;
+    return `${bank}${e.zone}地区${e.scene}场景${e.action}完成，${agent}确认放款 ¥${amount}已到账`;
   }
-  // normal
-  return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ${amount} 万元`;
+  return `${bank}${e.zone}地区${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ¥${amount}`;
 };
 
 type TickerItem = {

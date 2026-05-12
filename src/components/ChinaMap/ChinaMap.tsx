@@ -44,11 +44,11 @@ const starColors = ["#9be7ff", "#78d4ff", "#56c4ff", "#b0ecff", "#ffe9b3"];
 const pickStarColor = () => starColors[Math.floor(Math.random() * starColors.length)];
 
 const FLOAT_LABELS = [
-  "审批通过", "风控识别", "¥48.3万", "¥12.7万", "+1笔放款",
-  "合规校验", "¥156万", "授信完成", "+3笔撮合", "智能决策",
-  "¥89.2万", "身份核验", "风险拦截", "¥23.5万", "贷后监控",
-  "+5笔交易", "额度评估", "¥67.8万", "反欺诈", "信用评分",
-  "秒级审批", "¥203万", "模型命中", "+8笔授信", "策略触发",
+  "审批通过", "风控识别", "¥483千", "¥127千", "+1笔放款",
+  "合规校验", "¥1.6百万", "授信完成", "+3笔放款", "智能决策",
+  "¥892千", "身份核验", "风险拦截", "¥235千", "贷后监控",
+  "+5笔交易", "额度评估", "¥678千", "反欺诈", "信用评分",
+  "秒级审批", "¥2百万", "模型命中", "+8笔授信", "策略触发",
 ];
 const LABEL_COLORS = ["#56c4ff", "#2fd996", "#a78bfa", "#ffb84d", "#ff5e6c"];
 
@@ -57,48 +57,69 @@ type DataLabel = { id: number; x: number; y: number; text: string; color: string
 type FlyDot = { id: number; pathD: string; dur: number };
 // ── 业务类型定义（颜色贯穿事件流+心电图） ──
 const BIZ_TYPES = [
-  { key: "credit",   label: "信贷撮合", color: "#e8b866", weight: 35 },
-  { key: "risk",     label: "风控决策", color: "#36d6b6", weight: 25 },
-  { key: "sme",      label: "小微信贷", color: "#56c4ff", weight: 20 },
-  { key: "platform", label: "平台服务", color: "#7b8cce", weight: 15 },
-  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 5 },
+  { key: "credit",   label: "智能信贷", color: "#e8b866", weight: 40 },
+  { key: "risk",     label: "风控决策", color: "#36d6b6", weight: 12 },
+  { key: "sme",      label: "小微金融", color: "#56c4ff", weight: 30 },
+  { key: "platform", label: "平台服务", color: "#7b8cce", weight: 10 },
+  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 8 },
 ] as const;
 
 const BIZ_POOL: typeof BIZ_TYPES[number][] = [];
 BIZ_TYPES.forEach((b) => { for (let i = 0; i < b.weight; i++) BIZ_POOL.push(b); });
 const pickBiz = () => BIZ_POOL[Math.floor(Math.random() * BIZ_POOL.length)];
 
-const EVENT_ACTIONS: Record<string, { action: string; gen: () => string }[]> = {
-  credit: [
-    { action: "消费贷审批通过", gen: () => `¥${(Math.random() * 50 + 3).toFixed(1)}万` },
-    { action: "秒级放款完成", gen: () => `¥${(Math.random() * 80 + 5).toFixed(1)}万` },
-    { action: "授信额度评估", gen: () => `¥${(Math.random() * 100 + 10).toFixed(0)}万` },
-    { action: "实时撮合完成", gen: () => `+${Math.floor(Math.random() * 5 + 1)}笔` },
-  ],
-  risk: [
-    { action: "风控模型命中", gen: () => `${(Math.random() * 50 + 8).toFixed(0)}ms` },
-    { action: "反欺诈识别", gen: () => ["已拦截", "已通过"][Math.floor(Math.random() * 2)] },
-    { action: "信用评分更新", gen: () => `${Math.floor(Math.random() * 200 + 650)}分` },
-    { action: "智能决策引擎", gen: () => `策略${Math.floor(Math.random() * 20 + 1)}号` },
-  ],
-  sme: [
-    { action: "经营贷审批通过", gen: () => `¥${(Math.random() * 200 + 20).toFixed(0)}万` },
-    { action: "周转灵放款", gen: () => `¥${(Math.random() * 150 + 10).toFixed(1)}万` },
-    { action: "小微授信完成", gen: () => `¥${(Math.random() * 300 + 50).toFixed(0)}万` },
-  ],
-  platform: [
-    { action: "银行撮合对接", gen: () => `+${Math.floor(Math.random() * 3 + 1)}笔` },
-    { action: "FocusPRO引擎", gen: () => `${Math.floor(Math.random() * 8 + 1)}家机构` },
-    { action: "助贷服务完成", gen: () => `¥${(Math.random() * 500 + 100).toFixed(0)}万` },
-  ],
-  postloan: [
-    { action: "贷后监控预警", gen: () => ["低风险", "中风险"][Math.floor(Math.random() * 2)] },
-    { action: "合规校验通过", gen: () => "合规" },
-    { action: "智能还款提醒", gen: () => `批次${Math.floor(Math.random() * 50 + 1)}` },
-  ],
+const FEED_BANKS = [
+  "工商银行", "建设银行", "农业银行", "中国银行", "交通银行",
+  "招商银行", "浦发银行", "光大银行", "中信银行", "华夏银行",
+  "民生银行", "兴业银行", "平安银行", "北京银行", "上海银行",
+  "江苏银行", "宁波银行", "南京银行", "杭州银行", "长沙银行",
+  "常熟银行", "河南银行", "广发银行", "渤海银行", "浙商银行",
+  "徽商银行", "贵阳银行", "重庆银行", "成都银行", "苏州银行",
+  "青岛银行", "郑州银行", "厦门银行", "西安银行", "齐鲁银行",
+  "哈尔滨银行", "大连银行", "温州银行", "台州银行", "盛京银行",
+];
+const FEED_PERSONS = [
+  "张明", "李华", "王峰", "陈林", "刘强", "赵玲", "黄国", "周燕",
+  "吴辉", "孙丽", "何杰", "马芳", "谢平", "邓伟", "韩海", "萧勇",
+  "高志远", "林婷", "杨帆", "朱磊", "徐宏", "曹敏", "唐亮", "彭程",
+  "蒋欣", "沈涛", "郭晓", "田雨", "苏建", "范明杰", "许晴", "石磊",
+  "卢峰", "段瑜", "钟毅", "潘洁",
+];
+const FEED_COMPANIES = [
+  "兴达纺织厂", "大丰贸易", "利和科技", "明达电子", "长江材料",
+  "新兴食品", "振兴机械", "远达商贸", "光明制造", "海丰物流",
+  "安康建设", "富强实业", "恒通钢铁", "锦绣服饰", "永盛化工",
+  "国泰包装", "宏图建材", "博达通讯", "三和汽配", "金鼎模具",
+  "万达门窗", "天成物业", "顺达运输", "丰华农业", "中恒新能源",
+  "同创电气", "合力液压", "鸿盛塑业", "正泰电器", "长城精工",
+];
+const CREDIT_VERBS = [
+  "发放消费贷", "发放信用贷", "审批放款", "完成授信放款",
+  "发放装修贷", "发放教育贷", "发放医疗贷", "极速放款",
+];
+const SME_VERBS = [
+  "发放经营贷", "发放设备贷", "发放周转贷", "完成供应链放款",
+  "发放采购贷", "发放仓储贷",
+];
+const _pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
+const fmtAmount = (k: number): string => {
+  if (k >= 1000) return `¥${(k / 1000).toFixed(1)}百万`;
+  return `¥${k}千`;
+};
+const maskName = (n: string) => n[0] + "*".repeat(n.length - 1);
+const AGENT_MAP: Record<string, string[]> = {
+  credit: ["AI审批官", "AI信贷助手", "AI放款助手"],
+  sme: ["AI审批官", "AI小微助手", "AI企业评估"],
+  risk: ["AI风控助手", "AI反欺诈引擎", "AI信用评估"],
 };
 
-const CITY_NAMES = ["北京", "上海", "广州", "深圳", "重庆", "成都", "武汉", "杭州", "南京", "长沙", "西安", "济南", "沈阳", "哈尔滨", "福州", "昆明", "南宁"];
+const CITY_NAMES = [
+  "北京", "上海", "广州", "深圳", "重庆", "成都", "武汉", "杭州",
+  "南京", "长沙", "西安", "济南", "沈阳", "哈尔滨", "福州", "昆明",
+  "南宁", "天津", "郑州", "合肥", "南昌", "石家庄", "太原", "贵阳",
+  "兰州", "大连", "青岛", "厦门", "温州", "无锡", "苏州", "宁波",
+  "佛山", "东莞",
+];
 
 type FeedEvent = {
   id: number;
@@ -120,16 +141,75 @@ const genTime = () => {
   return `${h}:${m}:${s}`;
 };
 
+const _seenKeys = new Set<string>();
+const _genOnce = (biz: typeof BIZ_TYPES[number]) => {
+  const bank = _pick(FEED_BANKS);
+  let title: string;
+  let detail: string;
+  let actionLabel: string;
+  const agents = AGENT_MAP[biz.key];
+  switch (biz.key) {
+    case "credit": {
+      const p = maskName(_pick(FEED_PERSONS));
+      title = `${bank} 给 ${p} ${_pick(CREDIT_VERBS)}`;
+      detail = fmtAmount(Math.floor(Math.random() * 470 + 30));
+      actionLabel = `调用${_pick(agents)}`;
+      break;
+    }
+    case "sme": {
+      const c = _pick(FEED_COMPANIES);
+      title = `${bank} 给 ${c} ${_pick(SME_VERBS)}`;
+      detail = fmtAmount(Math.floor(Math.random() * 4800 + 200));
+      actionLabel = `调用${_pick(agents)}`;
+      break;
+    }
+    case "risk": {
+      const p = maskName(_pick(FEED_PERSONS));
+      title = _pick([
+        `${bank} 给 ${p} 风控审批通过`,
+        `${bank} 给 ${p} 完成信用评估`,
+      ]);
+      detail = `${Math.floor(Math.random() * 200 + 650)}分`;
+      actionLabel = `调用${_pick(agents)}`;
+      break;
+    }
+    case "platform": {
+      const c = _pick(FEED_COMPANIES);
+      title = _pick([
+        `${bank} 对接 ${c} 完成授信`,
+        `${bank} 联合 ${c} 放款`,
+      ]);
+      detail = fmtAmount(Math.floor(Math.random() * 2000 + 100));
+      actionLabel = biz.label;
+      break;
+    }
+    case "postloan": {
+      const p = maskName(_pick(FEED_PERSONS));
+      title = _pick([
+        `${bank} ${p} 按时还款`,
+        `${bank} ${p} 贷后回访正常`,
+      ]);
+      detail = fmtAmount(Math.floor(Math.random() * 100 + 5));
+      actionLabel = biz.label;
+      break;
+    }
+  }
+  return { title: `${title} ${detail}`, actionLabel };
+};
+
 const genEvent = (id: number, forceBiz?: typeof BIZ_TYPES[number]): FeedEvent => {
   const biz = forceBiz ?? pickBiz();
-  const actions = EVENT_ACTIONS[biz.key];
-  const tpl = actions[Math.floor(Math.random() * actions.length)];
+  let r = _genOnce(biz);
+  let attempts = 0;
+  while (_seenKeys.has(r.title) && attempts < 30) { r = _genOnce(biz); attempts++; }
+  _seenKeys.add(r.title);
+  if (_seenKeys.size > 2000) _seenKeys.clear();
   return {
     id,
-    city: CITY_NAMES[Math.floor(Math.random() * CITY_NAMES.length)],
-    bizLabel: biz.label,
-    action: tpl.action,
-    detail: tpl.gen(),
+    city: _pick(CITY_NAMES),
+    bizLabel: r.title,
+    action: r.actionLabel,
+    detail: "",
     color: biz.color,
     time: genTime(),
   };
@@ -196,7 +276,7 @@ const EventFeed = () => {
         <span className="cm-feed-dot" />
         实时事件流
         <span className="cm-meta">
-          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">320</em> 城
+          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">318</em> 城
         </span>
       </div>
       <div className="cm-feed-list">
@@ -209,11 +289,11 @@ const EventFeed = () => {
             <div className="cm-feed-row1">
               <span className="cm-feed-biz">{e.bizLabel}</span>
               <span className="cm-feed-detail">{e.detail}</span>
-              <span className="cm-feed-time">{e.time}</span>
             </div>
             <div className="cm-feed-row2">
               <span className="cm-feed-city">{e.city}</span>
               <span className="cm-feed-action">{e.action}</span>
+              <span className="cm-feed-time">{e.time}</span>
             </div>
           </div>
         ))}

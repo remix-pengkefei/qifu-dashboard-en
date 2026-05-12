@@ -328,7 +328,8 @@
   color: var(--ac, #56c4ff);
   font-weight: 600;
   letter-spacing: 0.3px;
-  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 0;
 }
 .cm-feed-detail {
   font-size: clamp(11px, 0.85vw, 20px);

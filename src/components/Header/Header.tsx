@@ -57,7 +57,7 @@ export const Header = () => {
     <header className="hdr">
       <div className="hdr-l">
         <img src="/assets/logo/qifu-official.png" alt="奇富科技" className="hdr-logo-img" />
-        <span className="hdr-slogan">用先进科技改变金融服务</span>
+        <span className="hdr-slogan">AI驱动未来金融</span>
       </div>
 
       <div className="hdr-honor">

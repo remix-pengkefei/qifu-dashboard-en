@@ -80,7 +80,7 @@ const initAgents = (): AgentState[] =>
   }));
 
 const initMetrics = (): TopMetrics => ({
-  activeOrgs: 167,
+  activeOrgs: 235,
   activeTasks: 24560,
   responseZones: 92,
   riskScore: 752,

@@ -3,8 +3,8 @@ import "./LiveBusiness.css";
 
 const cumBase = {
   loanAmount: 232_820_147.93,
-  creditUsers: 6360.82,
-  borrowers: 3890.47,
+  creditUsers: 6238.76,
+  borrowers: 3939.16,
   loanCount: 573_742_849,
   microBiz: 885.56,
 };
@@ -75,7 +75,7 @@ export const LiveBusiness = () => {
   }, []);
 
   const cards = [
-    { label: "累计撮合放款（万元）", value: "¥" + fmtWan2(cum.loanAmount) },
+    { label: "累计放款（万元）", value: "¥" + fmtWan2(cum.loanAmount) },
     { label: "累计授信用户（万人）", value: fmtWan2(cum.creditUsers) },
     { label: "累计成功借款人（万人）", value: fmtWan2(cum.borrowers) },
     { label: "累计放款笔数", value: cum.loanCount.toLocaleString() },

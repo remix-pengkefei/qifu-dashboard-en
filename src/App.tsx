@@ -16,7 +16,7 @@ const Shell = () => {
           <ChinaMap />
         </section>
 
-        {/* 右：167 家银行词云 + 4 大智能体 */}
+        {/* 右：235 家银行词云 + 4 大智能体 */}
         <section className="col-r">
           <BankCloud />
         </section>
