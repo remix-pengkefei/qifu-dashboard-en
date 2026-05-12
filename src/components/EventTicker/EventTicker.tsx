@@ -15,9 +15,15 @@ const agentIcon = (name: string): string => {
 };
 
 /** 把事件拼成一句完整的描述 */
+const fmtWan = (wan: number): string => {
+  if (wan >= 10000) return `${(wan / 10000).toFixed(1)}亿`;
+  if (wan >= 100) return `${Math.round(wan)}万`;
+  if (wan >= 1) return `${wan.toFixed(1)}万`;
+  return `${Math.round(wan * 10000)}元`;
+};
 const buildDesc = (e: LiveEvent): string => {
-  const k = Math.floor(Math.random() * 800 + 50);
-  const amount = k >= 1000 ? `${(k / 1000).toFixed(1)}百万` : `${k}千`;
+  const wan = Math.random() * 24 + 1;
+  const amount = fmtWan(wan);
   const bank = e.bank || "合作机构";
   const agent = e.agent || "AI 智能体";
 

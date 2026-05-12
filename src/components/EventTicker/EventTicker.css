@@ -3,13 +3,13 @@
   position: relative;
   display: flex;
   align-items: center;
-  height: 38px;
-  padding: 0 14px;
+  height: clamp(32px, 2.6vw, 228px);
+  padding: 0 clamp(10px, 0.9vw, 108px);
   background: linear-gradient(90deg, rgba(11, 23, 51, 0.92), rgba(8, 16, 38, 0.85));
   border-bottom: 1px solid var(--border-subtle);
   overflow: hidden;
   flex-shrink: 0;
-  gap: 12px;
+  gap: clamp(8px, 0.8vw, 96px);
   z-index: 3;
 }
 
@@ -17,20 +17,20 @@
 .etk-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(6px, 0.55vw, 66px);
   flex-shrink: 0;
   white-space: nowrap;
 }
 .etk-bar {
-  width: 3px;
-  height: 14px;
+  width: clamp(2px, 0.2vw, 18px);
+  height: clamp(10px, 0.9vw, 84px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
   border-radius: 1px;
   flex-shrink: 0;
 }
 .etk-title {
-  font-size: 12px;
+  font-size: clamp(10px, 0.8vw, 96px);
   font-weight: 600;
   letter-spacing: 1px;
   color: var(--text-primary);
@@ -40,7 +40,7 @@
 .etk-left::after {
   content: "";
   width: 1px;
-  height: 20px;
+  height: clamp(16px, 1.3vw, 120px);
   background: var(--border-line);
   margin-left: 4px;
   flex-shrink: 0;
@@ -61,7 +61,7 @@
 .etk-event {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(6px, 0.55vw, 66px);
   white-space: nowrap;
   will-change: transform, opacity;
 }
@@ -89,8 +89,8 @@
 
 /* 事件类型 icon */
 .etk-icon {
-  width: 20px;
-  height: 20px;
+  width: clamp(16px, 1.3vw, 120px);
+  height: clamp(16px, 1.3vw, 120px);
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(86,196,255,0.5));
 }
@@ -106,7 +106,7 @@
 
 /* 事件描述 */
 .etk-desc {
-  font-size: 12px;
+  font-size: clamp(10px, 0.8vw, 96px);
   color: var(--text-secondary);
   letter-spacing: 0.3px;
   overflow: hidden;
@@ -116,12 +116,12 @@
 
 /* 时间（末尾） */
 .etk-ago {
-  font-size: 10px;
+  font-size: clamp(9px, 0.65vw, 78px);
   color: var(--text-muted);
   letter-spacing: 0.3px;
   flex-shrink: 0;
   margin-left: auto;
-  padding-left: 12px;
+  padding-left: clamp(8px, 0.8vw, 96px);
 }
 
 /* 风险/预警行背景高亮 */

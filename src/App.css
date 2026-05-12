@@ -27,8 +27,8 @@
   display: grid;
   grid-template-columns: 1fr var(--col-right);
   grid-template-rows: minmax(0, 1fr);
-  gap: clamp(6px, 0.52vw, 16px);
-  padding: clamp(6px, 0.52vw, 16px);
+  gap: clamp(6px, 0.52vw, 96px);
+  padding: clamp(6px, 0.52vw, 96px);
   min-height: 0;
   overflow: hidden;
   position: relative;
@@ -56,6 +56,12 @@
   min-height: 0;
   overflow: hidden;
   display: flex;
+}
+
+@media (min-aspect-ratio: 21/9) {
+  .main {
+    grid-template-columns: 1fr 32vw;
+  }
 }
 
 @media (max-width: 768px) {

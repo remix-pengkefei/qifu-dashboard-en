@@ -2,12 +2,12 @@
   height: var(--header-height);
   display: flex;
   align-items: center;
-  padding: 0 clamp(12px, 1vw, 24px);
+  padding: 0 clamp(12px, 1vw, 144px);
   border-bottom: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, rgba(8, 18, 42, 0.92), rgba(6, 14, 32, 0.55));
   position: relative;
   z-index: 5;
-  gap: clamp(8px, 0.8vw, 20px);
+  gap: clamp(8px, 0.8vw, 120px);
 }
 
 .hdr::before {
@@ -24,17 +24,17 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: clamp(6px, 0.6vw, 16px);
-  padding-right: clamp(8px, 0.8vw, 20px);
+  gap: clamp(6px, 0.6vw, 96px);
+  padding-right: clamp(8px, 0.8vw, 120px);
   border-right: 1px solid var(--border-subtle);
 }
 .hdr-logo-img {
-  height: clamp(16px, 1.5vw, 40px);
+  height: clamp(16px, 1.5vw, 240px);
   width: auto;
   filter: drop-shadow(0 0 6px rgba(47, 217, 150, 0.55));
 }
 .hdr-slogan {
-  font-size: clamp(11px, 0.9vw, 22px);
+  font-size: clamp(11px, 0.9vw, 132px);
   color: rgba(200, 218, 240, 0.85);
   letter-spacing: 2px;
   white-space: nowrap;
@@ -54,8 +54,8 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: clamp(3px, 0.3vw, 8px);
-  font-size: clamp(10px, 0.75vw, 18px);
+  gap: clamp(3px, 0.3vw, 48px);
+  font-size: clamp(10px, 0.75vw, 108px);
   font-weight: 700;
   letter-spacing: 1.5px;
   color: transparent;
@@ -66,7 +66,7 @@
   white-space: nowrap;
 }
 .hdr-news-icon {
-  width: clamp(14px, 1.2vw, 28px);
+  width: clamp(14px, 1.2vw, 168px);
   height: auto;
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(232, 168, 48, 0.5));
@@ -74,14 +74,14 @@
 .hdr-news-divider {
   flex-shrink: 0;
   width: 1px;
-  height: clamp(10px, 1vw, 22px);
+  height: clamp(10px, 1vw, 132px);
   background: linear-gradient(180deg, transparent, rgba(232, 168, 48, 0.5), transparent);
-  margin: 0 clamp(6px, 0.6vw, 14px);
+  margin: 0 clamp(6px, 0.6vw, 84px);
 }
 
 /* 滚动区域（固定宽度，以最长新闻为基准） */
 .hdr-news-scroll {
-  width: clamp(280px, 20vw, 400px);
+  width: clamp(280px, 20vw, 2400px);
   flex-shrink: 0;
   overflow: hidden;
   display: flex;
@@ -121,7 +121,7 @@
 
 /* 新闻正文 */
 .hdr-news-text {
-  font-size: clamp(10px, 0.73vw, 18px);
+  font-size: clamp(10px, 0.73vw, 108px);
   color: rgba(220, 230, 245, 0.85);
   letter-spacing: 0.5px;
   overflow: hidden;

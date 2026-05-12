@@ -3,10 +3,10 @@ import "./LiveBusiness.css";
 
 const cumBase = {
   loanAmount: 232_820_147.93,
-  creditUsers: 6238.76,
-  borrowers: 3939.16,
+  creditUsers: 62_387_600,
+  borrowers: 39_391_600,
   loanCount: 573_742_849,
-  microBiz: 885.56,
+  microBiz: 8_855_600,
 };
 
 type Nums = {
@@ -59,15 +59,15 @@ export const LiveBusiness = () => {
     const tick = () => {
       if (!alive) return;
       setCum((p) => ({
-        loanAmount: p.loanAmount + (Math.random() * 6 + 2),
-        creditUsers: p.creditUsers + (Math.random() * 0.03 + 0.005),
-        borrowers: p.borrowers + (Math.random() * 0.02 + 0.003),
-        loanCount: p.loanCount + Math.floor(Math.random() * 3 + 1),
-        microBiz: p.microBiz + (Math.random() * 0.008 + 0.001),
+        loanAmount: p.loanAmount + (Math.random() * 18 + 5),
+        creditUsers: p.creditUsers + Math.floor(Math.random() * 120 + 30),
+        borrowers: p.borrowers + Math.floor(Math.random() * 80 + 20),
+        loanCount: p.loanCount + Math.floor(Math.random() * 6 + 2),
+        microBiz: p.microBiz + Math.floor(Math.random() * 70 + 20),
       }));
     };
 
-    const id = window.setInterval(tick, 1000);
+    const id = window.setInterval(tick, 600);
     return () => {
       alive = false;
       window.clearInterval(id);
@@ -76,10 +76,10 @@ export const LiveBusiness = () => {
 
   const cards = [
     { label: "累计放款（万元）", value: "¥" + fmtWan2(cum.loanAmount) },
-    { label: "累计授信用户（万人）", value: fmtWan2(cum.creditUsers) },
-    { label: "累计成功借款人（万人）", value: fmtWan2(cum.borrowers) },
+    { label: "累计授信用户（人）", value: cum.creditUsers.toLocaleString() },
+    { label: "累计成功借款人（人）", value: cum.borrowers.toLocaleString() },
     { label: "累计放款笔数", value: cum.loanCount.toLocaleString() },
-    { label: "累计小微服务用户（万人）", value: fmtWan2(cum.microBiz) },
+    { label: "累计小微服务用户（人）", value: cum.microBiz.toLocaleString() },
   ];
 
   return (

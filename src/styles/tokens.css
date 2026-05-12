@@ -58,8 +58,8 @@
 
   /* 布局 — 全部用 vw/vh 适配大屏 */
   --col-right: 26vw;
-  --header-height: clamp(44px, 3.6vw, 72px);
+  --header-height: clamp(44px, 3.6vw, 420px);
 
   /* 自适应缩放因子：基于视口宽度，1920px 时为 1 */
-  --s: clamp(0.65, 0.0005208vw + 0.0000001, 2);
+  --s: clamp(0.65, 0.0005208vw + 0.0000001, 8);
 }

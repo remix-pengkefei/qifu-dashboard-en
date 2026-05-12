@@ -17,13 +17,13 @@
 /* 标题栏 */
 .cm-head {
   position: absolute;
-  top: clamp(4px, 0.5vw, 12px);
-  left: clamp(8px, 0.7vw, 18px);
-  right: clamp(8px, 0.7vw, 18px);
+  top: clamp(4px, 0.5vw, 72px);
+  left: clamp(8px, 0.7vw, 108px);
+  right: clamp(8px, 0.7vw, 108px);
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.5vw, 12px);
-  font-size: clamp(12px, 1.0vw, 24px);
+  gap: clamp(4px, 0.5vw, 72px);
+  font-size: clamp(12px, 1.0vw, 144px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 1px;
@@ -31,15 +31,15 @@
   pointer-events: none;
 }
 .cm-bar {
-  width: clamp(2px, 0.22vw, 6px);
-  height: clamp(10px, 0.85vw, 20px);
+  width: clamp(2px, 0.22vw, 36px);
+  height: clamp(10px, 0.85vw, 120px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
   flex-shrink: 0;
 }
 .cm-meta {
   margin-left: auto;
-  font-size: clamp(10px, 0.75vw, 18px);
+  font-size: clamp(10px, 0.75vw, 108px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   font-weight: 400;
@@ -47,7 +47,7 @@
 }
 .cm-em {
   font-style: normal;
-  margin: 0 clamp(2px, 0.25vw, 6px);
+  margin: 0 clamp(2px, 0.25vw, 36px);
   color: var(--c-cyan-1);
 }
 
@@ -76,7 +76,7 @@
 /* ── 周边国家标注 ── */
 .cm-neighbor-label {
   fill: rgba(140, 170, 210, 0.3);
-  font-size: clamp(10px, 0.7vw, 17px);
+  font-size: clamp(10px, 0.7vw, 102px);
   font-family: var(--ff-num), sans-serif;
   font-weight: 400;
   letter-spacing: 1.5px;
@@ -146,7 +146,7 @@
 
 /* ── 浮动数据标签 ── */
 .cm-data-label {
-  font-size: clamp(10px, 0.75vw, 18px);
+  font-size: clamp(10px, 0.75vw, 108px);
   font-family: var(--ff-zh);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -229,7 +229,7 @@
 }
 .cm-city-label {
   fill: rgba(210, 232, 255, 0.88);
-  font-size: clamp(10px, 0.8vw, 18px);
+  font-size: clamp(10px, 0.8vw, 120px);
   font-family: var(--ff-zh);
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -243,7 +243,7 @@
    实时事件流（右侧竖栏）
    ══════════════════════════════════════ */
 .cm-feed {
-  width: clamp(200px, 18vw, 380px);
+  width: clamp(200px, 18vw, 2280px);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -251,16 +251,16 @@
   border-radius: 4px;
   background: linear-gradient(180deg, rgba(11, 23, 51, 0.85), rgba(8, 16, 38, 0.7));
   overflow: hidden;
-  margin-left: clamp(4px, 0.4vw, 10px);
+  margin-left: clamp(4px, 0.4vw, 60px);
   margin-bottom: 0;
 }
 
 .cm-feed-head {
   display: flex;
   align-items: center;
-  gap: clamp(6px, 0.55vw, 14px);
-  padding: clamp(10px, 0.8vw, 20px) clamp(12px, 0.9vw, 22px);
-  font-size: clamp(12px, 1.0vw, 24px);
+  gap: clamp(6px, 0.55vw, 84px);
+  padding: clamp(10px, 0.8vw, 120px) clamp(12px, 0.9vw, 132px);
+  font-size: clamp(12px, 1.0vw, 144px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.8px;
@@ -268,8 +268,8 @@
   flex-shrink: 0;
 }
 .cm-feed-dot {
-  width: clamp(6px, 0.5vw, 12px);
-  height: clamp(6px, 0.5vw, 12px);
+  width: clamp(6px, 0.5vw, 72px);
+  height: clamp(6px, 0.5vw, 72px);
   border-radius: 50%;
   background: #2fd996;
   box-shadow: 0 0 6px rgba(47, 217, 150, 0.6);
@@ -283,7 +283,7 @@
 .cm-feed-list {
   flex: 1;
   overflow: hidden;
-  padding: clamp(5px, 0.4vw, 10px);
+  padding: clamp(5px, 0.4vw, 60px);
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -292,7 +292,7 @@
 
 .cm-feed-item {
   flex-shrink: 0;
-  padding: clamp(5px, 0.4vw, 10px) clamp(8px, 0.55vw, 12px);
+  padding: clamp(5px, 0.4vw, 60px) clamp(8px, 0.55vw, 84px);
   background: linear-gradient(135deg, rgba(13, 28, 60, 0.7), rgba(8, 16, 38, 0.5));
   border: 1px solid rgba(86, 196, 255, 0.1);
   border-left: 2px solid #56c4ff;
@@ -320,11 +320,11 @@
 .cm-feed-row1 {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 0.4vw, 10px);
-  margin-bottom: clamp(3px, 0.25vw, 6px);
+  gap: clamp(5px, 0.4vw, 60px);
+  margin-bottom: clamp(3px, 0.25vw, 36px);
 }
 .cm-feed-biz {
-  font-size: clamp(11px, 0.85vw, 20px);
+  font-size: clamp(11px, 0.85vw, 120px);
   color: var(--ac, #56c4ff);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -332,14 +332,14 @@
   flex: 1 1 0;
 }
 .cm-feed-detail {
-  font-size: clamp(11px, 0.85vw, 20px);
+  font-size: clamp(11px, 0.85vw, 120px);
   color: var(--ac, #56c4ff);
   font-family: var(--ff-num);
   font-weight: 700;
   white-space: nowrap;
 }
 .cm-feed-time {
-  font-size: clamp(10px, 0.7vw, 17px);
+  font-size: clamp(10px, 0.7vw, 102px);
   color: var(--text-muted);
   font-family: var(--ff-num);
   margin-left: auto;
@@ -349,15 +349,15 @@
 .cm-feed-row2 {
   display: flex;
   align-items: center;
-  gap: clamp(6px, 0.45vw, 12px);
+  gap: clamp(6px, 0.45vw, 72px);
 }
 .cm-feed-city {
-  font-size: clamp(10px, 0.7vw, 17px);
+  font-size: clamp(10px, 0.7vw, 102px);
   color: var(--text-tertiary);
   letter-spacing: 0.3px;
 }
 .cm-feed-action {
-  font-size: clamp(10px, 0.7vw, 17px);
+  font-size: clamp(10px, 0.7vw, 102px);
   color: var(--text-muted);
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -370,7 +370,7 @@
    ══════════════════════════════════════ */
 .cm-wave {
   flex-shrink: 0;
-  height: clamp(36px, 3.8vw, 80px);
+  height: clamp(36px, 3.8vw, 480px);
   border-top: 1px solid rgba(86, 196, 255, 0.15);
   background: linear-gradient(180deg, rgba(4, 10, 24, 0.85), rgba(2, 6, 16, 0.95));
   position: relative;
@@ -379,25 +379,25 @@
 
 .cm-wave-labels {
   position: absolute;
-  bottom: clamp(3px, 0.3vw, 8px);
-  right: clamp(6px, 0.6vw, 14px);
+  bottom: clamp(3px, 0.3vw, 48px);
+  right: clamp(6px, 0.6vw, 84px);
   display: flex;
-  gap: clamp(8px, 0.8vw, 20px);
+  gap: clamp(8px, 0.8vw, 120px);
   z-index: 2;
   pointer-events: none;
 }
 .cm-wave-tag {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.3vw, 8px);
-  font-size: clamp(10px, 0.7vw, 17px);
+  gap: clamp(4px, 0.3vw, 48px);
+  font-size: clamp(10px, 0.7vw, 102px);
   font-family: var(--ff-zh);
   letter-spacing: 0.3px;
   opacity: 0.7;
 }
 .cm-wave-tag-dot {
-  width: clamp(6px, 0.45vw, 11px);
-  height: clamp(3px, 0.22vw, 6px);
+  width: clamp(6px, 0.45vw, 66px);
+  height: clamp(3px, 0.22vw, 36px);
   border-radius: 1px;
   flex-shrink: 0;
 }

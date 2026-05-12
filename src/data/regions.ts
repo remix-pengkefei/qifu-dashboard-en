@@ -54,9 +54,10 @@ export const CITY_NODES: CityNode[] = [
   { id: "fs", name: "佛山", coord: [113.122, 23.029], tier: 3, zone: "华南" },
   { id: "dl", name: "大连", coord: [121.620, 38.914], tier: 3, zone: "东北" },
 
-  // ── 港澳（tier 1 - 重要金融节点）
+  // ── 港澳台（重要金融节点）
   { id: "hk", name: "香港", coord: [114.174, 22.320], tier: 1, zone: "华南" },
   { id: "mo", name: "澳门", coord: [113.549, 22.199], tier: 2, zone: "华南" },
+  { id: "tp", name: "台北", coord: [121.565, 25.033], tier: 3, zone: "华东" },
 ];
 
 /** 国内主要金融链路（按真实区域协同） */
@@ -76,7 +77,7 @@ export const MAJOR_LINKS: [string, string][] = [
   // 东北
   ["bj", "sy"], ["sy", "cc"], ["cc", "hb"], ["sy", "dl"],
   // 华南
-  ["gz", "nn"], ["gz", "fz"], ["fz", "xm"], ["nn", "hk_city"],
+  ["gz", "nn"], ["gz", "fz"], ["fz", "xm"], ["nn", "hk_city"], ["xm", "tp"],
   // 山东 / 河南
   ["jn", "qd"], ["zz", "jn"],
 ];

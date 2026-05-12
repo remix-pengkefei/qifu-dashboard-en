@@ -9,7 +9,7 @@
   z-index: 2;
   flex-shrink: 0;
   overflow: hidden;
-  margin: clamp(6px, 0.52vw, 16px) clamp(6px, 0.52vw, 16px) 0;
+  margin: clamp(6px, 0.52vw, 96px) clamp(6px, 0.52vw, 96px) 0;
   border-radius: 4px;
 }
 
@@ -34,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(6px, 0.55vw, 14px) clamp(8px, 0.6vw, 16px);
+  padding: clamp(6px, 0.55vw, 84px) clamp(8px, 0.6vw, 96px);
   border-right: 1px solid rgba(0, 255, 65, 0.1);
   position: relative;
   background: rgba(0, 255, 65, 0.06);
@@ -44,7 +44,7 @@
 }
 
 .lb-label {
-  font-size: clamp(9px, 0.7vw, 17px);
+  font-size: clamp(9px, 0.7vw, 102px);
   color: rgba(0, 255, 65, 0.55);
   letter-spacing: 1px;
   font-weight: 400;
@@ -52,7 +52,7 @@
 }
 
 .lb-value {
-  font-size: clamp(16px, 1.5vw, 38px);
+  font-size: clamp(16px, 1.5vw, 228px);
   font-weight: 700;
   color: #00ff41;
   font-family: var(--ff-num);

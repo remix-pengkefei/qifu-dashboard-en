@@ -7,30 +7,30 @@
   background: linear-gradient(180deg, rgba(11, 23, 51, 0.85), rgba(8, 16, 38, 0.7));
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  padding: clamp(5px, 0.5vw, 14px) clamp(6px, 0.6vw, 16px) clamp(6px, 0.6vw, 16px);
+  padding: clamp(5px, 0.5vw, 84px) clamp(6px, 0.6vw, 96px) clamp(6px, 0.6vw, 96px);
   overflow: hidden;
 }
 
 .bcl-head {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.5vw, 12px);
-  font-size: clamp(12px, 1.0vw, 24px);
+  gap: clamp(4px, 0.5vw, 72px);
+  font-size: clamp(12px, 1.0vw, 144px);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 1px;
   flex-shrink: 0;
-  margin-bottom: clamp(4px, 0.5vw, 12px);
+  margin-bottom: clamp(4px, 0.5vw, 72px);
 }
 .bcl-bar {
-  width: clamp(2px, 0.2vw, 5px);
-  height: clamp(8px, 0.75vw, 18px);
+  width: clamp(2px, 0.2vw, 30px);
+  height: clamp(8px, 0.75vw, 108px);
   background: var(--c-cyan-1);
   box-shadow: var(--glow-cyan);
 }
 .bcl-meta {
   margin-left: auto;
-  font-size: clamp(10px, 0.75vw, 18px);
+  font-size: clamp(10px, 0.75vw, 108px);
   color: var(--text-tertiary);
   letter-spacing: 0.5px;
   font-weight: 400;
@@ -38,7 +38,7 @@
 }
 .bcl-em {
   font-style: normal;
-  margin: 0 clamp(2px, 0.25vw, 6px);
+  margin: 0 clamp(2px, 0.25vw, 36px);
   color: var(--c-cyan-1);
   font-weight: 700;
   text-shadow: 0 0 6px var(--c-cyan-glow);
@@ -48,10 +48,10 @@
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: clamp(4px, 0.4vw, 10px);
+  gap: clamp(4px, 0.4vw, 60px);
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: clamp(13px, 1.1vw, 26px);
+  font-size: clamp(13px, 1.1vw, 156px);
   color: var(--text-primary);
   letter-spacing: 4px;
   font-weight: 300;
@@ -63,7 +63,7 @@
 }
 .bcl-subtitle em {
   font-style: normal;
-  font-size: clamp(18px, 1.5vw, 36px);
+  font-size: clamp(18px, 1.5vw, 216px);
   color: var(--c-cyan-1);
   font-weight: 700;
   font-family: var(--ff-num);
@@ -75,16 +75,16 @@
 .bcl-agents {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(4px, 0.4vw, 10px);
+  gap: clamp(4px, 0.4vw, 60px);
   flex-shrink: 0;
-  margin-top: clamp(6px, 0.6vw, 16px);
+  margin-top: clamp(6px, 0.6vw, 96px);
 }
 .bcl-agent {
   position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.4vw, 10px);
-  padding: clamp(4px, 0.4vw, 10px) clamp(5px, 0.5vw, 12px);
+  gap: clamp(4px, 0.4vw, 60px);
+  padding: clamp(4px, 0.4vw, 60px) clamp(5px, 0.5vw, 72px);
   background: linear-gradient(180deg, rgba(13, 28, 60, 0.85), rgba(8, 16, 38, 0.85));
   border: 1px solid;
   border-radius: 3px;
@@ -97,14 +97,14 @@
   box-shadow: 0 0 18px var(--agent-glow, rgba(86,196,255,0.4));
 }
 .bcl-agent-icon {
-  width: clamp(18px, 1.6vw, 40px);
-  height: clamp(18px, 1.6vw, 40px);
+  width: clamp(18px, 1.6vw, 240px);
+  height: clamp(18px, 1.6vw, 240px);
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(86,196,255,0.5));
 }
 .bcl-agent-info { min-width: 0; }
 .bcl-agent-name {
-  font-size: clamp(10px, 0.8vw, 18px);
+  font-size: clamp(10px, 0.8vw, 108px);
   color: var(--text-primary);
   letter-spacing: 0.3px;
   font-weight: 500;
@@ -113,7 +113,7 @@
   text-overflow: ellipsis;
 }
 .bcl-agent-count {
-  font-size: clamp(10px, 0.85vw, 22px);
+  font-size: clamp(10px, 0.85vw, 132px);
   font-weight: 700;
   letter-spacing: 0.3px;
   text-shadow: 0 0 6px currentColor;
@@ -121,7 +121,7 @@
 }
 .bcl-agent-count em {
   font-style: normal;
-  font-size: clamp(10px, 0.7vw, 17px);
+  font-size: clamp(10px, 0.7vw, 102px);
   color: var(--text-tertiary);
   text-shadow: none;
   margin-left: 2px;
@@ -130,8 +130,8 @@
 .bcl-agent-plus {
   position: absolute;
   top: -4px;
-  right: clamp(4px, 0.4vw, 10px);
-  font-size: clamp(9px, 0.7vw, 18px);
+  right: clamp(4px, 0.4vw, 60px);
+  font-size: clamp(9px, 0.7vw, 108px);
   font-weight: 700;
   font-family: var(--ff-num);
   animation: bcl-plus-rise 0.6s ease-out forwards;

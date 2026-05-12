@@ -17,7 +17,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* 自适应根字号：1920px→14px, 3840px→28px, 1280px→9.3px */
-  font-size: clamp(9px, 0.729vw, 32px);
+  font-size: clamp(9px, 0.729vw, 200px);
 }
 
 body {
