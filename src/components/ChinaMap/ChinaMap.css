@@ -93,6 +93,7 @@
 
 .cm-province {
   transition: fill 600ms var(--ease), stroke 600ms var(--ease);
+  filter: drop-shadow(0 0 1px rgba(100, 180, 240, 0.2));
 }
 
 /* ── 全网络飞线 ── */
@@ -461,5 +462,71 @@
   }
   .cm-neighbor-label {
     font-size: 9px;
+  }
+}
+
+/* ══════════════════════════════════════
+   超宽屏适配（展厅 LED 6880×1366 等）
+   vw 在超宽屏下过大，切到 vh 保持纵向比例
+   ══════════════════════════════════════ */
+@media (min-aspect-ratio: 3/1) {
+  .cm-wave {
+    height: clamp(36px, 9vh, 140px);
+  }
+  .cm-feed {
+    width: clamp(200px, 30vh, 420px);
+    margin-left: clamp(4px, 0.4vh, 8px);
+  }
+  .cm-head {
+    font-size: clamp(12px, 1.5vh, 20px);
+    gap: clamp(4px, 0.5vh, 8px);
+  }
+  .cm-bar {
+    width: clamp(2px, 0.2vh, 4px);
+    height: clamp(10px, 1.2vh, 18px);
+  }
+  .cm-meta {
+    font-size: clamp(10px, 1vh, 14px);
+  }
+  .cm-feed-head {
+    font-size: clamp(12px, 1.5vh, 18px);
+    padding: clamp(6px, 0.8vh, 10px) clamp(8px, 1vh, 14px);
+    gap: clamp(4px, 0.5vh, 8px);
+  }
+  .cm-feed-dot {
+    width: clamp(5px, 0.5vh, 8px);
+    height: clamp(5px, 0.5vh, 8px);
+  }
+  .cm-feed-list {
+    padding: clamp(4px, 0.4vh, 6px);
+  }
+  .cm-feed-item {
+    padding: clamp(4px, 0.5vh, 8px) clamp(6px, 0.7vh, 10px);
+  }
+  .cm-feed-row1 {
+    gap: clamp(4px, 0.4vh, 6px);
+    margin-bottom: clamp(2px, 0.2vh, 4px);
+  }
+  .cm-feed-biz,
+  .cm-feed-detail {
+    font-size: clamp(11px, 1.2vh, 15px);
+  }
+  .cm-feed-time {
+    font-size: clamp(10px, 1vh, 13px);
+  }
+  .cm-feed-row2 {
+    gap: clamp(4px, 0.4vh, 6px);
+  }
+  .cm-feed-city,
+  .cm-feed-action {
+    font-size: clamp(10px, 1vh, 13px);
+  }
+  .cm-wave-tag {
+    font-size: clamp(10px, 1vh, 13px);
+    gap: clamp(3px, 0.3vh, 5px);
+  }
+  .cm-wave-tag-dot {
+    width: clamp(5px, 0.4vh, 8px);
+    height: clamp(2px, 0.2vh, 4px);
   }
 }

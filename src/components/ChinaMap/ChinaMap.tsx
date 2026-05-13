@@ -137,7 +137,7 @@ const _genOnce = (biz: typeof BIZ_TYPES[number]) => {
   switch (biz.key) {
     case "credit": {
       const p = maskName(_pick(FEED_PERSONS));
-      title = `给 ${p} ${_pick(CREDIT_VERBS)}`;
+      title = `${bank} 给 ${p} ${_pick(CREDIT_VERBS)}`;
       detail = fmtAmount(Math.random() * 14 + 1);
       actionLabel = `调用${_pick(agents)}`;
       break;
@@ -1151,9 +1151,9 @@ export const ChinaMap = () => {
                   <path
                     key={p.id}
                     d={p.d}
-                    fill="rgba(8, 18, 40, 0.3)"
-                    stroke="rgba(80, 160, 220, 0.25)"
-                    strokeWidth="0.6"
+                    fill="rgba(10, 22, 50, 0.4)"
+                    stroke="rgba(100, 180, 240, 0.45)"
+                    strokeWidth="1.0"
                     strokeLinejoin="round"
                   />
                 ))}
