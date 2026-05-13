@@ -63,7 +63,7 @@ export const LiveBusiness = () => {
         creditUsers: p.creditUsers + Math.floor(Math.random() * 120 + 30),
         borrowers: p.borrowers + Math.floor(Math.random() * 80 + 20),
         loanCount: p.loanCount + Math.floor(Math.random() * 6 + 2),
-        microBiz: p.microBiz + Math.floor(Math.random() * 70 + 20),
+        microBiz: p.microBiz + Math.floor(Math.random() * 6 + 3),
       }));
     };
 
