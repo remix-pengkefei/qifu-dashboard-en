@@ -35,7 +35,7 @@ const KEY_CITIES = [
   "km", "nn", "ur", "lz_lhasa", "hk_city",
   "sjz", "ty", "hhht", "cc", "hf", "nc",
   "zz", "gy", "lz", "xn", "yc",
-  "qd", "dl", "xm", "hk",
+  "qd", "dl", "xm", "hk", "tp",
 ];
 
 type Spark = { id: number; x: number; y: number; color: string; size: number };
