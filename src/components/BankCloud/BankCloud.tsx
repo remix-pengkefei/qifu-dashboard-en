@@ -22,7 +22,7 @@ const AGENTS = [
 ];
 
 const baseAgentCalls: Record<string, number> = {
-  approver: 1_285_302,
+  approver: 927_258,
   risk: 967_184,
   compliance: 832_461,
   marketing: 1_159_073,
