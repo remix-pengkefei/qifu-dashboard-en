@@ -2,20 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import "./Header.css";
 
 const NEWS_ITEMS = [
-  `奇富科技连续两年荣获Extel亚洲"最受尊敬公司"称号`,
-  `奇富科技成为2025年央视财经新媒体金融科技合作伙伴`,
-  `奇富科技CEO受邀出席中国发展高层论坛2025年年会`,
-  `奇富科技入选AIIA人工智能先锋案例，大模型赋能小微`,
-  `奇富科技论文入选IJCAI 2025国际人工智能顶级会议`,
-  `奇富科技语音情感框架受邀亮相IEEE ASRU 2025大会`,
-  `奇富科技连续六年入选毕马威中国领先金融科技企业榜`,
-  `奇富科技通过中国信通院数据安全治理能力最高级认证`,
-  `奇富科技荣获2024年度ESG先锋60"社会责任优秀奖"`,
-  `奇富科技ICDAR国际文档分析与识别大赛OCR荣获榜首`,
-  `奇富科技信贷多模态大模型Qfin-VL综合评测排名第一`,
-  `奇富科技联合工信部助力脐橙产业，科技赋能乡村振兴`,
-  `奇富科技累计协助环保企业发放绿色贷款超过245亿元`,
-  `奇富科技2025年助力小微企业放款超千亿惠及百万用户`,
+  `QiFu Tech named Extel Asia's Most Respected Company for two consecutive years`,
+  `QiFu Tech became CCTV Finance's 2025 fintech media partner`,
+  `QiFu Tech CEO invited to speak at China Development Forum 2025`,
+  `QiFu Tech selected as AIIA AI Pioneer Case for LLM-powered SME lending`,
+  `QiFu Tech paper accepted at IJCAI 2025 international AI conference`,
+  `QiFu Tech speech-emotion framework showcased at IEEE ASRU 2025`,
+  `QiFu Tech named a KPMG China Leading Fintech for six consecutive years`,
+  `QiFu Tech achieved top-level data security certification from CAICT`,
+  `QiFu Tech won the 2024 ESG Pioneer 60 Social Responsibility Award`,
+  `QiFu Tech ranked first in ICDAR international OCR competition`,
+  `QiFu Tech credit multimodal LLM Qfin-VL ranked #1 in comprehensive evaluation`,
+  `QiFu Tech partnered with MIIT to empower the navel orange industry with tech`,
+  `QiFu Tech facilitated over ¥24.5B in green loans for eco-friendly enterprises`,
+  `QiFu Tech helped SMEs secure over ¥100B in loans in 2025, benefiting millions`,
 ];
 
 export const Header = () => {
@@ -56,8 +56,8 @@ export const Header = () => {
   return (
     <header className="hdr">
       <div className="hdr-l">
-        <img src="/assets/logo/qifu-official.png" alt="奇富科技" className="hdr-logo-img" />
-        <span className="hdr-slogan">AI驱动未来金融</span>
+        <img src="/assets/logo/qifu-official.png" alt="QiFu Tech" className="hdr-logo-img" />
+        <span className="hdr-slogan">AI-Powered Future Finance</span>
       </div>
 
       <div className="hdr-honor">
@@ -75,7 +75,7 @@ export const Header = () => {
               </radialGradient>
             </defs>
           </svg>
-          企业荣誉
+          Honors
         </div>
         <div className="hdr-news-divider" />
         <div className="hdr-news-scroll">

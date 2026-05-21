@@ -3,10 +3,10 @@ import { BANKS } from "../../data/banks";
 import "./BankCalls.css";
 
 /**
- * 167 家合作银行的智能体调用情况：
- *  - 顶部：167 家总数 + "实时调用中"
- *  - 主体：top 8 银行调用排行（行 logo + 行名 + 调用计数 + 进度条）
- *  - 每隔 1 秒挑一家随机加 +N 模拟调用
+ * 167 partner banks agent call status:
+ *  - Top: 167 total count + "live calls"
+ *  - Body: top 8 bank call ranking (logo + name + call count + progress bar)
+ *  - Every 1 second, randomly increment one bank by +N to simulate calls
  */
 
 const baseCalls: Record<string, number> = {
@@ -47,7 +47,7 @@ export const BankCalls = () => {
     };
   }, []);
 
-  // 排序：按调用量降序，取 top 8
+  // Sort by call count descending, take top 8
   const ranked = [...BANKS]
     .map((b) => ({ ...b, count: calls[b.id] ?? 0 }))
     .sort((a, b) => b.count - a.count)
@@ -60,19 +60,19 @@ export const BankCalls = () => {
     <section className="bc">
       <div className="bc-h">
         <span className="bc-bar" />
-        合作银行 · 调用排行
+        Partner Banks · Call Ranking
         <span className="bc-meta">
-          <em className="num">235</em> 家合作机构
+          <em className="num">235</em> Partners
         </span>
       </div>
 
       <div className="bc-summary">
         <div className="bc-sum-cell">
-          <div className="bc-sum-label">实时调用累计</div>
+          <div className="bc-sum-label">Total Calls</div>
           <div className="bc-sum-value num">{totalCalls.toLocaleString()}</div>
         </div>
         <div className="bc-sum-cell">
-          <div className="bc-sum-label">活跃机构</div>
+          <div className="bc-sum-label">Active</div>
           <div className="bc-sum-value num">
             {Object.values(calls).filter((c) => c > 0).length}
             <em className="bc-sum-em"> / 235</em>
@@ -111,7 +111,7 @@ export const BankCalls = () => {
       </div>
 
       <div className="bc-foot">
-        <span>· 数据每秒更新 · 来源 Deepbank 智能体平台</span>
+        <span>· Data refreshed per second · Source: Deepbank Agent Platform</span>
       </div>
     </section>
   );

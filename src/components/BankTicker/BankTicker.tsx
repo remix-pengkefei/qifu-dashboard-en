@@ -3,11 +3,11 @@ import { BANKS } from "../../data/banks";
 import "./BankTicker.css";
 
 /**
- * 银行词云跑马灯：
- *  - 12 家银行排成横向队列，无限循环跑马灯
- *  - 卡片显示：行 logo + 行名 + 当前业务量
- *  - 词云感：业务量越大，卡片越大、字号越亮（按 fontWeight）
- *  - 当某银行"刚发生一笔业务"：卡片整体高光闪一下，业务量数字 +1，并飘出"+1"提示
+ * Bank word-cloud ticker:
+ *  - 12 banks in a horizontal infinite-scroll marquee
+ *  - Card shows: bank logo + name + current transaction count
+ *  - Cloud effect: higher count = larger card, brighter font weight
+ *  - When a bank has a new transaction: card flashes, count +1, floating "+1" indicator
  */
 
 const baseCounts: Record<string, number> = {
@@ -51,15 +51,15 @@ export const BankTicker = () => {
     };
   }, []);
 
-  // 滚动列表：原 12 家 × 重复 N 份，确保跑马灯不留白
+  // Scrolling list: 12 banks x N copies, ensuring no blank gaps in marquee
   const looped = [...BANKS, ...BANKS, ...BANKS];
 
   return (
     <div className="bt">
       <div className="bt-head">
         <span className="bt-bar" />
-        银行业务实时词云
-        <span className="bt-meta">235 家合作机构 · 全天候</span>
+        Bank Activity Cloud
+        <span className="bt-meta">235 Partners · 24/7</span>
       </div>
 
       <div className="bt-track-mask">
@@ -67,7 +67,7 @@ export const BankTicker = () => {
           {looped.map((b, i) => {
             const isBusy = bursts.some((x) => x.bankId === b.id);
             const cnt = counts[b.id] ?? 0;
-            // 按业务量给卡片加 weight（词云感）
+            // Add weight to card based on transaction count (cloud effect)
             const sizeClass =
               cnt > 5000 ? "bt-xl" : cnt > 4000 ? "bt-lg" : cnt > 2500 ? "bt-md" : "bt-sm";
             return (
@@ -82,7 +82,7 @@ export const BankTicker = () => {
                   <div className="bt-name">{b.name}</div>
                   <div className="bt-count num">
                     {cnt.toLocaleString()}
-                    <em>笔</em>
+                    <em> txns</em>
                   </div>
                 </div>
                 {isBusy && (

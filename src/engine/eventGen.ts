@@ -34,10 +34,10 @@ const buildBase = (level: EventLevel, _mode: Mode): LiveEvent => {
 
   let action: string;
   if (level === "risk") action = pick(RISK_EVENTS);
-  else if (level === "ok") action = pick(["智能审批通过", "用信划款执行", "提前还款受理"]);
+  else if (level === "ok") action = pick(["AI Approval Passed", "Disbursement Executed", "Early Repayment Accepted"]);
   else action = pick(ACTIONS);
 
-  // 每条事件都写全：银行、区域、场景、动作、智能体
+  // Each event includes all fields: bank, zone, scene, action, agent
   return {
     id: nextSeq(),
     time: formatTime(new Date()),
@@ -57,7 +57,7 @@ export const genInitialBatch = (mode: Mode, n: number): LiveEvent[] => {
   const out: LiveEvent[] = [];
   for (let i = 0; i < n; i++) {
     const ev = genEvent(mode);
-    // 时间稍微往前推一点
+    // Push time back slightly
     const d = new Date(Date.now() - Math.floor(rand(2, 30)) * 1000);
     ev.time = formatTime(d);
     out.push(ev);

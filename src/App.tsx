@@ -11,12 +11,12 @@ const Shell = () => {
       <Header />
       <LiveBusiness />
       <main className="main">
-        {/* 左：地图 */}
+        {/* Left: Map */}
         <section className="col-c">
           <ChinaMap />
         </section>
 
-        {/* 右：235 家银行词云 + 4 大智能体 */}
+        {/* Right: 235 Bank Cloud + 4 AI Agents */}
         <section className="col-r">
           <BankCloud />
         </section>

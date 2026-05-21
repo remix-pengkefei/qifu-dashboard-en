@@ -38,18 +38,18 @@ type Counters = {
 };
 
 type TopMetrics = {
-  activeOrgs: number; // 当前活跃机构
-  activeTasks: number; // 当前运行任务
-  responseZones: number; // 当前响应区域
-  riskScore: number; // 风险综合评分
-  stability: number; // 系统稳定性 %
-  avgResponse: number; // 平均响应 ms
-  abnormal: number; // 当前异常数
-  loanYTD: number; // 年累放款（万元）
-  aum: number; // AUM（亿元）
-  loanCnt: number; // 年累放款笔数
-  serveCnt: number; // 服务客户数
-  apiCalls: number; // 调用次数
+  activeOrgs: number; // Current active institutions
+  activeTasks: number; // Current running tasks
+  responseZones: number; // Current response zones
+  riskScore: number; // Composite risk score
+  stability: number; // System stability %
+  avgResponse: number; // Avg response ms
+  abnormal: number; // Current anomaly count
+  loanYTD: number; // YTD loans (x10K CNY)
+  aum: number; // AUM (x100M CNY)
+  loanCnt: number; // YTD loan count
+  serveCnt: number; // Served customer count
+  apiCalls: number; // API call count
 };
 
 type State = {
@@ -178,13 +178,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const setMode = useCallback((m: Mode) => {
     dispatch({ type: "SET_MODE", mode: m });
-    // 模式切换：重新种事件流但保留连续滚动感
+    // Mode switch: reseed event stream while keeping scroll continuity
     const nextEvents = genInitialBatch(m, 14);
     const nextCounters = genCounters(m);
     dispatch({ type: "RESEED", events: nextEvents, counters: nextCounters });
   }, []);
 
-  // 事件流：每 800–1500ms 一条
+  // Event stream: one event every 800-1500ms
   useEffect(() => {
     let timer: number;
     const tick = () => {
@@ -195,13 +195,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return () => window.clearTimeout(timer);
   }, []);
 
-  // 指标 / 智能体波动：每 2.4s
+  // Metrics / agent fluctuation: every 2.4s
   useEffect(() => {
     const id = window.setInterval(() => dispatch({ type: "TICK_METRICS" }), 2400);
     return () => window.clearInterval(id);
   }, []);
 
-  // 时钟：每 1s
+  // Clock: every 1s
   useEffect(() => {
     const id = window.setInterval(() => {
       const c = fmtClock();

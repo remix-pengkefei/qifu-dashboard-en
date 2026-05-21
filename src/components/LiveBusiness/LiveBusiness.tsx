@@ -75,11 +75,11 @@ export const LiveBusiness = () => {
   }, []);
 
   const cards = [
-    { label: "累计放款（万元）", value: "¥" + fmtWan2(cum.loanAmount) },
-    { label: "累计授信用户（人）", value: cum.creditUsers.toLocaleString() },
-    { label: "累计成功借款人（人）", value: cum.borrowers.toLocaleString() },
-    { label: "累计放款笔数", value: cum.loanCount.toLocaleString() },
-    { label: "累计小微服务用户（人）", value: cum.microBiz.toLocaleString() },
+    { label: "Total Loans (¥10K)", value: "¥" + fmtWan2(cum.loanAmount) },
+    { label: "Total Credit Users", value: cum.creditUsers.toLocaleString() },
+    { label: "Total Borrowers", value: cum.borrowers.toLocaleString() },
+    { label: "Total Loan Count", value: cum.loanCount.toLocaleString() },
+    { label: "Total SME Users", value: cum.microBiz.toLocaleString() },
   ];
 
   return (

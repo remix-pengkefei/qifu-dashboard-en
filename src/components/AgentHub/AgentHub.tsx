@@ -4,16 +4,16 @@ import { useSize } from "../../utils/useSize";
 import "./AgentHub.css";
 
 const INPUT_LEFT = [
-  { id: "持牌银行", label: "持牌银行" },
-  { id: "城商行", label: "城商行" },
-  { id: "农商行", label: "农商行" },
-  { id: "消金机构", label: "消金机构" },
+  { id: "Licensed Banks", label: "Licensed Banks" },
+  { id: "City Banks", label: "City Banks" },
+  { id: "Rural Banks", label: "Rural Banks" },
+  { id: "CF Companies", label: "CF Companies" },
 ];
 const INPUT_RIGHT = [
-  { id: "小微商户", label: "小微商户" },
-  { id: "供应链", label: "供应链工厂" },
-  { id: "经营客户", label: "经营客户" },
-  { id: "消费用户", label: "消费用户" },
+  { id: "SME Merchants", label: "SME Merchants" },
+  { id: "Supply Chain", label: "Supply Chain" },
+  { id: "Biz Clients", label: "Biz Clients" },
+  { id: "Consumers", label: "Consumers" },
 ];
 
 export const AgentHub = () => {
@@ -23,13 +23,13 @@ export const AgentHub = () => {
   const { agents, metrics } = useApp();
 
   /**
-   * 区域分配（防止重叠的关键）：
-   *   顶部 banner / 角标:        0 ~ 44
-   *   两侧 wave 面板（窄）:       50 ~ 50+waveH
-   *   中央作战区（hub + agents）: 50 ~ H-180
-   *   底部能力柱:                H-160 ~ H-90
-   *   底部 stats:                H-72 ~ H-8
-   *   左右 input source 列:     位于中央作战区两侧之外（不会进入 wave 区）
+   * Layout zones (key to preventing overlap):
+   *   Top banner / badges:          0 ~ 44
+   *   Side wave panels (narrow):    50 ~ 50+waveH
+   *   Central battle zone (hub+agents): 50 ~ H-180
+   *   Bottom capacity bars:         H-160 ~ H-90
+   *   Bottom stats:                 H-72 ~ H-8
+   *   Left/right input source cols: outside central zone (not in wave area)
    */
   const TOP_RESERVED = 50;
   const BOTTOM_RESERVED = 175; // stats(72) + capacity row(95) + spacing
@@ -37,14 +37,14 @@ export const AgentHub = () => {
   const battleBottom = H - BOTTOM_RESERVED;
   const battleH = Math.max(battleBottom - battleTop, 240);
 
-  // 中枢
+  // Hub center
   const hubSize = Math.min(battleH * 0.42, 200);
   const cx = W / 2;
   const cy = battleTop + battleH * 0.5;
 
-  // 6 个智能体节点
+  // 6 agent nodes
   const agentPositions = useMemo(() => {
-    // 移动端没有 wave 占用左右两侧，所以可用半径更大
+    // On mobile there's no wave panel on the sides, so usable radius is larger
     const sidesUsed = W >= 1024 ? 320 : 60;
     const rx = Math.max(80, Math.min((W - sidesUsed) * 0.35, 280));
     const ry = Math.max(70, Math.min(battleH * 0.34, 150));
@@ -59,8 +59,8 @@ export const AgentHub = () => {
     });
   }, [agents, cx, cy, W, battleH]);
 
-  // 输入源位置（避开 wave 面板，放在 wave 下方）
-  const sourcesTop = TOP_RESERVED + 110; // wave 面板高度约 100
+  // Input source positions (below wave panels to avoid overlap)
+  const sourcesTop = TOP_RESERVED + 110; // wave panel height ~100
   const sourcesH = Math.min(battleH * 0.7, 320);
   const leftSources = useMemo(
     () =>
@@ -91,28 +91,28 @@ export const AgentHub = () => {
   return (
     <div ref={ref} className="ah">
       <div className="ah-banner">
-        智能体编队作战中枢 · 实时调度
+        Agent Fleet Command · Real-time Dispatch
         <span className="ah-banner-en">AGENT FLEET COMMAND CENTER</span>
       </div>
 
       <div className="ah-corner-l">
-        <span className="dot" /> 调度协议 · ONLINE
+        <span className="dot" /> Protocol · ONLINE
       </div>
-      <div className="ah-corner-r">在岗 6 / 6 · 高效任务 6h 内 218</div>
+      <div className="ah-corner-r">Active 6/6 · Efficient Tasks: 218 in 6h</div>
 
-      {/* 两侧 wave 面板（顶部） */}
+      {/* Side wave panels (top) */}
       <div className="ah-wave-l">
-        <div className="ah-wave-h">实时数据 / Realtime</div>
+        <div className="ah-wave-h">Realtime Data</div>
         <img src="/assets/waves/wave-realtime.svg" alt="" />
-        <div className="ah-wave-meta num">采样 · {metrics.activeTasks.toLocaleString()} req/s</div>
+        <div className="ah-wave-meta num">Sampling · {metrics.activeTasks.toLocaleString()} req/s</div>
       </div>
       <div className="ah-wave-r">
-        <div className="ah-wave-h">结构化数据 / Structured</div>
+        <div className="ah-wave-h">Structured Data</div>
         <img src="/assets/waves/wave-structured.svg" alt="" />
-        <div className="ah-wave-meta num">入库 · {metrics.loanCnt.toLocaleString()} rec/h</div>
+        <div className="ah-wave-meta num">Ingested · {metrics.loanCnt.toLocaleString()} rec/h</div>
       </div>
 
-      {/* SVG 链路层 */}
+      {/* SVG link layer */}
       <svg className="ah-svg" viewBox={`0 0 ${W} ${H}`}>
         <g>
           {leftSources.map((s, i) => (
@@ -213,7 +213,7 @@ export const AgentHub = () => {
         className="ah-hub-label"
         style={{ left: cx, top: cy + hubSize / 2 + 2 }}
       >
-        <div className="ah-hub-title">智能体作战中枢</div>
+        <div className="ah-hub-title">Agent Command Center</div>
         <div className="ah-hub-sub">QFIN AGENT COMMAND</div>
       </div>
 
@@ -242,9 +242,9 @@ export const AgentHub = () => {
         </div>
       ))}
 
-      {/* 底部执行能力 */}
+      {/* Bottom performance */}
       <div className="ah-cap-row">
-        <div className="ah-cap-row-h">智能体执行能力 · 近 24h</div>
+        <div className="ah-cap-row-h">Agent Performance · Last 24h</div>
         <div className="ah-cap-grid">
           {capacities.map((c) => (
             <div key={c.id} className="ah-cap">
@@ -258,22 +258,22 @@ export const AgentHub = () => {
         </div>
       </div>
 
-      {/* 底部 stats */}
+      {/* Bottom stats */}
       <div className="ah-stats">
         <div className="ah-stat">
-          <div className="ah-stat-label">智能体调用</div>
+          <div className="ah-stat-label">Agent Calls</div>
           <div className="ah-stat-value num">{metrics.activeTasks.toLocaleString()}</div>
         </div>
         <div className="ah-stat">
-          <div className="ah-stat-label">协同准确率</div>
+          <div className="ah-stat-label">Coordination Accuracy</div>
           <div className="ah-stat-value num good">98.12<em>%</em></div>
         </div>
         <div className="ah-stat">
-          <div className="ah-stat-label">平均响应</div>
+          <div className="ah-stat-label">Avg Response</div>
           <div className="ah-stat-value num">{metrics.avgResponse}<em>ms</em></div>
         </div>
         <div className="ah-stat">
-          <div className="ah-stat-label">异常事件</div>
+          <div className="ah-stat-label">Anomalies</div>
           <div className="ah-stat-value num warn">{metrics.abnormal}</div>
         </div>
       </div>

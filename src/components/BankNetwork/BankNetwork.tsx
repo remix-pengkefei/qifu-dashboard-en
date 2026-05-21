@@ -5,28 +5,28 @@ import { useSize } from "../../utils/useSize";
 import "./BankNetwork.css";
 
 /**
- * 银行态布局策略 — 多战线并行：
- *   左侧 6 张银行卡（垂直列） / 右侧 6 张银行卡（垂直列）
- *   中央偏上：智能体调度子枢纽（hub-bank.png）
- *   中央偏下：8 个产业 / 客群场景图标（横向列）
+ * Bank mode layout strategy — parallel ops:
+ *   Left 6 bank cards (vertical) / Right 6 bank cards (vertical)
+ *   Upper center: agent dispatch sub-hub (hub-bank.png)
+ *   Lower center: 8 industry/segment scene icons (horizontal)
  *
- * 区域分配（基于实际容器尺寸 W x H）：
- *   顶部 banner: 0 ~ 44px
- *   左右银行列: 50 ~ H-90 (留底部 stats)
- *   中央枢纽:    在两列之间居中区域
- *   场景柱:      中央列底部
- *   底部 stats:  H-72 ~ H-8
+ * Zone allocation (based on container size W x H):
+ *   Top banner: 0 ~ 44px
+ *   Left/right bank cols: 50 ~ H-90 (leave room for bottom stats)
+ *   Center hub: centered between the two columns
+ *   Scene row: bottom of center column
+ *   Bottom stats: H-72 ~ H-8
  */
 
 const SCENE_TARGETS: { id: string; label: string }[] = [
-  { id: "factory", label: "制造业" },
-  { id: "auto", label: "汽车经销" },
-  { id: "electronics", label: "电子制造" },
-  { id: "supply", label: "供应链" },
-  { id: "ecom", label: "电商商户" },
-  { id: "sme", label: "小微商户" },
-  { id: "logistics", label: "物流车队" },
-  { id: "food", label: "餐饮门店" },
+  { id: "factory", label: "Manufacturing" },
+  { id: "auto", label: "Auto Dealer" },
+  { id: "electronics", label: "Electronics" },
+  { id: "supply", label: "Supply Chain" },
+  { id: "ecom", label: "E-commerce" },
+  { id: "sme", label: "SME" },
+  { id: "logistics", label: "Logistics" },
+  { id: "food", label: "F&B" },
 ];
 
 const BANK_TO_SCENE: Record<string, number[]> = {
@@ -52,19 +52,19 @@ export const BankNetwork = () => {
   const H = size.height || 1;
   const { metrics, agents } = useApp();
 
-  // 布局区域（防止重叠的核心边界值）
-  const TOP_RESERVED = 44;       // 顶部 banner / 角标
-  const BOTTOM_RESERVED = 80;    // 底部 stats 卡
+  // Layout zones (core boundaries to prevent overlap)
+  const TOP_RESERVED = 44;       // Top banner / badges
+  const BOTTOM_RESERVED = 80;    // Bottom stats card
   const stageTop = TOP_RESERVED + 6;
   const stageBottom = H - BOTTOM_RESERVED - 6;
   const stageH = Math.max(stageBottom - stageTop, 200);
 
-  // 银行卡片尺寸
+  // Bank card dimensions
   const cardW = Math.min(150, Math.max(120, W * 0.108));
   const cardH = Math.round(cardW / 1.6);
   const colInset = 14;
 
-  // 银行 6 行垂直分布
+  // 6-row vertical bank distribution
   const banksWithPos = useMemo(() => {
     const banksLeft = BANKS.slice(0, 6);
     const banksRight = BANKS.slice(6, 12);
@@ -89,18 +89,18 @@ export const BankNetwork = () => {
     return out;
   }, [W, stageH, cardW, stageTop]);
 
-  // 中区可用宽度（左右银行列之外）
+  // Center usable width (outside bank columns)
   const centerLeft = colInset + cardW + 20;
   const centerRight = W - colInset - cardW - 20;
   const centerW = centerRight - centerLeft;
   const centerCx = (centerLeft + centerRight) / 2;
 
-  // 中枢
+  // Hub
   const hubSize = Math.min(centerW * 0.32, stageH * 0.36, 200);
   const hubX = centerCx;
   const hubY = stageTop + stageH * 0.32;
 
-  // 场景图标位置（中央带宽内横向均布）
+  // Scene icon positions (evenly distributed within center band)
   const sceneRow = useMemo(() => {
     const row = SCENE_TARGETS;
     const totalW = Math.min(centerW * 0.92, 700);
@@ -116,18 +116,18 @@ export const BankNetwork = () => {
 
   return (
     <div ref={ref} className="bn">
-      {/* 顶部 banner */}
+      {/* Top banner */}
       <div className="bn-banner">
-        银行合作实时作战网络 · 多战线并发
+        Bank Collaboration Network · Parallel Ops
         <span className="bn-banner-en">PARALLEL BANK COLLABORATION</span>
       </div>
 
       <div className="bn-corner-l">
-        <span className="dot" /> 智能体在岗 · {agents.length}
+        <span className="dot" /> Agents Active · {agents.length}
       </div>
-      <div className="bn-corner-r">在线机构 · {metrics.activeOrgs}</div>
+      <div className="bn-corner-r">Online Institutions · {metrics.activeOrgs}</div>
 
-      {/* 中枢 PNG */}
+      {/* Hub PNG */}
       <img
         src="/assets/hubs/hub-bank.png"
         alt=""
@@ -146,13 +146,13 @@ export const BankNetwork = () => {
           top: hubY + hubSize / 2 + 2,
         }}
       >
-        <div className="bn-hub-title">智能体服务中枢</div>
+        <div className="bn-hub-title">Agent Service Hub</div>
         <div className="bn-hub-sub">QFIN AGENT HUB</div>
       </div>
 
-      {/* SVG 链路层 */}
+      {/* SVG link layer */}
       <svg className="bn-svg" viewBox={`0 0 ${W} ${H}`}>
-        {/* 银行 → 中枢 */}
+        {/* Bank -> Hub */}
         <g>
           {banksWithPos.filter((b) => BANK_TO_HUB.has(b.id)).map((b, i) => (
             <g key={`h-${b.id}`}>
@@ -173,7 +173,7 @@ export const BankNetwork = () => {
           ))}
         </g>
 
-        {/* 银行 → 场景 */}
+        {/* Bank -> Scene */}
         <g>
           {banksWithPos.flatMap((b) => {
             const targets = BANK_TO_SCENE[b.id] || [];
@@ -200,7 +200,7 @@ export const BankNetwork = () => {
           })}
         </g>
 
-        {/* 中枢 → 场景 */}
+        {/* Hub -> Scene */}
         <g>
           {sceneRow.map((s, i) => (
             <line
@@ -217,7 +217,7 @@ export const BankNetwork = () => {
         </g>
       </svg>
 
-      {/* 银行卡片 */}
+      {/* Bank cards */}
       {banksWithPos.map((b) => (
         <div
           key={b.id}
@@ -234,7 +234,7 @@ export const BankNetwork = () => {
         </div>
       ))}
 
-      {/* 场景图标 */}
+      {/* Scene icons */}
       {sceneRow.map((s) => (
         <div
           key={s.id}
@@ -249,30 +249,30 @@ export const BankNetwork = () => {
         </div>
       ))}
 
-      {/* 底部 stats */}
+      {/* Bottom stats */}
       <div className="bn-stats">
         <div className="bn-stat">
-          <div className="bn-stat-label">合作机构</div>
-          <div className="bn-stat-value num">235<em>家</em></div>
+          <div className="bn-stat-label">Partner Institutions</div>
+          <div className="bn-stat-value num">235</div>
         </div>
         <div className="bn-stat">
-          <div className="bn-stat-label">活跃机构</div>
-          <div className="bn-stat-value num">{metrics.activeOrgs}<em>家</em></div>
+          <div className="bn-stat-label">Active Institutions</div>
+          <div className="bn-stat-value num">{metrics.activeOrgs}</div>
         </div>
         <div className="bn-stat">
-          <div className="bn-stat-label">银行调用智能体</div>
-          <div className="bn-stat-value num">{metrics.activeTasks.toLocaleString()}<em>次</em></div>
+          <div className="bn-stat-label">Bank Agent Calls</div>
+          <div className="bn-stat-value num">{metrics.activeTasks.toLocaleString()}</div>
         </div>
         <div className="bn-stat">
-          <div className="bn-stat-label">系统稳定性</div>
+          <div className="bn-stat-label">System Stability</div>
           <div className="bn-stat-value num good">{metrics.stability.toFixed(2)}<em>%</em></div>
         </div>
         <div className="bn-stat">
-          <div className="bn-stat-label">平均响应</div>
+          <div className="bn-stat-label">Avg Response</div>
           <div className="bn-stat-value num">{metrics.avgResponse}<em>ms</em></div>
         </div>
         <div className="bn-stat">
-          <div className="bn-stat-label">异常拦截</div>
+          <div className="bn-stat-label">Anomaly Blocked</div>
           <div className="bn-stat-value num warn">{metrics.abnormal}</div>
         </div>
       </div>

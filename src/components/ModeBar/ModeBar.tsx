@@ -3,9 +3,9 @@ import type { Mode } from "../../engine/eventGen";
 import "./ModeBar.css";
 
 const MODES: { id: Mode; label: string; en: string; icon: string }[] = [
-  { id: "overview", label: "总览", en: "OVERVIEW", icon: "/assets/modes/mode-overview.svg" },
-  { id: "bank", label: "银行", en: "BANK NETWORK", icon: "/assets/modes/mode-bank.svg" },
-  { id: "agent", label: "智能体", en: "AGENT FLEET", icon: "/assets/modes/mode-agent.svg" },
+  { id: "overview", label: "Overview", en: "OVERVIEW", icon: "/assets/modes/mode-overview.svg" },
+  { id: "bank", label: "Bank", en: "BANK NETWORK", icon: "/assets/modes/mode-bank.svg" },
+  { id: "agent", label: "Agent", en: "AGENT FLEET", icon: "/assets/modes/mode-agent.svg" },
 ];
 
 export const ModeBar = () => {
@@ -41,7 +41,7 @@ export const ModeBar = () => {
         </div>
         <div className="mb-deco mb-deco-r" />
       </div>
-      <div className="mb-side num">作战模式 / MODE SELECT</div>
+      <div className="mb-side num">MODE SELECT</div>
     </nav>
   );
 };

@@ -5,11 +5,11 @@ import { useWorldGeoJson } from "../../utils/useWorldGeoJson";
 import "./WorldMini.css";
 
 /**
- * 海外合作迷你世界图：
- *  - 用真实 world GeoJSON（含全部国家轮廓）渲染
- *  - 用 geoEquirectangular fitSize 自动缩放到面板大小
- *  - 高亮中国位置 + 4 个海外伙伴 + 弧线连接
- *  - 下方双栏列出 4 国（中英）
+ * Global partnerships mini world map:
+ *  - Renders with real world GeoJSON (all country outlines)
+ *  - Uses geoEquirectangular fitSize to auto-scale to panel size
+ *  - Highlights China + 4 overseas partners + arc connections
+ *  - Bottom two-column list of 4 countries
  */
 
 const W = 300;
@@ -48,8 +48,8 @@ export const WorldMini = () => {
     <div className="wm">
       <div className="wm-head">
         <span className="wm-bar" />
-        海外合作
-        <span className="wm-en">{WORLD_COUNTRIES.length} 国</span>
+        Global Partners
+        <span className="wm-en">{WORLD_COUNTRIES.length} Countries</span>
       </div>
 
       <svg className="wm-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
@@ -64,7 +64,7 @@ export const WorldMini = () => {
           </radialGradient>
         </defs>
 
-        {/* 经纬网背景 */}
+        {/* Lat/lon grid background */}
         <g className="wm-grid">
           {[1, 2, 3].map((i) => (
             <line
@@ -92,7 +92,7 @@ export const WorldMini = () => {
           ))}
         </g>
 
-        {/* 真实国家轮廓 */}
+        {/* Real country outlines */}
         <g className="wm-countries">
           {countryPaths.map((c) =>
             c.isChina ? (
@@ -117,7 +117,7 @@ export const WorldMini = () => {
           )}
         </g>
 
-        {/* 弧线：中国 → 4 国 */}
+        {/* Arcs: China -> 4 countries */}
         <g>
           {partners.map((p, i) => {
             const midX = (chinaPt[0] + p.pt[0]) / 2;
@@ -144,15 +144,15 @@ export const WorldMini = () => {
           })}
         </g>
 
-        {/* 中国点 */}
+        {/* China point */}
         <g transform={`translate(${chinaPt[0]},${chinaPt[1]})`}>
           <circle r="9" fill="url(#wm-china-glow)" />
           <circle r="3" fill="#56c4ff" className="wm-pulse" />
           <circle r="1.4" fill="#fff" />
-          <text className="wm-china-label" x="0" y="-7" textAnchor="middle">中国</text>
+          <text className="wm-china-label" x="0" y="-7" textAnchor="middle">China</text>
         </g>
 
-        {/* 海外 4 点 */}
+        {/* 4 overseas points */}
         {partners.map((p) => (
           <g key={p.id} transform={`translate(${p.pt[0]},${p.pt[1]})`}>
             <circle r="7" fill="url(#wm-partner-glow)" />
@@ -167,7 +167,7 @@ export const WorldMini = () => {
           <div key={w.id} className="wm-item">
             <span className="wm-dot" />
             <div className="wm-text">
-              <div className="wm-cn">{w.cn}</div>
+              <div className="wm-cn">{w.en}</div>
               <div className="wm-en-line">{w.en}</div>
             </div>
           </div>

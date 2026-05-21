@@ -3,18 +3,18 @@ import { geoPath, geoTransform, geoContains, geoBounds } from "d3-geo";
 export { geoContains, geoBounds };
 
 /**
- * 中国地图自定义投影：
- *  - 自动用 GeoJSON 真实经纬度边界做 fit（精确）
- *  - 经度做 cos(meanLat) 压缩（中国均纬 ~36°，cos≈0.81），让地图比例更"圆润"
- *    而不是 geoIdentity 那种把经纬度当 1:1 直接映射造成的"太扁"
- *  - 不走 d3-geo Mercator 球面裁剪，避免 winding 不一致问题
+ * China map custom projection:
+ *  - Auto-fits using real GeoJSON lat/lon boundaries (precise)
+ *  - Applies cos(meanLat) compression on longitude (China mean lat ~36 deg, cos~0.81)
+ *    for more proportional rendering instead of geoIdentity's 1:1 flat mapping
+ *  - Avoids d3-geo Mercator sphere clipping to prevent winding inconsistencies
  */
 
 const cleanFeatures = (features: any[]) => {
   return features
     .filter((f) => f?.properties?.name && f.properties.name.trim().length > 0)
     .map((f) => {
-      // 海南省：只保留主岛（lat > 17），去除三沙
+      // Hainan: keep only main island (lat > 17), remove Sansha
       if (f.properties?.name === "海南省" && f.geometry?.type === "MultiPolygon") {
         const filtered = f.geometry.coordinates.filter((poly: any[][]) =>
           poly[0].some((pt: number[]) => pt[1] > 17)
@@ -28,7 +28,7 @@ const cleanFeatures = (features: any[]) => {
 type ProjectFn = (coord: [number, number]) => [number, number];
 
 export type ChinaProjection = ProjectFn & {
-  /** 让 geoPath 能用：把 ProjectFn 包成 geoTransform 风格的 stream */
+  /** For geoPath compatibility: wrap ProjectFn as a geoTransform-style stream */
   stream?: any;
   meanLat: number;
   scale: number;
@@ -38,8 +38,8 @@ export type ChinaProjection = ProjectFn & {
 };
 
 /**
- * 创建带 cos(lat) 校正的中国投影函数。
- * 返回一个 (lon, lat) → (x, y) 的函数，同时附带 d3-geo 兼容的 stream。
+ * Create a China projection function with cos(lat) correction.
+ * Returns a (lon, lat) -> (x, y) function with a d3-geo compatible stream.
  */
 export const createChinaProjection = (
   width: number,
@@ -49,7 +49,7 @@ export const createChinaProjection = (
 ): ChinaProjection => {
   const cleaned = cleanFeatures(geo.features as any[]);
 
-  // 收集所有点求 bbox
+  // Collect all points to compute bbox
   let minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
   const visit = (c: any) => {
     if (typeof c[0] === "number") {
@@ -95,7 +95,7 @@ export const createChinaProjection = (
   return fn;
 };
 
-/** 把 ChinaProjection 包成 d3-geo 可用的 stream，再喂给 geoPath */
+/** Wrap ChinaProjection as a d3-geo compatible stream for geoPath */
 export const buildPathFn = (projection: ChinaProjection) => {
   const transform = geoTransform({
     point(lon: number, lat: number) {

@@ -1,47 +1,47 @@
-/** 业务场景模板 */
+/** Business scenario templates */
 export const SCENES = [
-  "制造业经营周转",
-  "小微商户经营贷",
-  "供应链订单融资",
-  "消费金融分期",
-  "电子商务货款",
-  "汽车融资",
-  "餐饮经营贷",
-  "服装产业链",
-  "家居建材经营",
-  "农产品收购",
-  "工程结算融资",
-  "个体工商户",
-  "跨境贸易回款",
-  "医疗器械经营",
-  "教培行业经营",
-  "物流车队经营",
+  "Manufacturing Working Capital",
+  "SME Business Loan",
+  "Supply Chain Financing",
+  "Consumer Installment",
+  "E-commerce Payment",
+  "Auto Financing",
+  "F&B Business Loan",
+  "Apparel Supply Chain",
+  "Home Materials",
+  "Agricultural Purchase",
+  "Construction Settlement",
+  "Individual Business",
+  "Cross-border Trade",
+  "Medical Equipment",
+  "Education Business",
+  "Logistics Fleet",
 ];
 
 export const ACTIONS = [
-  "发起授信申请",
-  "智能审批通过",
-  "额度评估完成",
-  "风险复核中",
-  "合规规则校验",
-  "贷后监控触发",
-  "营销策略匹配",
-  "客户问询响应",
-  "反欺诈拦截",
-  "提前还款受理",
-  "续贷请求受理",
-  "用信划款执行",
+  "Credit Application Initiated",
+  "AI Approval Passed",
+  "Credit Assessment Done",
+  "Risk Review In Progress",
+  "Compliance Check",
+  "Post-loan Alert Triggered",
+  "Marketing Match",
+  "Customer Inquiry Response",
+  "Anti-fraud Blocked",
+  "Early Repayment Accepted",
+  "Renewal Request Accepted",
+  "Disbursement Executed",
 ];
 
-/** 区域名（用于事件流） */
-export const ZONES = ["华东", "华南", "华北", "华中", "西南", "西北", "东北"];
+/** Region names (for event stream) */
+export const ZONES = ["East", "South", "North", "Central", "Southwest", "Northwest", "Northeast"];
 
-/** 风险事件模板 */
+/** Risk event templates */
 export const RISK_EVENTS = [
-  "异常 IP 多账户",
-  "高风险行业准入",
-  "额度异常波动",
-  "提前结清后再申请",
-  "申报信息不一致",
-  "黑名单匹配命中",
+  "Abnormal IP Multi-account",
+  "High-risk Industry Access",
+  "Credit Limit Anomaly",
+  "Re-application After Early Settlement",
+  "Inconsistent Declaration",
+  "Blacklist Match Hit",
 ];

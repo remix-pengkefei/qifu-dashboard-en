@@ -17,8 +17,8 @@ export const StatusPanel = () => {
       <section className="sp-card sp-agents">
         <div className="sp-card-h">
           <span className="sp-bar" />
-          AI 智能体
-          <span className="sp-card-r">{agents.length} 在岗</span>
+          AI Agents
+          <span className="sp-card-r">{agents.length} Active</span>
         </div>
         <div className="sp-agent-grid">
           {agents.map((a) => (
@@ -34,13 +34,13 @@ export const StatusPanel = () => {
               </div>
               <div className="ag-tasks num">
                 {fmt(a.tasks)}
-                <em>任务</em>
+                <em>Tasks</em>
               </div>
               <img className="ag-spark" src={sparkUrlForLoad(a.load, a.status)} alt="" />
               <div className="ag-bar-meta num">
                 <span>{a.load}%</span>
                 <span className="ag-bar-meta-r">
-                  {a.status === "busy" ? "高负载" : a.status === "calm" ? "空闲中" : "运行中"}
+                  {a.status === "busy" ? "High Load" : a.status === "calm" ? "Idle" : "Running"}
                 </span>
               </div>
             </div>

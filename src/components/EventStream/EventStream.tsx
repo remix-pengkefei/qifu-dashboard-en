@@ -4,10 +4,10 @@ import { sceneIconUrl } from "../../data/sceneIcons";
 import "./EventStream.css";
 
 const levelLabel: Record<LiveEvent["level"], string> = {
-  normal: "运行中",
-  ok: "已完成",
-  warn: "复核中",
-  risk: "风险拦截",
+  normal: "Running",
+  ok: "Completed",
+  warn: "Reviewing",
+  risk: "Risk Blocked",
 };
 
 const levelStatusIcon: Record<LiveEvent["level"], string> = {
@@ -29,23 +29,23 @@ export const EventStream = () => {
       <div className="es-head">
         <div className="es-title">
           <i className="es-bar" />
-          实时事件流
+          Live Event Stream
         </div>
         <div className="es-tabs num">
           <span className="es-tab on">
-            全部 <em>{counters.totalEvents.toLocaleString()}</em>
+            All <em>{counters.totalEvents.toLocaleString()}</em>
           </span>
           <span className="es-tab">
-            交易 <em>{counters.trade}</em>
+            Trade <em>{counters.trade}</em>
           </span>
           <span className="es-tab tab-warn">
-            风控 <em>{counters.risk}</em>
+            Risk <em>{counters.risk}</em>
           </span>
           <span className="es-tab">
-            服务 <em>{counters.service}</em>
+            Service <em>{counters.service}</em>
           </span>
           <span className="es-tab tab-amber">
-            预警 <em>{counters.alert}</em>
+            Alert <em>{counters.alert}</em>
           </span>
         </div>
       </div>
@@ -92,7 +92,7 @@ export const EventStream = () => {
 
       <div className="es-foot">
         <div className="es-scan" />
-        <div className="es-foot-text">数据每秒推送</div>
+        <div className="es-foot-text">Data updates per second</div>
       </div>
     </aside>
   );

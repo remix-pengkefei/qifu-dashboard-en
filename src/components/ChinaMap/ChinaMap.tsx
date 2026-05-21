@@ -47,77 +47,78 @@ const PULSE_COLORS = ["#56c4ff", "#2fd996", "#a78bfa", "#ffb84d", "#ff5e6c"];
 
 type CityPulse = { id: number; x: number; y: number; color: string };
 type FlyDot = { id: number; pathD: string; dur: number };
-// ── 业务类型定义（颜色贯穿事件流+心电图） ──
+// ── Biz type definitions (colors used in event feed + wave monitor) ──
 const BIZ_TYPES = [
-  { key: "credit",   label: "智能信贷", color: "#e8b866", weight: 40 },
-  { key: "risk",     label: "风控决策", color: "#36d6b6", weight: 12 },
-  { key: "sme",      label: "小微金融", color: "#56c4ff", weight: 25 },
-  { key: "platform", label: "联合放款", color: "#7b8cce", weight: 13 },
-  { key: "postloan", label: "贷后管理", color: "#78909c", weight: 10 },
+  { key: "credit",   label: "Smart Credit", color: "#e8b866", weight: 40 },
+  { key: "risk",     label: "Risk Control", color: "#36d6b6", weight: 12 },
+  { key: "sme",      label: "SME Finance", color: "#56c4ff", weight: 25 },
+  { key: "platform", label: "Co-lending", color: "#7b8cce", weight: 13 },
+  { key: "postloan", label: "Post-loan Mgmt", color: "#78909c", weight: 10 },
 ] as const;
 
 const BIZ_POOL: typeof BIZ_TYPES[number][] = [];
 BIZ_TYPES.forEach((b) => { for (let i = 0; i < b.weight; i++) BIZ_POOL.push(b); });
 const pickBiz = () => BIZ_POOL[Math.floor(Math.random() * BIZ_POOL.length)];
 
-// ── 合作机构（严格取自 banks167.ts 合作名单） ──
+// ── Partner institutions (from banks167.ts partner list) ──
 const FEED_BANKS = [
-  // weight 5 头部
-  "北京银行", "上海银行", "宁波银行", "江苏银行", "杭州银行",
-  "民生银行", "光大银行", "恒丰银行", "渤海银行", "浦发银行",
-  "京东消金", "平安消金", "马上消金", "招联消金", "兴业消金",
-  "中邮消金", "小米消金", "平安普惠", "度小满",
+  // weight 5 — top-tier
+  "Bank of Beijing", "Bank of Shanghai", "Bank of Ningbo", "Bank of Jiangsu", "Bank of Hangzhou",
+  "Minsheng Bank", "Everbright Bank", "Evergrowing Bank", "Bohai Bank", "SPD Bank",
+  "JD Finance", "Ping An CF", "MaShang CF", "Zhaolian CF", "CIB CF",
+  "China Post CF", "Xiaomi CF", "Ping An Puhui", "Du Xiaoman",
   // weight 4
-  "吉林银行", "汉口银行", "廊坊银行", "兰州银行", "青岛银行",
-  "徽商银行", "广州银行", "西安银行", "齐鲁银行", "天津银行",
-  "甘肃银行", "长安银行", "重庆农商行", "东莞农商行", "上海农商行",
-  "苏州农商行", "昆山农商行", "北银消金", "中银消金", "中信消金",
-  "杭银消金", "海尔消金", "宁银消金", "南银法巴消金",
+  "Bank of Jilin", "Bank of Hankou", "Bank of Langfang", "Bank of Lanzhou", "Bank of Qingdao",
+  "Huishang Bank", "Bank of Guangzhou", "Bank of Xi'an", "Bank of Qilu", "Bank of Tianjin",
+  "Bank of Gansu", "Chang'an Bank", "Chongqing RCB", "Dongguan RCB", "Shanghai RCB",
+  "Suzhou RCB", "Kunshan RCB", "BOB CF", "BOC CF", "CITIC CF",
+  "HZB CF", "Haier CF", "NBB CF", "NJB BNP CF",
   // weight 3
-  "辽宁盛京银行", "浙商银行", "广西北部湾银行", "厦门国际银行",
-  "苏商银行", "平安银行", "华夏银行", "南京银行", "桂林银行",
-  "九江银行", "百信银行", "天津农商", "福建海峡银行", "龙江银行",
-  "哈银消金", "阳光消金", "中原消金", "盛银消金", "幸福消金",
+  "Shengjing Bank", "Zheshang Bank", "Beibu Gulf Bank", "Xiamen Intl Bank",
+  "Sushang Bank", "Ping An Bank", "Huaxia Bank", "Bank of Nanjing", "Bank of Guilin",
+  "Bank of Jiujiang", "aiBank", "Tianjin RCB", "Fujian Strait Bank", "Longjiang Bank",
+  "Harbin CF", "Sunshine CF", "Zhongyuan CF", "Shengyin CF", "Xingfu CF",
   // weight 2
-  "东营银行", "威海银行", "烟台银行", "海口银行", "张家口银行",
-  "石嘴山银行", "昆仑银行", "贵阳农商行", "江西银行", "青海银行",
-  "工商银行", "重庆富民银行", "武汉众邦银行",
+  "Bank of Dongying", "Bank of Weihai", "Bank of Yantai", "Bank of Haikou", "Bank of Zhangjiakou",
+  "Bank of Shizuishan", "Kunlun Bank", "Guiyang RCB", "Bank of Jiangxi", "Bank of Qinghai",
+  "ICBC", "Chongqing Fumin Bank", "Wuhan Zhongbang Bank",
 ];
 const FEED_PERSONS = [
-  "张明", "李华", "王峰", "陈林", "刘强", "赵玲", "黄国", "周燕",
-  "吴辉", "孙丽", "何杰", "马芳", "谢平", "邓伟", "韩海", "萧勇",
-  "高志远", "林婷", "杨帆", "朱磊", "徐宏", "曹敏", "唐亮", "彭程",
-  "蒋欣", "沈涛", "郭晓", "田雨", "苏建", "范明杰", "许晴", "石磊",
-  "卢峰", "段瑜", "钟毅", "潘洁",
+  "James W.", "Lisa C.", "David L.", "Sarah Z.", "Michael H.", "Emily Y.", "Robert G.", "Anna W.",
+  "Kevin S.", "Helen M.", "Jason X.", "Grace T.", "Peter D.", "Tony C.", "Mark Z.", "Diana L.",
+  "Andrew G.", "Julia T.", "Frank Y.", "Chris Z.", "Henry X.", "Amy C.", "Leo T.", "Brian P.",
+  "Kate J.", "Steven S.", "Nancy G.", "Tom T.", "Eric S.", "Daniel F.", "Rose X.", "Jack S.",
+  "Luke L.", "Ray D.", "Sam Z.", "Ivy P.",
 ];
 const FEED_COMPANIES = [
-  "兴达纺织厂", "大丰贸易", "利和科技", "明达电子", "长江材料",
-  "新兴食品", "振兴机械", "远达商贸", "光明制造", "海丰物流",
-  "安康建设", "富强实业", "恒通钢铁", "锦绣服饰", "永盛化工",
-  "国泰包装", "宏图建材", "博达通讯", "三和汽配", "金鼎模具",
-  "万达门窗", "天成物业", "顺达运输", "丰华农业", "中恒新能源",
-  "同创电气", "合力液压", "鸿盛塑业", "正泰电器", "长城精工",
+  "Xingda Textiles", "Dafeng Trading", "Lihe Tech", "Mingda Electronics", "Yangtze Materials",
+  "Xinxing Foods", "Zhenxing Machinery", "Yuanda Commerce", "Guangming Mfg", "Haifeng Logistics",
+  "Ankang Construction", "Fuqiang Industries", "Hengtong Steel", "Jinxiu Apparel", "Yongsheng Chemical",
+  "Guotai Packaging", "Hongtu Materials", "Boda Telecom", "Sanhe Auto Parts", "Jinding Molds",
+  "Wanda Windows", "Tiancheng Property", "Shunda Transport", "Fenghua Agriculture", "Zhongheng Energy",
+  "Tongchuang Electric", "Heli Hydraulic", "Hongsheng Plastics", "Zhengtai Electric", "Great Wall Precision",
 ];
 const CREDIT_VERBS = [
-  "发放消费贷", "发放信用贷", "审批放款", "完成授信放款",
-  "发放装修贷", "发放教育贷", "发放医疗贷", "极速放款",
+  "consumer loan approved", "credit loan issued", "approval & disbursement", "credit line granted",
+  "renovation loan issued", "education loan issued", "medical loan issued", "instant disbursement",
 ];
 const SME_VERBS = [
-  "发放经营贷", "发放设备贷", "发放周转贷", "完成供应链放款",
-  "发放采购贷", "发放仓储贷",
+  "business loan issued", "equipment loan issued", "working capital issued", "supply chain funded",
+  "procurement loan issued", "warehouse loan issued",
 ];
 const _pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
 const fmtAmount = (wan: number): string => {
-  if (wan >= 10000) return `¥${(wan / 10000).toFixed(1)}亿`;
-  if (wan >= 100) return `¥${Math.round(wan)}万`;
-  if (wan >= 1) return `¥${wan.toFixed(1)}万`;
-  return `¥${Math.round(wan * 10000)}元`;
+  const yuan = wan * 10000;
+  if (yuan >= 100000000) return `¥${(yuan / 100000000).toFixed(1)}B`;
+  if (yuan >= 10000000) return `¥${(yuan / 1000000).toFixed(0)}M`;
+  if (yuan >= 1000000) return `¥${(yuan / 1000000).toFixed(1)}M`;
+  return `¥${Math.round(yuan / 1000)}K`;
 };
 const maskName = (n: string) => n[0] + "*".repeat(n.length - 1);
 const AGENT_MAP: Record<string, string[]> = {
-  credit: ["AI审批官", "AI信贷助手", "AI放款助手"],
-  sme: ["AI审批官", "AI小微助手", "AI企业评估"],
-  risk: ["AI风控助手", "AI反欺诈引擎", "AI信用评估"],
+  credit: ["AI Approver", "AI Credit Asst", "AI Disbursement"],
+  sme: ["AI Approver", "AI SME Asst", "AI Biz Evaluator"],
+  risk: ["AI Risk Control", "AI Anti-fraud", "AI Credit Scoring"],
 };
 
 
@@ -150,33 +151,33 @@ const _genOnce = (biz: typeof BIZ_TYPES[number]) => {
   switch (biz.key) {
     case "credit": {
       const p = maskName(_pick(FEED_PERSONS));
-      title = `${bank} 给 ${p} ${_pick(CREDIT_VERBS)}`;
+      title = `${bank} granted ${p} ${_pick(CREDIT_VERBS)}`;
       detail = fmtAmount(Math.random() * 14 + 1);
-      actionLabel = `调用${_pick(agents)}`;
+      actionLabel = `via ${_pick(agents)}`;
       break;
     }
     case "sme": {
       const c = _pick(FEED_COMPANIES);
-      title = `${bank} 给 ${c} ${_pick(SME_VERBS)}`;
+      title = `${bank} granted ${c} ${_pick(SME_VERBS)}`;
       detail = fmtAmount(Math.random() * 60 + 30);
-      actionLabel = `调用${_pick(agents)}`;
+      actionLabel = `via ${_pick(agents)}`;
       break;
     }
     case "risk": {
       const p = maskName(_pick(FEED_PERSONS));
       title = _pick([
-        `${bank} 给 ${p} 风控审批通过`,
-        `${bank} 给 ${p} 完成信用评估`,
+        `${bank} ${p} risk approval passed`,
+        `${bank} ${p} credit evaluation done`,
       ]);
-      detail = `${Math.floor(Math.random() * 200 + 650)}分`;
-      actionLabel = `调用${_pick(agents)}`;
+      detail = `${Math.floor(Math.random() * 200 + 650)}pts`;
+      actionLabel = `via ${_pick(agents)}`;
       break;
     }
     case "platform": {
       const c = _pick(FEED_COMPANIES);
       title = _pick([
-        `${bank} 对接 ${c} 完成授信`,
-        `${bank} 联合 ${c} 放款`,
+        `${bank} connected with ${c} credit approved`,
+        `${bank} co-lending with ${c}`,
       ]);
       detail = fmtAmount(Math.random() * 60 + 30);
       actionLabel = biz.label;
@@ -185,8 +186,8 @@ const _genOnce = (biz: typeof BIZ_TYPES[number]) => {
     case "postloan": {
       const p = maskName(_pick(FEED_PERSONS));
       title = _pick([
-        `${bank} ${p} 按时还款`,
-        `${bank} ${p} 贷后回访正常`,
+        `${bank} ${p} repaid on time`,
+        `${bank} ${p} post-loan review normal`,
       ]);
       detail = fmtAmount(Math.random() * 14 + 1);
       actionLabel = biz.label;
@@ -217,7 +218,7 @@ const genBatch = (count: number, seq: { current: number }): FeedEvent[] => {
   return Array.from({ length: count }, () => genEvent(seq.current++));
 };
 
-// ── 事件流组件 ──
+// ── Event feed component ──
 const FEED_COUNT = 8;
 const FLIP_GAP = 140;
 const FLIP_PAUSE = 2000;
@@ -258,9 +259,9 @@ const EventFeed = () => {
     <div className="cm-feed">
       <div className="cm-feed-head">
         <span className="cm-feed-dot" />
-        实时事件流
+        Live Event Feed
         <span className="cm-meta">
-          覆盖 <em className="cm-em num">31</em> 省 · <em className="cm-em num">318</em> 城
+          Covering <em className="cm-em num">31</em> Provinces · <em className="cm-em num">318</em> Cities
         </span>
       </div>
       <div className="cm-feed-list">
@@ -285,7 +286,7 @@ const EventFeed = () => {
   );
 };
 
-// ── 心电图波形：只往上跳，高度=请求量，颜色=业务类型 ──
+// ── Wave monitor: upward spikes, height = request volume, color = biz type ──
 const WAVE_SEGMENTS = BIZ_TYPES.map((b) => ({ label: b.label, color: b.color }));
 
 const waveBuf: number[] = [];
@@ -446,7 +447,7 @@ const WaveMonitor = () => {
   );
 };
 
-// ── 业务热力散点层（航空俯瞰城市灯光） ──
+// ── Business heatmap scatter layer (aerial city lights view) ──
 const HEAT_CITIES = CITY_NODES.map((c) => ({
   coord: c.coord,
   weight: c.tier === 1 ? 1.0 : c.tier === 2 ? 0.45 : c.tier === 3 ? 0.25 : 0.12,
@@ -455,32 +456,32 @@ const HEAT_CITIES = CITY_NODES.map((c) => ({
 
 // extra population corridors (small towns between major cities)
 const EXTRA_POINTS: [number, number, number][] = [
-  // 长三角密集带
+  // Yangtze River Delta cluster
   [120.9, 31.4, 0.15], [121.1, 30.9, 0.12], [120.5, 30.5, 0.1],
   [119.5, 31.8, 0.08], [119.9, 30.8, 0.08], [121.4, 29.3, 0.06],
-  // 珠三角密集带
+  // Pearl River Delta cluster
   [113.5, 22.8, 0.15], [113.8, 22.6, 0.12], [114.3, 23.1, 0.1],
   [112.9, 23.3, 0.08], [113.1, 22.5, 0.06],
-  // 京津冀
+  // Beijing-Tianjin-Hebei
   [116.8, 39.5, 0.1], [115.5, 38.8, 0.08], [117.5, 39.7, 0.06],
   [115.0, 39.5, 0.05], [116.1, 38.3, 0.04],
-  // 成渝
+  // Chengdu-Chongqing
   [105.3, 30.1, 0.08], [106.0, 29.8, 0.06], [104.7, 29.3, 0.04],
-  // 中部走廊
+  // Central corridor
   [113.4, 30.2, 0.06], [113.0, 28.8, 0.05], [115.0, 30.5, 0.05],
   [112.5, 34.2, 0.05], [116.5, 33.5, 0.04], [111.7, 29.4, 0.04],
   [114.5, 36.6, 0.04], [113.7, 27.8, 0.04],
-  // 东部沿海带
+  // Eastern coastal belt
   [119.0, 25.5, 0.05], [118.5, 24.9, 0.06], [120.7, 28.0, 0.05],
   [117.3, 34.8, 0.04], [118.3, 33.9, 0.04], [116.7, 23.4, 0.05],
   [110.4, 21.2, 0.04], [109.1, 21.5, 0.03],
-  // ── 东北 ──
+  // ── Northeast ──
   [124.5, 42.8, 0.05], [125.8, 44.5, 0.04], [123.0, 41.1, 0.06],
   [121.6, 38.9, 0.06], [122.0, 41.1, 0.04], [123.9, 47.3, 0.03],
   [124.8, 45.7, 0.03], [126.9, 47.4, 0.03], [129.6, 44.6, 0.02],
   [127.0, 41.8, 0.02], [130.3, 47.3, 0.02], [121.2, 45.0, 0.02],
   [120.4, 41.8, 0.03], [122.8, 45.2, 0.02],
-  // ── 内蒙古 ──
+  // ── Inner Mongolia ──
   [109.8, 40.6, 0.05], [110.0, 41.0, 0.04], [106.8, 39.7, 0.04],
   [114.0, 40.8, 0.04], [116.8, 43.6, 0.03], [119.7, 49.2, 0.03],
   [117.4, 47.4, 0.03], [108.7, 40.0, 0.03], [112.0, 43.0, 0.03],
@@ -488,7 +489,7 @@ const EXTRA_POINTS: [number, number, number][] = [
   [107.5, 40.8, 0.03], [113.0, 42.0, 0.03], [118.5, 46.0, 0.02],
   [116.0, 44.5, 0.02], [121.5, 47.0, 0.02], [110.5, 42.5, 0.02],
   [108.0, 41.5, 0.02], [114.5, 44.0, 0.02],
-  // ── 新疆 ──
+  // ── Xinjiang ──
   [87.6, 43.8, 0.06], [86.1, 41.8, 0.04], [81.3, 43.9, 0.04],
   [80.3, 41.2, 0.04], [76.0, 39.5, 0.04], [79.9, 37.1, 0.03],
   [88.1, 47.8, 0.03], [84.9, 45.6, 0.03], [89.2, 42.9, 0.03],
@@ -497,70 +498,70 @@ const EXTRA_POINTS: [number, number, number][] = [
   [90.5, 45.0, 0.03], [86.5, 44.2, 0.03], [77.5, 37.5, 0.02],
   [83.5, 40.0, 0.02], [88.0, 40.5, 0.02], [93.5, 43.0, 0.02],
   [79.0, 43.0, 0.02], [85.5, 48.0, 0.02],
-  // ── 西藏 ──
+  // ── Tibet ──
   [91.1, 29.7, 0.05], [88.9, 29.3, 0.03], [86.0, 29.0, 0.03],
   [97.2, 31.5, 0.03], [94.4, 29.7, 0.03], [80.1, 32.5, 0.02],
   [84.2, 31.5, 0.02], [92.0, 31.0, 0.02],
   [82.0, 30.0, 0.02], [86.5, 32.0, 0.02], [89.0, 31.5, 0.02],
   [95.5, 30.5, 0.02], [83.5, 29.5, 0.02], [79.0, 31.0, 0.02],
   [87.0, 30.5, 0.02], [93.0, 32.5, 0.02], [85.0, 33.0, 0.01],
-  // ── 青海 ──
+  // ── Qinghai ──
   [101.8, 36.6, 0.05], [97.4, 37.4, 0.03], [95.4, 33.0, 0.02],
   [100.6, 34.5, 0.03], [102.0, 35.0, 0.03], [98.1, 36.4, 0.03],
   [96.0, 35.5, 0.02], [99.0, 33.5, 0.02], [94.5, 36.0, 0.02],
   [97.0, 35.0, 0.02], [100.0, 36.0, 0.02], [93.0, 34.5, 0.02],
-  // ── 甘肃 ──
+  // ── Gansu ──
   [103.8, 36.1, 0.05], [98.3, 39.7, 0.04], [104.6, 35.6, 0.04],
   [105.7, 34.6, 0.04], [106.7, 35.5, 0.04], [100.5, 38.9, 0.03],
   [97.0, 39.0, 0.03], [95.0, 40.1, 0.03], [102.2, 38.0, 0.03],
   [99.5, 39.5, 0.02], [93.5, 40.5, 0.02], [101.0, 37.0, 0.02],
-  // ── 宁夏 ──
+  // ── Ningxia ──
   [106.3, 38.5, 0.04], [105.2, 37.5, 0.03],
-  // ── 云贵 ──
+  // ── Yunnan-Guizhou ──
   [106.6, 26.6, 0.05], [104.8, 26.6, 0.04], [100.2, 26.9, 0.03],
   [103.8, 25.0, 0.04], [106.7, 27.7, 0.03], [107.9, 27.1, 0.03],
   [104.3, 23.4, 0.02], [108.3, 22.8, 0.03],
-  // ── 广西 ──
+  // ── Guangxi ──
   [109.4, 24.3, 0.04], [110.3, 25.3, 0.03], [107.4, 23.7, 0.03],
   [111.3, 23.5, 0.03], [108.1, 24.7, 0.02],
-  // ── 陕西 ──
+  // ── Shaanxi ──
   [108.9, 34.3, 0.06], [109.5, 36.6, 0.03], [107.1, 34.4, 0.03],
   [107.8, 33.1, 0.02], [110.1, 35.1, 0.03],
-  // ── 山西 ──
+  // ── Shanxi ──
   [112.5, 37.9, 0.05], [113.1, 36.2, 0.03], [111.5, 36.1, 0.03],
   [112.7, 35.5, 0.03], [113.3, 40.1, 0.03],
-  // ── 海南 ──
+  // ── Hainan ──
   [110.3, 20.0, 0.04], [109.5, 18.2, 0.03], [110.0, 19.2, 0.02],
-  // ── 河南补充 ──
+  // ── Henan supplement ──
   [114.3, 34.0, 0.05], [112.4, 35.0, 0.04], [115.6, 34.4, 0.04],
   [111.2, 34.0, 0.03], [113.9, 33.0, 0.03], [114.0, 32.1, 0.03],
-  // ── 安徽补充 ──
+  // ── Anhui supplement ──
   [117.8, 30.9, 0.04], [116.5, 31.7, 0.04], [118.3, 32.9, 0.03],
   [115.8, 33.9, 0.03], [117.0, 30.0, 0.03],
-  // ── 江西补充 ──
+  // ── Jiangxi supplement ──
   [115.0, 27.8, 0.04], [114.4, 27.1, 0.04], [116.4, 28.3, 0.03],
   [114.9, 26.0, 0.03], [117.0, 29.3, 0.03], [116.0, 25.8, 0.02],
-  // ── 湖北补充 ──
+  // ── Hubei supplement ──
   [112.1, 31.0, 0.04], [110.8, 32.6, 0.03], [111.3, 30.7, 0.03],
   [109.5, 30.3, 0.03], [113.4, 31.7, 0.03],
-  // ── 湖南补充 ──
+  // ── Hunan supplement ──
   [110.0, 27.2, 0.04], [109.7, 28.3, 0.03], [111.6, 26.4, 0.03],
   [112.6, 27.0, 0.03], [110.5, 29.4, 0.03],
-  // ── 四川盆地 ──
+  // ── Sichuan Basin ──
   [105.1, 31.5, 0.04], [106.8, 31.2, 0.03], [103.0, 30.0, 0.03],
   [104.8, 28.8, 0.03], [105.6, 30.8, 0.03], [107.5, 31.8, 0.02],
-  // ── 吉林补充 ──
+  // ── Jilin supplement ──
   [126.5, 43.8, 0.03], [127.5, 42.9, 0.02], [124.3, 43.2, 0.02],
-  // ── 黑龙江补充 ──
+  // ── Heilongjiang supplement ──
   [128.0, 46.6, 0.03], [124.0, 46.6, 0.02], [127.5, 50.2, 0.01],
   [131.0, 46.0, 0.02],
-  // ── 河北补充 ──
+  // ── Hebei supplement ──
   [114.5, 37.1, 0.04], [116.1, 39.6, 0.03], [118.2, 39.6, 0.03],
   [115.5, 37.7, 0.03],
-  // ── 山东补充 ──
+  // ── Shandong supplement ──
   [118.0, 36.8, 0.04], [119.1, 35.4, 0.03], [116.0, 35.4, 0.03],
   [121.4, 37.5, 0.03],
-  // ── 台湾（仅台北附近，轻度闪烁） ──
+  // ── Taiwan (Taipei area only, light flicker) ──
   [121.565, 25.033, 0.04], [121.52, 25.08, 0.03], [121.45, 25.00, 0.02],
 ];
 
@@ -1107,7 +1108,7 @@ export const ChinaMap = () => {
     <div className="cm">
       <div className="cm-head">
         <span className="cm-bar" />
-        全国业务覆盖 · 实时态势
+        National Coverage · Real-time Status
       </div>
       <div className="cm-body">
         <div ref={ref} className="cm-map">
@@ -1129,7 +1130,7 @@ export const ChinaMap = () => {
             </defs>
 
             <g transform={`translate(0, ${mapTop})`}>
-              {/* 周边国家轮廓（暗底） */}
+              {/* Neighboring countries outline (dark bg) */}
               <g className="cm-world">
                 {worldPaths.map((w) => (
                   <path key={w.id} d={w.d} className="cm-world-country" />
@@ -1238,7 +1239,7 @@ export const ChinaMap = () => {
         <EventFeed />
       </div>
 
-      {/* 底部心跳波形图 */}
+      {/* Bottom heartbeat wave monitor */}
       <WaveMonitor />
     </div>
   );

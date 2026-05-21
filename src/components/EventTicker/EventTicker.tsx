@@ -3,40 +3,40 @@ import { useApp } from "../../store/AppContext";
 import type { LiveEvent } from "../../engine/eventGen";
 import "./EventTicker.css";
 
-/** 智能体名称 → icon 路径 */
+/** Agent name -> icon path */
 const agentIcon = (name: string): string => {
-  if (name.includes("审批")) return "/assets/agents/agent-approver.svg";
-  if (name.includes("风控") || name.includes("决策")) return "/assets/agents/agent-risk.svg";
-  if (name.includes("合规")) return "/assets/agents/agent-compliance.svg";
-  if (name.includes("营销")) return "/assets/agents/agent-marketing.svg";
-  if (name.includes("贷后")) return "/assets/agents/agent-post.svg";
-  if (name.includes("服务")) return "/assets/agents/agent-service.svg";
+  if (name.includes("Approv")) return "/assets/agents/agent-approver.svg";
+  if (name.includes("Risk") || name.includes("Decision")) return "/assets/agents/agent-risk.svg";
+  if (name.includes("Compliance")) return "/assets/agents/agent-compliance.svg";
+  if (name.includes("Marketing")) return "/assets/agents/agent-marketing.svg";
+  if (name.includes("Post")) return "/assets/agents/agent-post.svg";
+  if (name.includes("Service")) return "/assets/agents/agent-service.svg";
   return "/assets/agents/agent-approver.svg";
 };
 
-/** 把事件拼成一句完整的描述 */
+/** Build a full description sentence for the event */
 const fmtWan = (wan: number): string => {
-  if (wan >= 10000) return `${(wan / 10000).toFixed(1)}亿`;
-  if (wan >= 100) return `${Math.round(wan)}万`;
-  if (wan >= 1) return `${wan.toFixed(1)}万`;
-  return `${Math.round(wan * 10000)}元`;
+  if (wan >= 10000) return `${(wan / 10000).toFixed(1)}B`;
+  if (wan >= 100) return `${Math.round(wan)}0K`;
+  if (wan >= 1) return `${wan.toFixed(1)}0K`;
+  return `${Math.round(wan * 10000)}`;
 };
 const buildDesc = (e: LiveEvent): string => {
   const wan = Math.random() * 24 + 1;
   const amount = fmtWan(wan);
-  const bank = e.bank || "合作机构";
-  const agent = e.agent || "AI 智能体";
+  const bank = e.bank || "Partner";
+  const agent = e.agent || "AI Agent";
 
   if (e.level === "risk") {
-    return `${bank}触发风险预警：${e.action}，${agent}已介入实时拦截并启动人工复核流程`;
+    return `${bank} triggered risk alert: ${e.action}, ${agent} intervened for real-time blocking and manual review`;
   }
   if (e.level === "warn") {
-    return `${bank}${e.scene}场景${e.action}，${agent}标记为待复核，预计金额 ¥${amount}`;
+    return `${bank} ${e.scene} scenario ${e.action}, ${agent} flagged for review, est. amount ¥${amount}`;
   }
   if (e.level === "ok") {
-    return `${bank}${e.scene}场景${e.action}完成，${agent}确认放款 ¥${amount}已到账`;
+    return `${bank} ${e.scene} scenario ${e.action} completed, ${agent} confirmed disbursement ¥${amount} credited`;
   }
-  return `${bank}${e.scene}场景${e.action}，${agent}正在处理中，申请金额 ¥${amount}`;
+  return `${bank} ${e.scene} scenario ${e.action}, ${agent} processing, applied amount ¥${amount}`;
 };
 
 type TickerItem = {
@@ -55,7 +55,7 @@ export const EventTicker = () => {
   const showingIdRef = useRef<number>(-1);
   const seqRef = useRef(0);
 
-  // 新事件入队
+  // Queue new events
   useEffect(() => {
     if (!events.length) return;
     const latest = events[0];
@@ -70,7 +70,7 @@ export const EventTicker = () => {
     }
   }, [events]);
 
-  // 跑马灯循环：enter(0.6s) → show(5s) → exit(0.5s) → 下一条
+  // Ticker loop: enter(0.6s) -> show(5s) -> exit(0.5s) -> next item
   useEffect(() => {
     let alive = true;
 
@@ -130,17 +130,17 @@ export const EventTicker = () => {
     <div className="etk">
       <div className="etk-left">
         <i className="etk-bar" />
-        <span className="etk-title">实时事件流</span>
+        <span className="etk-title">Live Events</span>
       </div>
 
       <div className="etk-marquee">
         <div className={`etk-event lvl-${current.level} etk-${phase}`} key={current.id}>
           {/* 1. icon */}
           <img className="etk-icon" src={current.icon} alt="" />
-          {/* 2. 事件描述 */}
+          {/* 2. event description */}
           <span className="etk-desc">{current.desc}</span>
-          {/* 3. 时间 */}
-          <span className="etk-ago num">{current.agoSec}秒前</span>
+          {/* 3. time */}
+          <span className="etk-ago num">{current.agoSec}s ago</span>
         </div>
       </div>
 
