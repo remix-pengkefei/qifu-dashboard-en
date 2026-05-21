@@ -490,9 +490,9 @@
     font-size: clamp(10px, 1vh, 14px);
   }
   .cm-feed-head {
-    font-size: clamp(11px, 1.2vh, 16px);
-    padding: clamp(4px, 0.5vh, 8px) clamp(6px, 0.7vh, 10px);
-    gap: clamp(3px, 0.3vh, 6px);
+    font-size: clamp(10px, 1vh, 14px);
+    padding: clamp(3px, 0.3vh, 6px) clamp(5px, 0.5vh, 8px);
+    gap: clamp(2px, 0.2vh, 4px);
   }
   .cm-feed-head .cm-meta {
     display: none;
@@ -502,41 +502,34 @@
     height: clamp(5px, 0.5vh, 8px);
   }
   .cm-feed-list {
-    padding: clamp(2px, 0.2vh, 4px);
+    padding: clamp(1px, 0.1vh, 3px);
     justify-content: flex-start;
-    gap: clamp(2px, 0.2vh, 4px);
+    gap: clamp(1px, 0.1vh, 2px);
     perspective: none;
   }
   .cm-feed-item {
-    padding: clamp(3px, 0.35vh, 6px) clamp(5px, 0.5vh, 8px);
+    padding: 1px clamp(4px, 0.4vh, 6px);
     animation: none;
   }
   .cm-feed-row1 {
-    gap: clamp(3px, 0.3vh, 5px);
-    margin-bottom: clamp(1px, 0.1vh, 3px);
+    gap: clamp(2px, 0.2vh, 4px);
+    margin-bottom: 0;
   }
   .cm-feed-biz {
-    font-size: clamp(10px, 1vh, 14px);
+    font-size: clamp(9px, 0.8vh, 12px);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .cm-feed-detail {
-    font-size: clamp(10px, 1vh, 14px);
+    font-size: clamp(9px, 0.8vh, 12px);
     white-space: nowrap;
   }
   .cm-feed-time {
-    font-size: clamp(9px, 0.8vh, 12px);
+    font-size: clamp(8px, 0.65vh, 10px);
   }
   .cm-feed-row2 {
-    gap: clamp(3px, 0.3vh, 5px);
-  }
-  .cm-feed-city,
-  .cm-feed-action {
-    font-size: clamp(9px, 0.8vh, 12px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none;
   }
   .cm-wave-tag {
     font-size: clamp(10px, 1vh, 13px);
