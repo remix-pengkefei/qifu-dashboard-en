@@ -503,9 +503,13 @@
   }
   .cm-feed-list {
     padding: clamp(2px, 0.2vh, 4px);
+    justify-content: flex-start;
+    gap: clamp(2px, 0.2vh, 4px);
+    perspective: none;
   }
   .cm-feed-item {
     padding: clamp(3px, 0.35vh, 6px) clamp(5px, 0.5vh, 8px);
+    animation: none;
   }
   .cm-feed-row1 {
     gap: clamp(3px, 0.3vh, 5px);
