@@ -12,7 +12,7 @@
   transform: translateX(-50%);
   font-size: 12px;
   color: var(--text-secondary);
-  letter-spacing: 4px;
+  letter-spacing: 1.5px;
   background: linear-gradient(90deg, transparent, rgba(8,18,40,0.55), transparent);
   padding: 4px 24px;
   pointer-events: none;
@@ -84,7 +84,7 @@
 .bn-hub-title {
   font-size: 13px;
   color: var(--c-cyan-1);
-  letter-spacing: 4px;
+  letter-spacing: 1.5px;
   font-weight: 600;
   text-shadow: 0 0 10px var(--c-cyan-glow);
 }

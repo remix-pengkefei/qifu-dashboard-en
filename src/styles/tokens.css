@@ -46,8 +46,8 @@
   --glow-green: 0 0 14px rgba(47, 217, 150, 0.55);
   --glow-red: 0 0 14px rgba(255, 94, 108, 0.55);
 
-  /* 字体 */
-  --ff-zh: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", "Source Han Sans CN", sans-serif;
+  /* Fonts */
+  --ff-zh: "Inter", "Segoe UI", "Helvetica Neue", "Arial", sans-serif;
   --ff-num: "D-DIN", "JetBrains Mono", "SF Mono", "Menlo", monospace;
 
   /* 节奏 */

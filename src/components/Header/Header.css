@@ -36,7 +36,7 @@
 .hdr-slogan {
   font-size: clamp(11px, 0.9vw, 132px);
   color: rgba(200, 218, 240, 0.85);
-  letter-spacing: 2px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
   font-weight: 500;
 }
@@ -81,7 +81,7 @@
 
 /* 滚动区域（固定宽度，以最长新闻为基准） */
 .hdr-news-scroll {
-  width: clamp(280px, 20vw, 2400px);
+  width: clamp(280px, 26vw, 2800px);
   flex-shrink: 0;
   overflow: hidden;
   display: flex;

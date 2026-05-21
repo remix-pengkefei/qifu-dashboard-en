@@ -51,9 +51,9 @@
   gap: clamp(4px, 0.4vw, 60px);
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: clamp(13px, 1.1vw, 156px);
+  font-size: clamp(11px, 0.85vw, 120px);
   color: var(--text-primary);
-  letter-spacing: 4px;
+  letter-spacing: 1px;
   font-weight: 300;
   margin-top: auto;
   margin-bottom: 0;
@@ -63,12 +63,12 @@
 }
 .bcl-subtitle em {
   font-style: normal;
-  font-size: clamp(18px, 1.5vw, 216px);
+  font-size: clamp(15px, 1.2vw, 180px);
   color: var(--c-cyan-1);
   font-weight: 700;
   font-family: var(--ff-num);
   text-shadow: 0 0 10px var(--c-cyan-glow), 0 0 20px rgba(86, 196, 255, 0.2);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 /* 4 大智能体 — 2×2 网格，固定在底部 */
@@ -164,8 +164,8 @@
 .bcl-word {
   cursor: default;
   transition: fill 180ms var(--ease);
-  font-family: var(--ff-zh);
-  letter-spacing: 0.2px;
+  font-family: var(--ff-zh), sans-serif;
+  letter-spacing: 0;
 }
 .bcl-word.bcl-word-active {
   font-weight: 700;
@@ -184,8 +184,8 @@
     height: 45vw;
   }
   .bcl-subtitle {
-    font-size: 13px;
-    letter-spacing: 2px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
     top: 15px;
   }
   .bcl-subtitle em {
