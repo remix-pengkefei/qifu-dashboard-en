@@ -219,7 +219,7 @@ const genBatch = (count: number, seq: { current: number }): FeedEvent[] => {
 };
 
 // ── Event feed component ──
-const FEED_COUNT = 8;
+const FEED_COUNT = 5;
 const FLIP_GAP = 140;
 const FLIP_PAUSE = 2000;
 
